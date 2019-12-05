@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="8.5.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
+		<PackageReference Include="MimeTypesMap" Version="1.0.8" />
+		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+	</ItemGroup>
+</Project>

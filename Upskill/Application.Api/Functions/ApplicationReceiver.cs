@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
-using Application.Api.CommandBuilders;
-using Application.Api.Commands.RegisterApplicationCommand;
-using Application.Api.Dtos;
-using Application.Api.RequestToDtoMappers;
+using Application.Commands.CommandBuilders;
+using Application.Commands.Commands;
 using Application.Infrastructure;
+using Application.RequestMappers.Dtos;
+using Application.RequestMappers.RequestToDtoMappers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -36,7 +36,7 @@ namespace Application.Api.Functions
             [DurableClient] IDurableOrchestrationClient processStarter,
             ILogger log)
         {
-            var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.Deserialize(req);
+            var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.MapRequest(req);
             
             if (!mappingResult.Success)
             {
@@ -44,7 +44,8 @@ namespace Application.Api.Functions
             }
 
             var command = await _commandBuilder.Build(mappingResult.Value);
-            var instanceId = _guidProvider.GenerateGuid().ToString();
+            var instanceId = _guidProvider.GenerateGuid().ToString("N");
+
             await processStarter.StartNewAsync(nameof(ApplicationProcessOrchestrator), instanceId, command);
 
             log.LogInformation($"Started orchestration of application process with instanceId: {instanceId}");
