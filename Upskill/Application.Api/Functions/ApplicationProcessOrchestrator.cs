@@ -42,7 +42,7 @@ namespace Application.Api.Functions
 
             await Task.WhenAll(tasks);
 
-            log.LogInformation($": {context.InstanceId}");
+            log.LogInformation($"Finished the files uploading in instanceId: {context.InstanceId}");
 
             var cvUri = cvUploadedEventTask.Result.CvUri;
             var photoUri = photoUploadedEventTask.Result.PhotoUri;
@@ -56,6 +56,7 @@ namespace Application.Api.Functions
                 command.CreationTime);
 
             await context.CallActivityAsync<Task>(nameof(ApplicationSaver), saveApplicationCommand);
+
             var applicationSavedEvent = await context.WaitForExternalEvent<ApplicationSavedEvent>(nameof(ApplicationSavedEvent));
 
             //ToDo dispatch events to event bus

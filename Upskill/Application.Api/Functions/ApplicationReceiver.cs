@@ -37,14 +37,16 @@ namespace Application.Api.Functions
             ILogger log)
         {
             var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.MapRequest(req);
-            
+
+            var instanceId = _guidProvider.GenerateGuid().ToString("N");
+
             if (!mappingResult.Success)
             {
+                log.LogInformation($"Invalid data provided to the application process with instanceId: ${instanceId}");
                 return new BadRequestObjectResult(mappingResult.Errors);
             }
 
             var command = await _commandBuilder.Build(mappingResult.Value);
-            var instanceId = _guidProvider.GenerateGuid().ToString("N");
 
             await processStarter.StartNewAsync(nameof(ApplicationProcessOrchestrator), instanceId, command);
 

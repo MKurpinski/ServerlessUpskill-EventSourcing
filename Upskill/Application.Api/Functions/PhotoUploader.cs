@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Application.Api.Events.Internal;
 using Application.BlobStorage.Writers;
@@ -24,16 +25,26 @@ namespace Application.Api.Functions
             [ActivityTrigger] IDurableActivityContext context,
             ILogger log)
         {
-            var command = context.GetInput<UploadPhotoCommand>();
-            var cvUri = await _fileWriter.Save(
-                PHOTO_CONTAINER_NAME,
-                command.Content,
-                command.ContentType,
-                context.InstanceId,
-                command.Extension);
+            try
+            {
+                var command = context.GetInput<UploadPhotoCommand>();
 
-            var eventToDispatch = new PhotoUploadedEvent(cvUri);
-            await client.RaiseEventAsync(context.InstanceId, nameof(PhotoUploadedEvent), eventToDispatch);
+                var cvUri = await _fileWriter.Write(
+                    PHOTO_CONTAINER_NAME,
+                    command.Content,
+                    command.ContentType,
+                    context.InstanceId,
+                    command.Extension);
+
+                var eventToDispatch = new PhotoUploadedEvent(cvUri);
+                await client.RaiseEventAsync(context.InstanceId, nameof(PhotoUploadedEvent), eventToDispatch);
+            }
+            catch (Exception ex)
+            {
+                log.LogError($"Uploading photo failed instanceId: {context.InstanceId}, error: {ex.Message}");
+                var eventToDispatch = new CvUploadFailed();
+                await client.RaiseEventAsync(context.InstanceId, nameof(CvUploadFailed), eventToDispatch);
+            }
         }
     }
 }

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.RequestMappers.Dtos;
-using Application.RequestMappers.RequestToDtoMappers.Results;
-using Application.RequestMappers.RequestToDtoMappers.Results.Implementation;
+using Application.Results;
+using Application.Results.Implementation;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
@@ -24,7 +24,7 @@ namespace Application.RequestMappers.RequestToDtoMappers.Implementation
             _fromFormToApplicationDtoDeserializer = fromFormToApplicationDtoDeserializer;
         }
 
-        public async Task<IResult<RegisterApplicationDto>> MapRequest(
+        public async Task<IDataResult<RegisterApplicationDto>> MapRequest(
             HttpRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -41,14 +41,14 @@ namespace Application.RequestMappers.RequestToDtoMappers.Implementation
                 if (!validationResult.IsValid)
                 {
                     var preparedErrors = validationResult.Errors.Select(x => new KeyValuePair<string, string>(x.PropertyName, x.ErrorMessage));
-                    return  new FailedResult<RegisterApplicationDto>(preparedErrors);
+                    return  new FailedDataResult<RegisterApplicationDto>(preparedErrors);
                 }
 
-                return new SuccessfulResult<RegisterApplicationDto>(deserializationFromFormResult.Value);
+                return new SuccessfulDataResult<RegisterApplicationDto>(deserializationFromFormResult.Value);
             }
             catch (Exception)
             {
-                return new FailedResult<RegisterApplicationDto>("InvalidData", "Data in invalid format");
+                return new FailedDataResult<RegisterApplicationDto>("InvalidData", "Data in invalid format");
             }
         }
     }

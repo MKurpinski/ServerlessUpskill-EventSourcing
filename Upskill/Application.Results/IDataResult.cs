@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace Application.RequestMappers.RequestToDtoMappers.Results
+namespace Application.Results
 {
-    public interface IResult<T>
-    { 
-        bool Success { get; } 
+    public interface IDataResult<T> : IResult
+    {
         T Value { get; }
+
         IReadOnlyCollection<KeyValuePair<string, string>> Errors { get; }
     }
 }

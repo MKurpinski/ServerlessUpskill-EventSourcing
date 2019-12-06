@@ -1,4 +1,6 @@
 ﻿using Application.DataStorage.Options;
+using Application.DataStorage.Providers;
+using Application.DataStorage.Repositories;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +17,11 @@ namespace Application.DataStorage.Config
                     configuration.Bind(settings);
                 });
 
-            return builder.Services;
+            return builder.Services
+                .AddTransient<ICosmosClientProvider, CosmosClientProvider>()
+                .AddTransient<IDatabaseClientProvider, DatabaseClientProvider>()
+                .AddTransient<IContainerClientProvider, ContainerClientProvider>()
+                .AddTransient<IApplicationRepository, ApplicationRepository>();
         }
     }
 }

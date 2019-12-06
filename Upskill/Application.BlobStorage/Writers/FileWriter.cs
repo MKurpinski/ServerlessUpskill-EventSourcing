@@ -13,7 +13,7 @@ namespace Application.BlobStorage.Writers
             _blobClient = blobClientProvider.Get();
         }
 
-        public async Task<string> Save(string containerName, byte[] content, string contentType, string fileName, string extension)
+        public async Task<string> Write(string containerName, byte[] content, string contentType, string fileName, string extension)
         {
             var container = _blobClient.GetContainerReference(containerName);
             await container.CreateIfNotExistsAsync();

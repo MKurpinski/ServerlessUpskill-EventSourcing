@@ -11,4 +11,7 @@
 		<PackageReference Include="MimeTypesMap" Version="1.0.8" />
 		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Application.Results\Application.Results.csproj" />
+	</ItemGroup>
 </Project>

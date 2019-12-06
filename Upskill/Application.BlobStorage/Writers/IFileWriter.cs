@@ -4,7 +4,7 @@ namespace Application.BlobStorage.Writers
 {
     public interface IFileWriter
     {
-        Task<string> Save(
+        Task<string> Write(
             string containerName,
             byte[] content,
             string contentType,

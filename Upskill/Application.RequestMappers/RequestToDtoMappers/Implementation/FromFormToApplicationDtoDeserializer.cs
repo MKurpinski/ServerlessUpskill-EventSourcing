@@ -4,8 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.RequestMappers.Dtos;
 using Application.RequestMappers.RequestToDtoMappers.Extensions;
-using Application.RequestMappers.RequestToDtoMappers.Results;
-using Application.RequestMappers.RequestToDtoMappers.Results.Implementation;
+using Application.Results;
+using Application.Results.Implementation;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -14,7 +14,7 @@ namespace Application.RequestMappers.RequestToDtoMappers.Implementation
     public class FromFormToApplicationDtoDeserializer : IFromFormToApplicationDtoDeserializer
     {
 
-        public async Task<IResult<RegisterApplicationDto>> HandleDeserializationFromForm(HttpRequest request, CancellationToken cancellationToken)
+        public async Task<IDataResult<RegisterApplicationDto>> HandleDeserializationFromForm(HttpRequest request, CancellationToken cancellationToken)
         {
             var formData = await request.ReadFormAsync(cancellationToken);
 
@@ -25,7 +25,7 @@ namespace Application.RequestMappers.RequestToDtoMappers.Implementation
             if (!candidateDeserializationResult.Success || !cvDeserializationResult.Success || !photoDeserializationResult.Success)
             {
                 var errors = new[] {candidateDeserializationResult.Errors, cvDeserializationResult.Errors, photoDeserializationResult.Errors};
-                return new FailedResult<RegisterApplicationDto>(errors.SelectMany(x => x));
+                return new FailedDataResult<RegisterApplicationDto>(errors.SelectMany(x => x));
             }
 
             var dto = new RegisterApplicationDto(
@@ -34,21 +34,21 @@ namespace Application.RequestMappers.RequestToDtoMappers.Implementation
                 candidateDeserializationResult.Value
             );
 
-            return new SuccessfulResult<RegisterApplicationDto>(dto);
+            return new SuccessfulDataResult<RegisterApplicationDto>(dto);
         }
 
-        private IResult<IFormFile> ProvideFile(IFormCollection form, string key)
+        private IDataResult<IFormFile> ProvideFile(IFormCollection form, string key)
         {
             var containFile = form.TryGetFile(key, out var file);
             if (!containFile)
             {
-                return new FailedResult<IFormFile>(key, "File is required");
+                return new FailedDataResult<IFormFile>(key, "File is required");
             }
 
-            return new SuccessfulResult<IFormFile>(file);
+            return new SuccessfulDataResult<IFormFile>(file);
         }
 
-        private IResult<CandidateDto> ProvideCandidate(IFormCollection form)
+        private IDataResult<CandidateDto> ProvideCandidate(IFormCollection form)
         {
             var containCandidate = form.TryGetValue(
                 nameof(RegisterApplicationDto.Candidate),
@@ -57,11 +57,11 @@ namespace Application.RequestMappers.RequestToDtoMappers.Implementation
 
             if (!containCandidate)
             {
-                return new FailedResult<CandidateDto>(nameof(RegisterApplicationDto.Candidate), "Candidate info is required");
+                return new FailedDataResult<CandidateDto>(nameof(RegisterApplicationDto.Candidate), "Candidate info is required");
             }
 
             var deserializedCandidate = JsonConvert.DeserializeObject<CandidateDto>(candidateAsString);
-            return new SuccessfulResult<CandidateDto>(deserializedCandidate);
+            return new SuccessfulDataResult<CandidateDto>(deserializedCandidate);
         }
     }
 }
