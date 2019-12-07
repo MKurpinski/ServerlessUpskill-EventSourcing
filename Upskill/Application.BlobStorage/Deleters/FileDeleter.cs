@@ -13,7 +13,7 @@ namespace Application.BlobStorage.Deleters
             _blobClient = blobClientProvider.Get();
         }
 
-        public async Task Delete(string containerName, string fileName, string extension)
+        public async Task Delete(string containerName, string fileName)
         {
             var container = _blobClient.GetContainerReference(containerName);
             var containerExists = await container.ExistsAsync();
@@ -23,7 +23,7 @@ namespace Application.BlobStorage.Deleters
                 return;
             }
 
-            var blob = container.GetBlockBlobReference($"{fileName}.{extension}");
+            var blob = container.GetBlockBlobReference(fileName);
             await blob.DeleteIfExistsAsync();
         }
     }

@@ -42,7 +42,7 @@ namespace Application.Api.Functions
 
             if (!mappingResult.Success)
             {
-                log.LogInformation($"Invalid data provided to the application process with instanceId: ${instanceId}");
+                log.LogInformation($"Invalid data provided to the application process with instanceId: {instanceId}");
                 return new BadRequestObjectResult(mappingResult.Errors);
             }
 

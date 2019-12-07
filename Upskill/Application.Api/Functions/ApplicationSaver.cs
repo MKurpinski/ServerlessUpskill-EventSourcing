@@ -43,8 +43,8 @@ namespace Application.Api.Functions
                 if (!saveResult.Success)
                 {
                     this.LogError(log, context.InstanceId, string.Join(',', saveResult.Errors.Select(x => x.Value)));
-                    var eventToDispatch = new ApplicationSaveFailed();
-                    await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailed), eventToDispatch);
+                    var eventToDispatch = new ApplicationSaveFailedEvent();
+                    await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailedEvent), eventToDispatch);
                     return;
                 }
 
@@ -54,8 +54,8 @@ namespace Application.Api.Functions
             catch (Exception ex)
             {
                 this.LogError(log, context.InstanceId, ex.Message);
-                var eventToDispatch = new ApplicationSaveFailed();
-                await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailed), eventToDispatch);
+                var eventToDispatch = new ApplicationSaveFailedEvent();
+                await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailedEvent), eventToDispatch);
             }
         }
 

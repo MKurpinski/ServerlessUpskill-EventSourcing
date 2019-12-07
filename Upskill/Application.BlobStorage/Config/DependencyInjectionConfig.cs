@@ -1,4 +1,5 @@
-﻿using Application.BlobStorage.Options;
+﻿using Application.BlobStorage.Deleters;
+using Application.BlobStorage.Options;
 using Application.BlobStorage.Providers;
 using Application.BlobStorage.Writers;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -19,6 +20,8 @@ namespace Application.BlobStorage.Config
 
             return builder.Services
                 .AddTransient<IFileWriter, FileWriter>()
+                .AddTransient<IFileDeleter, FileDeleter>()
+                .AddTransient<IFileNameProvider, FileNameProvider>()
                 .AddTransient<IBlobClientProvider, BlobClientProvider>();
         }
     }

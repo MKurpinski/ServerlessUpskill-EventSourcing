@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Application.RequestMappers.Dtos;
 using Application.RequestMappers.Options;
@@ -12,10 +13,6 @@ namespace Application.RequestMappers.Validators
 {
     public class RegisterApplicationDtoValidator: AbstractValidator<RegisterApplicationDto>
     {
-        private const int MAX_LENGTH_OF_CV_IN_MEGABYTES = 10;
-        private const int MAX_LENGTH_OF_PHOTO_IN_MEGABYTES = 2;
-        private static readonly string[] ALLOWED_CV_FORMATS = {"pdf"};
-        private static readonly string[] ALLOWED_PHOTO_FORMATS = {"png", "jpg"};
         public RegisterApplicationDtoValidator(
             IOptions<ApplicationFormValidationOptions> applicationFormOptionsAccessor,
             IValidator<CandidateDto> candidateDtoValidator)
@@ -27,8 +24,8 @@ namespace Application.RequestMappers.Validators
                     nameof(RegisterApplicationDto.Cv),
                     file,
                     context,
-                    MAX_LENGTH_OF_CV_IN_MEGABYTES,
-                    ALLOWED_CV_FORMATS));
+                    applicationFormOptions.MaxCvSizeInMegabytes,
+                    applicationFormOptions.CvFormats));
 
             RuleFor(x => x.Photo)
                 .NotNull()
@@ -36,13 +33,13 @@ namespace Application.RequestMappers.Validators
                     nameof(RegisterApplicationDto.Photo),
                     file,
                     context,
-                    MAX_LENGTH_OF_PHOTO_IN_MEGABYTES,
-                    ALLOWED_PHOTO_FORMATS));
+                    applicationFormOptions.MaxPhotoSizeInMegabytes,
+                    applicationFormOptions.PhotoFormats));
 
             RuleFor(x => x.Candidate).NotNull().SetValidator(candidateDtoValidator);
         }
 
-        private void FileValidation(string propertyName, IFormFile file, CustomContext context, int maxFileLengthInMb, string[] allowedExtensions)
+        private void FileValidation(string propertyName, IFormFile file, CustomContext context, int maxFileLengthInMb, IEnumerable<string> allowedExtensions)
         {
             const int bytesInMegaByte = 1000000;
             var maxLengthInBytes = maxFileLengthInMb * bytesInMegaByte;

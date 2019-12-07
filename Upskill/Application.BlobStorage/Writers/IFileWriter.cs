@@ -8,7 +8,6 @@ namespace Application.BlobStorage.Writers
             string containerName,
             byte[] content,
             string contentType,
-            string fileName,
-            string extension);
+            string fileName);
     }
 }
