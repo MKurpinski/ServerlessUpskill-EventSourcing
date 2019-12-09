@@ -2,9 +2,10 @@ using System;
 using System.Threading.Tasks;
 using Application.Api.Constants;
 using Application.Api.Events.Internal;
-using Application.BlobStorage.Providers;
-using Application.BlobStorage.Writers;
+using Application.Api.Extensions;
 using Application.Commands.Commands;
+using Application.Storage.Blob.Providers;
+using Application.Storage.Blob.Writers;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
@@ -30,24 +31,22 @@ namespace Application.Api.Functions
             [ActivityTrigger] IDurableActivityContext context,
             ILogger log)
         {
-            try
-            {
-                var command = context.GetInput<UploadCvCommand>();
-                var cvUri = await _fileWriter.Write(
-                    FileStore.CvsContainer,
-                    command.Content,
-                    command.ContentType,
-                    _fileNameProvider.GetFileName(context.InstanceId, command.Extension));
+            var command = context.GetInput<UploadCvCommand>();
+            var saveCvResult = await _fileWriter.Write(
+                FileStore.CvsContainer,
+                command.Content,
+                command.ContentType,
+                _fileNameProvider.GetFileName(context.InstanceId, command.Extension));
 
-                var eventToDispatch = new CvUploadedEvent(cvUri);
-                await client.RaiseEventAsync(context.InstanceId, nameof(CvUploadedEvent), eventToDispatch);
-            }
-            catch (Exception ex)
+            if (!saveCvResult.Success)
             {
-                log.LogError($"Uploading cv failed instanceId: {context.InstanceId}, error: {ex.Message}");
-                var eventToDispatch = new CvUploadFailedEvent();
-                await client.RaiseEventAsync(context.InstanceId, nameof(CvUploadFailedEvent), eventToDispatch);
+                log.LogErrors($"Uploading cv failed instanceId: {context.InstanceId}", saveCvResult.Errors);
+                var failedEvent = new CvUploadFailedEvent(saveCvResult.Errors);
+                await client.RaiseEventAsync(context.InstanceId, nameof(CvUploadFailedEvent), failedEvent);
             }
+
+            var eventToDispatch = new CvUploadedEvent(saveCvResult.Value);
+            await client.RaiseEventAsync(context.InstanceId, nameof(CvUploadedEvent), eventToDispatch);
         }
     }
 }

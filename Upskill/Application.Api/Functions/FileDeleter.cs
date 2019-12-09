@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Application.BlobStorage.Deleters;
 using Application.Commands.Commands;
+using Application.Storage.Blob.Deleters;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 

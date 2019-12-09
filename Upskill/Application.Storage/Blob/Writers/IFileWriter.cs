@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Application.Results;
 
-namespace Application.BlobStorage.Writers
+namespace Application.Storage.Blob.Writers
 {
     public interface IFileWriter
     {
-        Task<string> Write(
+        Task<IDataResult<string>> Write(
             string containerName,
             byte[] content,
             string contentType,

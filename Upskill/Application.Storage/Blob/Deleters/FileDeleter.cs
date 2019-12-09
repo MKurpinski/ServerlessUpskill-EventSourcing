@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Application.BlobStorage.Providers;
+using Application.Storage.Blob.Providers;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-namespace Application.BlobStorage.Deleters
+namespace Application.Storage.Blob.Deleters
 {
     public class FileDeleter : IFileDeleter
     {

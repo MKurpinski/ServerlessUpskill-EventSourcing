@@ -9,11 +9,12 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Application.BlobStorage\Application.BlobStorage.csproj" />
     <ProjectReference Include="..\Application.Commands\Application.Commands.csproj" />
     <ProjectReference Include="..\Application.DataStorage\Application.DataStorage.csproj" />
     <ProjectReference Include="..\Application.Infrastructure\Application.Infrastructure.csproj" />
+    <ProjectReference Include="..\Application.ProcessStatus\Application.ProcessStatus.csproj" />
     <ProjectReference Include="..\Application.RequestMappers\Application.RequestMappers.csproj" />
+    <ProjectReference Include="..\Application.Storage\Application.Storage.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

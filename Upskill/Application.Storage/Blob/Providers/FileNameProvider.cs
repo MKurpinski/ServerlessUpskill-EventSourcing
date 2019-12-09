@@ -1,4 +1,4 @@
-﻿namespace Application.BlobStorage.Providers
+﻿namespace Application.Storage.Blob.Providers
 {
     public class FileNameProvider : IFileNameProvider
     {

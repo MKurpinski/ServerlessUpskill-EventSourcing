@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Application.BlobStorage.Deleters
+namespace Application.Storage.Blob.Deleters
 {
     public interface IFileDeleter
     {

@@ -23,15 +23,23 @@ namespace Application.DataStorage.Repositories
 
         public async Task<IDataResult<Model.Application>> Create(Model.Application application)
         {
-            var container = await this.GetClient();
-            var response = await container.CreateItemAsync(application);
-
-            if (!response.StatusCode.IsSuccessfulStatusCode())
+            try
             {
-                return new FailedDataResult<Model.Application>(nameof(Model.Application).ToLower(), response.Diagnostics.ToString());
-            }
+                var container = await this.GetClient();
+                var response = await container.CreateItemAsync(application);
 
-            return new SuccessfulDataResult<Model.Application>(response.Resource);
+                if (!response.StatusCode.IsSuccessfulStatusCode())
+                {
+                    return new FailedDataResult<Model.Application>(nameof(Model.Application).ToLower(),
+                        response.Diagnostics.ToString());
+                }
+
+                return new SuccessfulDataResult<Model.Application>(response.Resource);
+            }
+            catch (Exception ex)
+            {
+                return new FailedDataResult<Model.Application>(nameof(Model.Application).ToLower(), $"{ex.Message} \n{ex.StackTrace}");
+            }
         }
     }
 }

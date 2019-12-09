@@ -25,38 +25,29 @@ namespace Application.Api.Functions
             [ActivityTrigger] IDurableActivityContext context,
             ILogger log)
         {
-            try
+            var command = context.GetInput<SaveApplicationCommand>();
+
+            var applicationToSave = new DataStorage.Model.Application(
+                context.InstanceId,
+                command.CreationTime,
+                command.PhotoId,
+                command.CvId,
+                command.Category,
+                command.FirstName,
+                command.LastName);
+
+            var saveResult = await _applicationRepository.Create(applicationToSave);
+
+            if (!saveResult.Success)
             {
-                var command = context.GetInput<SaveApplicationCommand>();
-
-                var applicationToSave = new DataStorage.Model.Application(
-                    context.InstanceId,
-                    command.CreationTime,
-                    command.PhotoId,
-                    command.CvId,
-                    command.Category,
-                    command.FirstName,
-                    command.LastName);
-
-                var saveResult = await _applicationRepository.Create(applicationToSave);
-
-                if (!saveResult.Success)
-                {
-                    this.LogError(log, context.InstanceId, string.Join(',', saveResult.Errors.Select(x => x.Value)));
-                    var eventToDispatch = new ApplicationSaveFailedEvent();
-                    await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailedEvent), eventToDispatch);
-                    return;
-                }
-
-                var applicationSavedEvent = new ApplicationSavedEvent(applicationToSave);
-                await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSavedEvent), applicationSavedEvent);
-            }
-            catch (Exception ex)
-            {
-                this.LogError(log, context.InstanceId, ex.Message);
-                var eventToDispatch = new ApplicationSaveFailedEvent();
+                this.LogError(log, context.InstanceId, string.Join(',', saveResult.Errors.Select(x => x.Value)));
+                var eventToDispatch = new ApplicationSaveFailedEvent(saveResult.Errors);
                 await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailedEvent), eventToDispatch);
+                return;
             }
+
+            var applicationSavedEvent = new ApplicationSavedEvent(applicationToSave);
+            await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSavedEvent), applicationSavedEvent);
         }
 
         private void LogError(ILogger log, string instanceId, string error)
