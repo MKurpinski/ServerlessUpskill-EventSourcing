@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Application.Api.Constants;
 using Application.Commands.Commands;
@@ -22,20 +23,30 @@ namespace Application.Api.Functions
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             ILogger log)
         {
-            var command = context.GetInput<RecompensateApplicationProcessCommand>();
-            log.LogInformation($"Starting recompensation process(instanceId: {context.InstanceId} for ${command.Id}");
-            
-            var deleteCvCommand = new DeleteFileCommand(
-                _fileNameProvider.GetFileName(command.Id, command.Cv.Extension),
-                FileStore.CvsContainer);
+            try
+            {
+                var command = context.GetInput<RecompensateApplicationProcessCommand>();
+                log.LogInformation(
+                    $"Starting recompensation process(instanceId: {context.InstanceId} for ${command.Id}");
 
-            var deletePhotoCommand = new DeleteFileCommand(
-                _fileNameProvider.GetFileName(command.Id, command.Photo.Extension),
-                FileStore.PhotosContainer);
+                var deleteCvCommand = new DeleteFileCommand(
+                    _fileNameProvider.GetFileName(command.Id, command.Cv.Extension),
+                    FileStore.CvsContainer);
 
-            await context.CallActivityAsync(nameof(FileDeleter), deleteCvCommand);
-            await context.CallActivityAsync(nameof(FileDeleter), deletePhotoCommand);
-            log.LogInformation($"Finished recompensation process(instanceId: {context.InstanceId} for ${command.Id}");
+                var deletePhotoCommand = new DeleteFileCommand(
+                    _fileNameProvider.GetFileName(command.Id, command.Photo.Extension),
+                    FileStore.PhotosContainer);
+
+                await context.CallActivityAsync(nameof(FileDeleter), deleteCvCommand);
+                await context.CallActivityAsync(nameof(FileDeleter), deletePhotoCommand);
+                log.LogInformation(
+                    $"Finished recompensation process(instanceId: {context.InstanceId} for ${command.Id}");
+            }
+            catch (Exception)
+            {
+                // Allow somebody from support to handle it manually
+                throw;
+            }
         }
     }
 }

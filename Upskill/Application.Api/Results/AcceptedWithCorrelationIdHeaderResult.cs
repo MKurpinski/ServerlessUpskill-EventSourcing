@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Application.Api.Extensions
+namespace Application.Api.Results
 {
     public class AcceptedWithCorrelationIdHeaderResult : AcceptedResult
     {
