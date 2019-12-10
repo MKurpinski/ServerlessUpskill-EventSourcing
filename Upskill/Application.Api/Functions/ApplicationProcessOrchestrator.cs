@@ -63,7 +63,7 @@ namespace Application.Api.Functions
                 }
 
                 var failedProcessCommand = this.BuildFailedProcessCommand(context, errors);
-                await context.CallActivityAsync<Task>(nameof(TrackProcessStatusCommand), failedProcessCommand);
+                await context.CallActivityAsync<Task>(nameof(StatusTracker), failedProcessCommand);
 
                 log.LogErrors($"Uploading files failed: {context.InstanceId}", errors);
                 await this.StartRecompensateProcess(processStarter, context, command, log);
@@ -100,7 +100,7 @@ namespace Application.Api.Functions
             }
 
             var finishProcessCommand = this.BuildFinishedProcessCommand(context);
-            await context.CallActivityAsync<Task>(nameof(TrackProcessStatusCommand), finishProcessCommand);
+            await context.CallActivityAsync<Task>(nameof(StatusTracker), finishProcessCommand);
 
             log.LogInformation($"Application process finished: {context.InstanceId}");
 
