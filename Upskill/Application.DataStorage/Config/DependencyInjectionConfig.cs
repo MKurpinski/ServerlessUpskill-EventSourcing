@@ -1,8 +1,8 @@
 ﻿using Application.DataStorage.Options;
 using Application.DataStorage.Providers;
 using Application.DataStorage.Repositories;
+using Application.Infrastructure.Extensions;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.DataStorage.Config
@@ -11,11 +11,7 @@ namespace Application.DataStorage.Config
     {
         public static IServiceCollection AddDataStorageModule(this IFunctionsHostBuilder builder)
         {
-            builder.Services.AddOptions<DataStorageOptions>()
-                .Configure<IConfiguration>((settings, configuration) =>
-                {
-                    configuration.Bind(settings);
-                });
+            builder.ConfigureOptions<DataStorageOptions>();
 
             return builder.Services
                 .AddTransient<ICosmosClientProvider, CosmosClientProvider>()

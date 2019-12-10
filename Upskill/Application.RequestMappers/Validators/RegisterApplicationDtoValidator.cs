@@ -25,7 +25,7 @@ namespace Application.RequestMappers.Validators
                     file,
                     context,
                     applicationFormOptions.MaxCvSizeInMegabytes,
-                    applicationFormOptions.CvFormats));
+                    applicationFormOptions.AllowedCvFormats));
 
             RuleFor(x => x.Photo)
                 .NotNull()
@@ -34,7 +34,7 @@ namespace Application.RequestMappers.Validators
                     file,
                     context,
                     applicationFormOptions.MaxPhotoSizeInMegabytes,
-                    applicationFormOptions.PhotoFormats));
+                    applicationFormOptions.AllowedPhotoFormats));
 
             RuleFor(x => x.Candidate).NotNull().SetValidator(candidateDtoValidator);
         }

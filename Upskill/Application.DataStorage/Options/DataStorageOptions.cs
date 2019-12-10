@@ -2,7 +2,7 @@
 {
     public class DataStorageOptions
     {
-        public string DataStorageConnectionString { get; set; }
-        public string DataStorageDatabaseId { get; set; }
+        public string ConnectionString { get; set; }
+        public string DatabaseId { get; set; }
     }
 }

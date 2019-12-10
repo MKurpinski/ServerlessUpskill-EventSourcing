@@ -13,7 +13,7 @@ namespace Application.Storage.Providers
         }
         public CloudStorageAccount Get()
         {
-            var connectionString = _options.StorageConnectionString;
+            var connectionString = _options.ConnectionString;
             var storageAccount = CloudStorageAccount.Parse(connectionString);
             return storageAccount;
         }

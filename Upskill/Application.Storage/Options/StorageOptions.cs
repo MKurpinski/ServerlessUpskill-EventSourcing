@@ -2,6 +2,6 @@
 {
     public class StorageOptions
     {
-        public string StorageConnectionString { get; set; }
+        public string ConnectionString { get; set; }
     }
 }

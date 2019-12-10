@@ -24,7 +24,7 @@ namespace Application.DataStorage.Repositories
 
         protected async Task<Container> GetClient()
         {
-            return await _containerClientProvider.Get(_storageOptions.DataStorageDatabaseId, ContainerId, PartitionKey);
+            return await _containerClientProvider.Get(_storageOptions.DatabaseId, ContainerId, PartitionKey);
         }
     }
 }
