@@ -17,9 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.DataStorage", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Results", "Application.Results\Application.Results.csproj", "{8A7A6E3B-8258-4ED9-8FBB-E7B6CAF42DD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.ProcessStatus", "Application.ProcessStatus\Application.ProcessStatus.csproj", "{F2A480BC-AFF3-42E4-9BDF-13A09DC6E87A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.ProcessStatus", "Application.ProcessStatus\Application.ProcessStatus.csproj", "{F2A480BC-AFF3-42E4-9BDF-13A09DC6E87A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Storage", "Application.Storage\Application.Storage.csproj", "{692EFAB1-6774-4073-9B83-DBEB7F2977AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Storage", "Application.Storage\Application.Storage.csproj", "{692EFAB1-6774-4073-9B83-DBEB7F2977AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

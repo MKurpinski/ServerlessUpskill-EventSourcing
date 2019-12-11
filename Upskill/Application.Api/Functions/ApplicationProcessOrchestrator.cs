@@ -81,7 +81,12 @@ namespace Application.Api.Functions
                 photoUri,
                 cvUri,
                 command.Candidate.Category,
-                command.CreationTime);
+                command.CreationTime,
+                command.Candidate.EducationLevel,
+                command.Candidate.Address,
+                command.Candidate.FinishedSchools,
+                command.Candidate.ConfirmedSkills,
+                command.Candidate.WorkExperiences);
 
             await context.CallActivityAsync<Task>(nameof(ApplicationSaver), saveApplicationCommand);
 

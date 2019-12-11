@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Api.Events.Internal;
 using Application.Commands.Commands;
+using Application.DataStorage.Model;
 using Application.DataStorage.Repositories;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -27,6 +28,22 @@ namespace Application.Api.Functions
         {
             var command = context.GetInput<SaveApplicationCommand>();
 
+            var address = new Address(command.Address.City, command.Address.Country);
+
+            var finishedSchools =
+                command.FinishedSchools?.Select(x => new FinishedSchool(x.Name, x.StartDate, x.FinishDate))
+                ?? Enumerable.Empty<FinishedSchool>();
+
+            var confirmedSkills =
+                command.ConfirmedSkills?.Select(x =>
+                    new ConfirmedSkill(x.Name, x.DateOfAchievement))
+                ?? Enumerable.Empty<ConfirmedSkill>();
+
+            var workExperience =
+                command.WorkExperiences?.Select(x =>
+                    new WorkExperience(x.CompanyName, x.Position, x.StartDate, x.FinishDate))
+                ?? Enumerable.Empty<WorkExperience>();
+
             var applicationToSave = new DataStorage.Model.Application(
                 context.InstanceId,
                 command.CreationTime,
@@ -34,7 +51,12 @@ namespace Application.Api.Functions
                 command.CvId,
                 command.Category,
                 command.FirstName,
-                command.LastName);
+                command.LastName,
+                command.EducationLevel,
+                address,
+                finishedSchools.ToList(),
+                confirmedSkills.ToList(),
+                workExperience.ToList());
 
             var saveResult = await _applicationRepository.Create(applicationToSave);
 
