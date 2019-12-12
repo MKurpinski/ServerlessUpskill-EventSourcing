@@ -47,7 +47,7 @@ namespace Upskill.EventPublisher.Publishers
                 return;
             }
 
-            var topicEndpoint = string.Format(_eventOptions.TopicEndpointPattern, topicInformation.TopicName, topicInformation.RegionName);
+            var topicEndpoint = string.Format(_eventOptions.TopicEndpointPattern, topicInformation.TopicName.ToLowerInvariant(), topicInformation.RegionName);
             var topicHostname = new Uri(topicEndpoint).Host;
 
             var topicCredentials = new TopicCredentials(topicInformation.TopicKey);
