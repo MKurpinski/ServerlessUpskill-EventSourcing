@@ -16,7 +16,7 @@ namespace Upskill.EventPublisher.Publishers
         private readonly IGuidProvider _guidProvider;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly EventOptions _eventOptions;
-        private readonly Lazy<IDictionary<string, TopicInformation>> _lazyTopicNameInformationMap;
+        private readonly Lazy<IDictionary<string, EventInformation>> _lazyTopicNameInformationMap;
         private readonly ILogger _logger;
         private readonly IEventGridClientFacade _eventGridClientFacade;
 
@@ -32,41 +32,42 @@ namespace Upskill.EventPublisher.Publishers
             _dateTimeProvider = dateTimeProvider;
             _eventGridClientFacade = eventGridClientFacade;
             _eventOptions = eventOptionsAccessor.Value;
-            _lazyTopicNameInformationMap = new Lazy<IDictionary<string, TopicInformation>>(GetTopicsMap);
+            _lazyTopicNameInformationMap = new Lazy<IDictionary<string, EventInformation>>(GetTopicsMap);
         }
 
         public async Task PublishEvent<T>(T eventContent) where T : IEvent
         {
             var typeName = typeof(T).Name;
 
-            var canHandle = _lazyTopicNameInformationMap.Value.TryGetValue(typeName, out var topicInformation);
+            var canHandle = _lazyTopicNameInformationMap.Value.TryGetValue(typeName, out var eventInformation);
 
             if (!canHandle)
             {
-                _logger.LogInformation($"Event of type: {typeof(T).Name} cannot be handled");
+                _logger.LogInformation($"Event of type: {typeName} cannot be handled");
                 return;
             }
 
-            var topicEndpoint = string.Format(_eventOptions.TopicEndpointPattern, topicInformation.TopicName.ToLowerInvariant(), topicInformation.RegionName);
-            var topicHostname = new Uri(topicEndpoint).Host;
+            var domainEndpoint = string.Format(_eventOptions.DomainEndpointPattern, _eventOptions.DomainName, _eventOptions.RegionName);
+            var domainHostname = new Uri(domainEndpoint).Host;
 
-            var topicCredentials = new TopicCredentials(topicInformation.TopicKey);
+            var domainCredentials = new TopicCredentials(_eventOptions.DomainKey);
 
             var eventToPublish = new EventGridEvent
             {
                 Id = _guidProvider.GenerateGuid().ToString(),
                 Data = eventContent,
-                DataVersion = topicInformation.EventVersion,
+                DataVersion = eventInformation.EventVersion,
                 EventTime = _dateTimeProvider.GetCurrentDateTime(),
                 EventType = typeName,
+                Topic = typeName,
                 Subject = typeName
             };
-            await _eventGridClientFacade.PublishEvent(topicCredentials, topicHostname, eventToPublish);
+            await _eventGridClientFacade.PublishEvent(domainCredentials, domainHostname, eventToPublish);
         }
 
-        private IDictionary<string, TopicInformation> GetTopicsMap()
+        private IDictionary<string, EventInformation> GetTopicsMap()
         {
-            return _eventOptions.Topics.ToDictionary(t => t.TopicName, t => t);
+            return _eventOptions.Topics.ToDictionary(t => t.EventName, t => t);
         }
     }
 }
