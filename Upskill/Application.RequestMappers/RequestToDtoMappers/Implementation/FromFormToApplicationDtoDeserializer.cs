@@ -4,10 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.RequestMappers.Dtos;
 using Application.RequestMappers.RequestToDtoMappers.Extensions;
-using Application.Results;
-using Application.Results.Implementation;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Upskill.Results;
+using Upskill.Results.Implementation;
 
 namespace Application.RequestMappers.RequestToDtoMappers.Implementation
 {

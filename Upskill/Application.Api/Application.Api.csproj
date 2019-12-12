@@ -4,6 +4,7 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.0.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
@@ -11,10 +12,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Application.Commands\Application.Commands.csproj" />
     <ProjectReference Include="..\Application.DataStorage\Application.DataStorage.csproj" />
-    <ProjectReference Include="..\Application.Infrastructure\Application.Infrastructure.csproj" />
     <ProjectReference Include="..\Application.ProcessStatus\Application.ProcessStatus.csproj" />
     <ProjectReference Include="..\Application.RequestMappers\Application.RequestMappers.csproj" />
     <ProjectReference Include="..\Application.Storage\Application.Storage.csproj" />
+    <ProjectReference Include="..\Upskill.EventPublisher\Upskill.EventPublisher.csproj" />
+    <ProjectReference Include="..\Upskill.Infrastructure\Upskill.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">

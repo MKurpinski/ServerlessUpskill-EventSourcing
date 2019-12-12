@@ -1,11 +1,15 @@
-﻿using Application.Api.Results;
+﻿using Application.Api.Extensions;
+using Application.Api.Profiles;
 using Application.Commands.Config;
+using Application.Commands.Profiles;
 using Application.DataStorage.Config;
-using Application.Infrastructure.Config;
 using Application.ProcessStatus.Config;
 using Application.RequestMappers.Config;
 using Application.Storage.Config;
+using AutoMapper;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Upskill.EventPublisher.Config;
+using Upskill.Infrastructure.Config;
 
 [assembly: FunctionsStartup(typeof(Application.Api.Startup))]
 
@@ -15,6 +19,10 @@ namespace Application.Api
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            builder.Services.AddAutoMapper(
+                typeof(SaveApplicationCommandToApplicationProfile).Assembly,
+                typeof(CandidateDtoToCandidateProfile).Assembly);
+
             builder.AddAppSettingsToConfiguration();
             builder.AddRequestMappersModule();
             builder.AddInfrastructureModule();
@@ -22,6 +30,7 @@ namespace Application.Api
             builder.AddStorageModule();
             builder.AddDataStorageModule();
             builder.AddProcessStatusModule();
+            builder.AddEventPublisher();
         }
     }
 }

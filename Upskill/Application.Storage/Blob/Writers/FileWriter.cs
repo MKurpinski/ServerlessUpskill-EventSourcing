@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Application.Results;
-using Application.Results.Implementation;
 using Application.Storage.Blob.Providers;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Upskill.Results;
+using Upskill.Results.Implementation;
 
 namespace Application.Storage.Blob.Writers
 {

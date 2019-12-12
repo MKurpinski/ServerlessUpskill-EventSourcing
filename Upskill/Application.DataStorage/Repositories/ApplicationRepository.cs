@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Application.DataStorage.Extensions;
 using Application.DataStorage.Options;
 using Application.DataStorage.Providers;
-using Application.Results;
-using Application.Results.Implementation;
 using Microsoft.Extensions.Options;
+using Upskill.Results;
+using Upskill.Results.Implementation;
 
 namespace Application.DataStorage.Repositories
 {

@@ -1,9 +1,9 @@
 ﻿using Application.DataStorage.Options;
 using Application.DataStorage.Providers;
 using Application.DataStorage.Repositories;
-using Application.Infrastructure.Extensions;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Upskill.Infrastructure.Extensions;
 
 namespace Application.DataStorage.Config
 {

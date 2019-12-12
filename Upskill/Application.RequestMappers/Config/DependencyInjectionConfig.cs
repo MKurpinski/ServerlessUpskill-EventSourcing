@@ -1,5 +1,4 @@
-﻿using Application.Infrastructure.Extensions;
-using Application.RequestMappers.Dtos;
+﻿using Application.RequestMappers.Dtos;
 using Application.RequestMappers.Options;
 using Application.RequestMappers.RequestToDtoMappers;
 using Application.RequestMappers.RequestToDtoMappers.Implementation;
@@ -7,6 +6,7 @@ using Application.RequestMappers.Validators;
 using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Upskill.Infrastructure.Extensions;
 
 namespace Application.RequestMappers.Config
 {

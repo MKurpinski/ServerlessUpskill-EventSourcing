@@ -5,12 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="MimeTypesMap" Version="1.0.8" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Application.Infrastructure\Application.Infrastructure.csproj" />
     <ProjectReference Include="..\Application.RequestMappers\Application.RequestMappers.csproj" />
+    <ProjectReference Include="..\Upskill.Infrastructure\Upskill.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
