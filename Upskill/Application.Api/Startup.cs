@@ -5,6 +5,7 @@ using Application.Commands.Profiles;
 using Application.DataStorage.Config;
 using Application.ProcessStatus.Config;
 using Application.RequestMappers.Config;
+using Application.Search.Config;
 using Application.Storage.Config;
 using AutoMapper;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -30,6 +31,7 @@ namespace Application.Api
             builder.AddStorageModule();
             builder.AddDataStorageModule();
             builder.AddProcessStatusModule();
+            builder.AddSearchModule();
             builder.AddEventPublisher();
         }
     }

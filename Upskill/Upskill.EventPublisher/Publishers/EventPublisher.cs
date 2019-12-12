@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Upskill.EventPublisher.Client;
 using Upskill.EventPublisher.Options;
 using Upskill.Infrastructure;
@@ -47,15 +49,19 @@ namespace Upskill.EventPublisher.Publishers
                 return;
             }
 
-            var domainEndpoint = string.Format(_eventOptions.DomainEndpointPattern, _eventOptions.DomainName, _eventOptions.RegionName);
-            var domainHostname = new Uri(domainEndpoint).Host;
+            var domainHostname = new Uri(_eventOptions.DomainEndpoint).Host;
 
             var domainCredentials = new TopicCredentials(_eventOptions.DomainKey);
+
+            var serializedEventContent = JsonConvert.SerializeObject(eventContent, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
 
             var eventToPublish = new EventGridEvent
             {
                 Id = _guidProvider.GenerateGuid().ToString(),
-                Data = eventContent,
+                Data = serializedEventContent,
                 DataVersion = eventInformation.EventVersion,
                 EventTime = _dateTimeProvider.GetCurrentDateTime(),
                 EventType = typeName,
@@ -67,7 +73,7 @@ namespace Upskill.EventPublisher.Publishers
 
         private IDictionary<string, EventInformation> GetTopicsMap()
         {
-            return _eventOptions.Topics.ToDictionary(t => t.EventName, t => t);
+            return _eventOptions.Events.ToDictionary(t => t.EventName, t => t);
         }
     }
 }
