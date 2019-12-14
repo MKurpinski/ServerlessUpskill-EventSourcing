@@ -24,7 +24,8 @@ namespace Application.Storage.Config
                 .AddTransient<IBlobClientProvider, BlobClientProvider>()
                 .AddTransient<ITableClientProvider, TableClientProvider>()
                 .AddTransient<IStorageAccountProvider, StorageAccountProvider>()
-                .AddTransient<IProcessStatusRepository, ProcessStatusRepository>();
+                .AddTransient<IProcessStatusRepository, ProcessStatusRepository>()
+                .AddTransient<ISearchableIndexRepository, SearchableIndexRepository>();
         }
     }
 }

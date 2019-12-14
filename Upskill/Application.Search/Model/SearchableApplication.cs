@@ -6,7 +6,7 @@ using Microsoft.Azure.Search.Models;
 namespace Application.Search.Model
 {
     [SerializePropertyNamesAsCamelCase]
-    public class SearchableApplication
+    public class SearchableApplication : ISearchable
     {
         [System.ComponentModel.DataAnnotations.Key]
         [IsSearchable]
@@ -16,6 +16,7 @@ namespace Application.Search.Model
         public DateTime CreationTime { get; set; }
 
         public string PhotoUri { get; set; }
+
         public string CvUri { get; set; }
 
         [IsSortable, IsFacetable, IsSearchable, IsFilterable]

@@ -6,6 +6,7 @@ using Application.DataStorage.Config;
 using Application.ProcessStatus.Config;
 using Application.RequestMappers.Config;
 using Application.Search.Config;
+using Application.Search.Profiles;
 using Application.Storage.Config;
 using AutoMapper;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -22,7 +23,9 @@ namespace Application.Api
         {
             builder.Services.AddAutoMapper(
                 typeof(SaveApplicationCommandToApplicationProfile).Assembly,
-                typeof(CandidateDtoToCandidateProfile).Assembly);
+                typeof(SaveApplicationCommandToApplicationProfile).Assembly,
+                typeof(CandidateDtoToCandidateProfile).Assembly,
+                typeof(SearchableApplicationToApplicationDtoProfile).Assembly);
 
             builder.AddAppSettingsToConfiguration();
             builder.AddRequestMappersModule();
