@@ -2,7 +2,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Api.Events.Internal;
 using Application.Commands.Commands;
-using Application.DataStorage.Model;
 using Application.DataStorage.Repositories;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
@@ -31,7 +30,7 @@ namespace Application.Api.Functions.ApplicationProcess
             ILogger log)
         {
             var command = context.GetInput<SaveApplicationCommand>();
-            var applicationToSave = _mapper.Map<SaveApplicationCommand, DataStorage.Model.Application>(command);
+            var applicationToSave = _mapper.Map<SaveApplicationCommand, DataStorage.Models.Application>(command);
             var saveResult = await _applicationRepository.Create(applicationToSave);
 
             if (!saveResult.Success)

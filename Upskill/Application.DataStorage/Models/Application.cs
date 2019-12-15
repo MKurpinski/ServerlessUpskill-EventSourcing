@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Application.DataStorage.Model
+namespace Application.DataStorage.Models
 {
     public class Application
     {

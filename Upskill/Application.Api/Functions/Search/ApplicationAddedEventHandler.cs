@@ -3,7 +3,7 @@
 using System.Threading.Tasks;
 using Application.Api.Events.External.ApplicationAdded;
 using Application.Search.Dtos;
-using Application.Search.Indexer;
+using Application.Search.Indexers;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.EventGrid.Models;

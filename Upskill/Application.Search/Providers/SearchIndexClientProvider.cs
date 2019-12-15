@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Application.Search.Model;
+using Application.Search.Models;
 using Application.Search.Resolvers;
 using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;

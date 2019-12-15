@@ -5,6 +5,6 @@ namespace Application.DataStorage.Repositories
 {
     public interface IApplicationRepository
     {
-        Task<IDataResult<Model.Application>> Create(Model.Application application);
+        Task<IDataResult<Models.Application>> Create(Models.Application application);
     }
 }

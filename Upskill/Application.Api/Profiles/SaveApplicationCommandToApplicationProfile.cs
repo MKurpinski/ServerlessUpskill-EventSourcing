@@ -1,4 +1,5 @@
 ﻿using Application.Commands.Commands;
+using Application.DataStorage.Models;
 using AutoMapper;
 
 namespace Application.Api.Profiles
@@ -7,11 +8,11 @@ namespace Application.Api.Profiles
     {
         public SaveApplicationCommandToApplicationProfile()
         {
-            CreateMap<SaveApplicationCommand, DataStorage.Model.Application>();
-            CreateMap<Commands.Commands.Candidate.Address, DataStorage.Model.Address>();
-            CreateMap<Commands.Commands.Candidate.ConfirmedSkill, DataStorage.Model.ConfirmedSkill>();
-            CreateMap<Commands.Commands.Candidate.FinishedSchool, DataStorage.Model.FinishedSchool>();
-            CreateMap<Commands.Commands.Candidate.WorkExperience, DataStorage.Model.WorkExperience>();
+            CreateMap<SaveApplicationCommand, DataStorage.Models.Application>();
+            CreateMap<Commands.Commands.Candidate.Address, Address>();
+            CreateMap<Commands.Commands.Candidate.ConfirmedSkill, ConfirmedSkill>();
+            CreateMap<Commands.Commands.Candidate.FinishedSchool, FinishedSchool>();
+            CreateMap<Commands.Commands.Candidate.WorkExperience, WorkExperience>();
         }
     }
 }

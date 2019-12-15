@@ -12,7 +12,7 @@ namespace Application.Search.Dtos
         public string Category { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public AddressDto AddressDto { get; set; }
+        public AddressDto Address { get; set; }
         public string EducationLevel { get; set; }
         public IReadOnlyCollection<FinishedSchoolDto> FinishedSchools { get; set; }
         public IReadOnlyCollection<ConfirmedSkillDto> ConfirmedSkills { get; set; }

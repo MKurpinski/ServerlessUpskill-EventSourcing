@@ -12,24 +12,24 @@ namespace Application.Storage.Table.Repository
     public abstract class Repository<T> where T: TableEntity, new()
     {
         private readonly string _nameOfTypeT;
-        protected readonly ITableClientProvider TableClientProvider;
+        private readonly ITableClientProvider _tableClientProvider;
 
         protected Repository(ITableClientProvider tableClientProvider)
         {
-            TableClientProvider = tableClientProvider;
+            _tableClientProvider = tableClientProvider;
             _nameOfTypeT = typeof(T).Name;
         }
 
         public async Task CreateOrUpdate(T entity)
         {
-            var table = await TableClientProvider.Get(_nameOfTypeT);
+            var table = await _tableClientProvider.Get(_nameOfTypeT);
             var insertOrMergeOperation = TableOperation.InsertOrMerge(entity);
             await table.ExecuteAsync(insertOrMergeOperation);
         }
 
         public async Task<IDataResult<T>> GetById(string id)
         {
-            var table = await TableClientProvider.Get(_nameOfTypeT);
+            var table = await _tableClientProvider.Get(_nameOfTypeT);
             var retrieveOperation = TableOperation.Retrieve<T>(_nameOfTypeT, id);
             var result = await table.ExecuteAsync(retrieveOperation);
             
@@ -45,7 +45,7 @@ namespace Application.Storage.Table.Repository
 
         public async Task<IList<T>> GetBy(TableQuery<T> tableQuery)
         {
-            var table = await TableClientProvider.Get(_nameOfTypeT);
+            var table = await _tableClientProvider.Get(_nameOfTypeT);
 
             var result = await table.ExecuteQueryAsync(tableQuery);
 

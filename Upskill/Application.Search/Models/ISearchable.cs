@@ -1,4 +1,4 @@
-﻿namespace Application.Search.Model
+﻿namespace Application.Search.Models
 {
     public interface ISearchable
     {

@@ -1,5 +1,5 @@
 ﻿using Application.Search.Dtos;
-using Application.Search.Model;
+using Application.Search.Models;
 using AutoMapper;
 
 namespace Application.Search.Profiles

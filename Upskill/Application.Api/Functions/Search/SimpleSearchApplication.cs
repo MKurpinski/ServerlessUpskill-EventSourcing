@@ -20,7 +20,7 @@ namespace Application.Api.Functions.Search
 
         [FunctionName(nameof(SimpleSearchApplication))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "application/search")] SimpleApplicationSearchHttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "search")] SimpleApplicationSearchHttpRequest req)
         {
             var results =
                 await _applicationSearchHandler.Search(new SimpleApplicationSearchQuery(req.Query, req.Skip, req.Take));

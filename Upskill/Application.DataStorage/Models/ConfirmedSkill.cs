@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Application.DataStorage.Model
+namespace Application.DataStorage.Models
 {
     public class ConfirmedSkill
     {

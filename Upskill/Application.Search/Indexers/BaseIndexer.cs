@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Search.Model;
+using Application.Search.Models;
 using Application.Search.Providers;
 using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Search.Indexer
+namespace Application.Search.Indexers
 {
     public class BaseIndexer<T> where T : ISearchable
     {
@@ -23,11 +23,11 @@ namespace Application.Search.Indexer
         {
             var indexClient = await _searchIndexClientProvider.Get<T>();
 
-            var batch = IndexBatch.MergeOrUpload(new List<IndexAction<T>> {new IndexAction<T>(value)});
+            var batch = IndexBatch.MergeOrUpload<T>(new List<T> { value });
 
             try
             {
-                await indexClient.Documents.IndexAsync(batch);
+                await indexClient.Documents.IndexAsync<T>(batch);
             }
             catch (IndexBatchException)
             {

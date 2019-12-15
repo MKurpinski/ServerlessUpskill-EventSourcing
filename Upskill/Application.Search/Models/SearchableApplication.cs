@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
 
-namespace Application.Search.Model
+namespace Application.Search.Models
 {
     [SerializePropertyNamesAsCamelCase]
     public class SearchableApplication : ISearchable

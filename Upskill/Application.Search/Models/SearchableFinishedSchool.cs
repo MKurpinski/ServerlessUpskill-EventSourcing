@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Azure.Search;
 
-namespace Application.Search.Model
+namespace Application.Search.Models
 {
     public class SearchableFinishedSchool
     {

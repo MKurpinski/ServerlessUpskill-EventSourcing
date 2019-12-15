@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Application.Search.Model;
+using Application.Search.Models;
 using Microsoft.Azure.Search;
 
 namespace Application.Search.Providers

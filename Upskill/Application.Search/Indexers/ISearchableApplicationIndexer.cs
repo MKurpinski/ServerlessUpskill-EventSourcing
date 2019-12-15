@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Application.Search.Dtos;
 
-namespace Application.Search.Indexer
+namespace Application.Search.Indexers
 {
     public interface ISearchableApplicationIndexer
     {

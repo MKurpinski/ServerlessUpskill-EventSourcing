@@ -2,11 +2,11 @@
 {
     public class ApplicationSavedInternalFunctionEvent : IInternalFunctionEvent
     {
-        public ApplicationSavedInternalFunctionEvent(DataStorage.Model.Application application)
+        public ApplicationSavedInternalFunctionEvent(DataStorage.Models.Application application)
         {
             Application = application;
         }
 
-        public DataStorage.Model.Application Application { get; }
+        public DataStorage.Models.Application Application { get; }
     }
 }
