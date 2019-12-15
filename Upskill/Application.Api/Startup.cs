@@ -1,5 +1,7 @@
-﻿using Application.Api.Extensions;
+﻿using Application.Api.CustomHttpRequests;
+using Application.Api.Extensions;
 using Application.Api.Profiles;
+using Application.Api.Validators;
 using Application.Commands.Config;
 using Application.Commands.Profiles;
 using Application.DataStorage.Config;
@@ -9,7 +11,9 @@ using Application.Search.Config;
 using Application.Search.Profiles;
 using Application.Storage.Config;
 using AutoMapper;
+using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Upskill.EventPublisher.Config;
 using Upskill.Infrastructure.Config;
 
@@ -26,6 +30,8 @@ namespace Application.Api
                 typeof(SaveApplicationCommandToApplicationProfile).Assembly,
                 typeof(CandidateDtoToCandidateProfile).Assembly,
                 typeof(SearchableApplicationToApplicationDtoProfile).Assembly);
+
+            builder.Services.AddTransient<IValidator<SimpleApplicationSearchHttpRequest>, SimpleApplicationSearchHttpRequestValidator>();
 
             builder.AddAppSettingsToConfiguration();
             builder.AddRequestMappersModule();

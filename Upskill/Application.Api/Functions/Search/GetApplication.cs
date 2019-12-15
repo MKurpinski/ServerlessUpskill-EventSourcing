@@ -20,7 +20,7 @@ namespace Application.Api.Functions.Search
 
         [FunctionName(nameof(GetApplication))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Get, Route = "search/{id}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Get, Route = "search/{id:guid}")] HttpRequest req,
             string id)
         {
             var result = await _applicationSearchHandler.GetById(new GetApplicationByIdQuery(id));

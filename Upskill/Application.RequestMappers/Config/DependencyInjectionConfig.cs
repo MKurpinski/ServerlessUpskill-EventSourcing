@@ -14,11 +14,16 @@ namespace Application.RequestMappers.Config
     {
         public static IServiceCollection AddRequestMappersModule(this IFunctionsHostBuilder builder)
         {
+            ValidatorOptions.CascadeMode = CascadeMode.StopOnFirstFailure;
             builder.ConfigureOptions<ApplicationFormValidationOptions>();
 
             return builder.Services
                 .AddTransient<IValidator<RegisterApplicationDto>, RegisterApplicationDtoValidator>()
                 .AddTransient<IValidator<CandidateDto>, CandidateDtoValidator>()
+                .AddTransient<IValidator<AddressDto>, AddressDtoValidator>()
+                .AddTransient<IValidator<ConfirmedSkillDto>, ConfirmedSkillDtoValidator>()
+                .AddTransient<IValidator<WorkExperienceDto>, WorkExperienceDtoValidator>()
+                .AddTransient<IValidator<FinishedSchoolDto>, FinishedSchoolDtoValidator>()
                 .AddTransient<IFromFormToApplicationAddDtoRequestMapper, FromFormToApplicationAddDtoRequestMapper>()
                 .AddTransient<IFromFormToApplicationDtoDeserializer, FromFormToApplicationDtoDeserializer>();
         }
