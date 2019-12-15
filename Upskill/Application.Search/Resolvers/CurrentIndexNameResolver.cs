@@ -29,7 +29,7 @@ namespace Application.Search.Resolvers
                 return existingActiveIndex.Name;
             }
 
-            var indexName = $"{tName}-{_dateTimeProvider.GetCurrentDateTime():yyyy-MM-dd-mm-ss}".ToLowerInvariant();
+            var indexName = $"{tName}-{_dateTimeProvider.GetCurrentDateTime():yyyy-MM-dd-hh-mm-ss}".ToLowerInvariant();
 
             await _searchableIndexRepository.Create(new SearchableIndex(tName, indexName, IndexStatus.Active.ToString()));
 
