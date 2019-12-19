@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.ProcessStatus.Dtos;
-using Application.Results;
+using Upskill.Results;
 
 namespace Application.ProcessStatus
 {

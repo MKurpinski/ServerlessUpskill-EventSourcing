@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Application.RequestMappers.Dtos;
-using Application.Results;
 using Microsoft.AspNetCore.Http;
+using Upskill.Results;
 
 namespace Application.RequestMappers.RequestToDtoMappers
 {

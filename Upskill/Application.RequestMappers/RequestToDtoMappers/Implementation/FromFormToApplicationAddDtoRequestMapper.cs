@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.RequestMappers.Dtos;
-using Application.Results;
-using Application.Results.Implementation;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Upskill.Results;
+using Upskill.Results.Implementation;
 
 namespace Application.RequestMappers.RequestToDtoMappers.Implementation
 {

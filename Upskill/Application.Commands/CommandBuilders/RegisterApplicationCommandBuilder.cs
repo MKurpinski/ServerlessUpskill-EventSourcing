@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Application.Commands.Commands;
 using Application.Commands.Commands.Candidate;
 using Application.Commands.Utils;
-using Application.Infrastructure;
 using Application.RequestMappers.Dtos;
+using AutoMapper;
 using HeyRed.Mime;
 using Microsoft.AspNetCore.Http;
+using Upskill.Infrastructure;
 
 namespace Application.Commands.CommandBuilders
 {
@@ -14,13 +15,16 @@ namespace Application.Commands.CommandBuilders
     {
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IFileToByteArrayConverter _fileToByteArrayConverter;
+        private readonly IMapper _mapper;
 
         public RegisterApplicationCommandBuilder(
             IDateTimeProvider dateTimeProvider,
-            IFileToByteArrayConverter fileToByteArrayConverter)
+            IFileToByteArrayConverter fileToByteArrayConverter,
+            IMapper mapper)
         {
             _dateTimeProvider = dateTimeProvider;
             _fileToByteArrayConverter = fileToByteArrayConverter;
+            _mapper = mapper;
         }
 
         public async Task<RegisterApplicationCommand> Build(RegisterApplicationDto from)
@@ -29,31 +33,7 @@ namespace Application.Commands.CommandBuilders
             var cv = await this.BuildApplicationFile(from.Cv);
             var photo = await this.BuildApplicationFile(from.Photo);
 
-            var address = new Address(from.Candidate.Address.City, from.Candidate.Address.Country);
-
-            var finishedSchools =
-                from.Candidate.FinishedSchools?.Select(x => new FinishedSchool(x.Name, x.StartDate, x.FinishDate))
-                ?? Enumerable.Empty<FinishedSchool>();
-
-            var confirmedSkills =
-                from.Candidate.ConfirmedSkills?.Select(x =>
-                    new ConfirmedSkill(x.Name, x.DateOfAchievement))
-                ?? Enumerable.Empty<ConfirmedSkill>();
-
-            var workExperience =
-                from.Candidate.WorkExperiences?.Select(x =>
-                    new WorkExperience(x.CompanyName, x.Position, x.StartDate, x.FinishDate))
-                ?? Enumerable.Empty<WorkExperience>();
-
-            var candidate = new Candidate(
-                from.Candidate.FirstName,
-                from.Candidate.LastName,
-                from.Candidate.Category,
-                from.Candidate.EducationLevel,
-                address,
-                finishedSchools.ToList(),
-                confirmedSkills.ToList(),
-                workExperience.ToList());
+            var candidate = _mapper.Map<CandidateDto, Candidate>(from.Candidate);
 
             var command = new RegisterApplicationCommand(cv, photo, candidate, creationTime);
             return command;

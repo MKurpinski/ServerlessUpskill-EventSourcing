@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Application.Results;
 using Application.Storage.Table.Model;
+using Upskill.Results;
 
 namespace Application.Storage.Table.Repository
 {

@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application.Storage\Application.Storage.csproj" />
+    <ProjectReference Include="..\Upskill.Results\Upskill.Results.csproj" />
   </ItemGroup>
 
 </Project>

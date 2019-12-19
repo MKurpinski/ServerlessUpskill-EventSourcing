@@ -6,9 +6,10 @@ namespace Application.Commands.Commands
 {
     public class SaveApplicationCommand
     {
+        public string Id { get; }
         public DateTime CreationTime { get; }
-        public string PhotoId { get; }
-        public string CvId { get; }
+        public string PhotoUri { get; }
+        public string CvUri { get; }
         public string Category { get; }
         public string FirstName { get; }
         public string LastName { get; }
@@ -19,10 +20,11 @@ namespace Application.Commands.Commands
         public IReadOnlyCollection<WorkExperience> WorkExperiences { get; }
 
         public SaveApplicationCommand(
+            string id,
             string firstName,
             string lastName,
-            string photoId,
-            string cvId,
+            string photoUri,
+            string cvUri,
             string category,
             DateTime creationTime, 
             string educationLevel,
@@ -31,14 +33,15 @@ namespace Application.Commands.Commands
             IReadOnlyCollection<ConfirmedSkill> confirmedSkills,
             IReadOnlyCollection<WorkExperience> workExperiences)
         {
+            Id = id;
             CreationTime = creationTime;
             EducationLevel = educationLevel;
             Address = address;
             FinishedSchools = finishedSchools;
             ConfirmedSkills = confirmedSkills;
             WorkExperiences = workExperiences;
-            PhotoId = photoId;
-            CvId = cvId;
+            PhotoUri = photoUri;
+            CvUri = cvUri;
             Category = category;
             FirstName = firstName;
             LastName = lastName;

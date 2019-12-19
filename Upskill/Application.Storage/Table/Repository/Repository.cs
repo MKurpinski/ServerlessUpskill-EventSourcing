@@ -1,12 +1,15 @@
-﻿using System.Threading.Tasks;
-using Application.Results;
-using Application.Results.Implementation;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Application.Storage.Table.Extensions;
 using Application.Storage.Table.Providers;
 using Microsoft.WindowsAzure.Storage.Table;
+using Upskill.Results;
+using Upskill.Results.Implementation;
 
 namespace Application.Storage.Table.Repository
 {
-    public abstract class Repository<T> where T: TableEntity
+    public abstract class Repository<T> where T: TableEntity, new()
     {
         private readonly string _nameOfTypeT;
         private readonly ITableClientProvider _tableClientProvider;
@@ -38,6 +41,15 @@ namespace Application.Storage.Table.Repository
             }
 
             return new SuccessfulDataResult<T>(entity);
+        }
+
+        public async Task<IList<T>> GetBy(TableQuery<T> tableQuery)
+        {
+            var table = await _tableClientProvider.Get(_nameOfTypeT);
+
+            var result = await table.ExecuteQueryAsync(tableQuery);
+
+            return result;
         }
     }
 }
