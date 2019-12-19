@@ -1,6 +1,6 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 
-namespace Application.Storage.Providers
+namespace Upskill.Storage.Providers
 {
     public interface IStorageAccountProvider
     {

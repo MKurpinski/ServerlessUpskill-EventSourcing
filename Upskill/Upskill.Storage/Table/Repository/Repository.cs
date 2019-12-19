@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Application.Storage.Table.Extensions;
-using Application.Storage.Table.Providers;
 using Microsoft.WindowsAzure.Storage.Table;
 using Upskill.Results;
 using Upskill.Results.Implementation;
+using Upskill.Storage.Table.Extensions;
+using Upskill.Storage.Table.Providers;
 
-namespace Application.Storage.Table.Repository
+namespace Upskill.Storage.Table.Repository
 {
     public abstract class Repository<T> where T: TableEntity, new()
     {

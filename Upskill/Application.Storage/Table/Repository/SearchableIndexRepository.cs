@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Application.Storage.Table.Model;
-using Application.Storage.Table.Providers;
 using Microsoft.WindowsAzure.Storage.Table;
+using Upskill.Storage.Table.Providers;
+using Upskill.Storage.Table.Repository;
 
 namespace Application.Storage.Table.Repository
 {

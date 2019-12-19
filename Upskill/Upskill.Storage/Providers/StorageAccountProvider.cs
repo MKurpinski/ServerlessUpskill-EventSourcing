@@ -1,8 +1,8 @@
-﻿using Application.Storage.Options;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
+using Upskill.Storage.Options;
 
-namespace Application.Storage.Providers
+namespace Upskill.Storage.Providers
 {
     public class StorageAccountProvider : IStorageAccountProvider
     {

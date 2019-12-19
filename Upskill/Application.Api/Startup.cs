@@ -1,5 +1,4 @@
 ﻿using Application.Api.CustomHttpRequests;
-using Application.Api.Extensions;
 using Application.Api.Profiles;
 using Application.Api.Validators;
 using Application.Commands.Config;

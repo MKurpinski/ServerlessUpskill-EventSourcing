@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Application.Storage.Providers;
 using Microsoft.WindowsAzure.Storage.Table;
+using Upskill.Storage.Providers;
 
-namespace Application.Storage.Table.Providers
+namespace Upskill.Storage.Table.Providers
 {
     public class TableClientProvider : ITableClientProvider
     {

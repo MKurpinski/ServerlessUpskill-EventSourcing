@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Category.Api", "Category.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upskill.FunctionUtils", "Upskill.FunctionUtils\Upskill.FunctionUtils.csproj", "{AC95A61E-7EF9-4DC4-AB03-99E412BA8868}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upskill.Storage", "Upskill.Storage\Upskill.Storage.csproj", "{4834A6A0-8278-41CA-A829-C145C243AA3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{AC95A61E-7EF9-4DC4-AB03-99E412BA8868}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC95A61E-7EF9-4DC4-AB03-99E412BA8868}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC95A61E-7EF9-4DC4-AB03-99E412BA8868}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4834A6A0-8278-41CA-A829-C145C243AA3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4834A6A0-8278-41CA-A829-C145C243AA3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4834A6A0-8278-41CA-A829-C145C243AA3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4834A6A0-8278-41CA-A829-C145C243AA3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +110,7 @@ Global
 		{3AC9C18C-7DF5-421E-91EA-A9F70AE311C8} = {4A07BF84-9C4F-479E-9541-DF1DBD96586A}
 		{C83D75CD-FED5-4F4C-9BFC-EA8876B678BA} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
 		{AC95A61E-7EF9-4DC4-AB03-99E412BA8868} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
+		{4834A6A0-8278-41CA-A829-C145C243AA3E} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BEEA3619-2CA9-4BDD-B713-A656BE95FBB0}

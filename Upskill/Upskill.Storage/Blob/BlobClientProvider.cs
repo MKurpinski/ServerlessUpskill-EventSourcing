@@ -1,7 +1,7 @@
-﻿using Application.Storage.Providers;
-using Microsoft.WindowsAzure.Storage.Blob;
+﻿using Microsoft.WindowsAzure.Storage.Blob;
+using Upskill.Storage.Providers;
 
-namespace Application.Storage.Blob.Providers
+namespace Upskill.Storage.Blob
 {
     public class BlobClientProvider: IBlobClientProvider
     {

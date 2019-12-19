@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Application.Storage.Table.Model;
-using Application.Storage.Table.Providers;
+using Upskill.Storage.Table.Repository;
 using Upskill.Results;
 using Upskill.Results.Implementation;
+using Upskill.Storage.Table.Providers;
 
 namespace Application.Storage.Table.Repository
 {

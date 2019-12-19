@@ -1,4 +1,4 @@
-﻿namespace Application.Api.Constants
+﻿namespace Application.Storage.Constants
 {
     public static class FileStore
     {

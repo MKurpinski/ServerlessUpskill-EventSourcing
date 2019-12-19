@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace Application.Storage.Table.Extensions
+namespace Upskill.Storage.Table.Extensions
 {
     public static class CloudTableExtensions
     {

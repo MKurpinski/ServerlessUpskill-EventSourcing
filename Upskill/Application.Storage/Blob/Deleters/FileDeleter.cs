@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Application.Storage.Blob.Providers;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Upskill.Storage.Blob;
 
 namespace Application.Storage.Blob.Deleters
 {

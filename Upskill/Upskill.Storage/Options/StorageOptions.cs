@@ -1,4 +1,4 @@
-﻿namespace Application.Storage.Options
+﻿namespace Upskill.Storage.Options
 {
     public class StorageOptions
     {

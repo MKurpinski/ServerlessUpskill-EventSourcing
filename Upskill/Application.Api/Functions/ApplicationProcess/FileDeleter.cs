@@ -19,7 +19,6 @@ namespace Application.Api.Functions.ApplicationProcess
         public async Task Run(
             [ActivityTrigger] IDurableActivityContext context)
         {
-
             var command = context.GetInput<DeleteFileCommand>();
             await _fileDeleter.Delete(command.ContainerName, command.FileName);
         }

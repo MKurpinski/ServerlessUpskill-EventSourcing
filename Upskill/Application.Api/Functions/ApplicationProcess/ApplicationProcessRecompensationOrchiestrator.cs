@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Application.Api.Constants;
 using Application.Commands.Commands;
 using Application.Storage.Blob.Providers;
+using Application.Storage.Constants;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;

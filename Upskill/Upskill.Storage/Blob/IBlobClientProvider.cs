@@ -1,6 +1,6 @@
 ﻿using Microsoft.WindowsAzure.Storage.Blob;
 
-namespace Application.Storage.Blob.Providers
+namespace Upskill.Storage.Blob
 {
     public interface IBlobClientProvider
     {
