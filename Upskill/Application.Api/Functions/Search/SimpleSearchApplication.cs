@@ -6,7 +6,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using HttpMethods = Application.Api.Constants.HttpMethods;
+using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Application.Api.Functions.Search
 {

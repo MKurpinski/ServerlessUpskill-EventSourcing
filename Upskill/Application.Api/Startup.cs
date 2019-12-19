@@ -15,6 +15,7 @@ using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Upskill.EventPublisher.Config;
+using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
 
 [assembly: FunctionsStartup(typeof(Application.Api.Startup))]

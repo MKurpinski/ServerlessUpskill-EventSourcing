@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Application.Search\Application.Search.csproj" />
     <ProjectReference Include="..\Application.Storage\Application.Storage.csproj" />
     <ProjectReference Include="..\Upskill.EventPublisher\Upskill.EventPublisher.csproj" />
+    <ProjectReference Include="..\Upskill.FunctionUtils\Upskill.FunctionUtils.csproj" />
     <ProjectReference Include="..\Upskill.Infrastructure\Upskill.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
