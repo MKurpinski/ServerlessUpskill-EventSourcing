@@ -4,11 +4,16 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="8.5.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventGrid" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Category.DataStorage\Category.DataStorage.csproj" />
+    <ProjectReference Include="..\Category.Storage\Category.Storage.csproj" />
+    <ProjectReference Include="..\Upskill.EventPublisher\Upskill.EventPublisher.csproj" />
     <ProjectReference Include="..\Upskill.FunctionUtils\Upskill.FunctionUtils.csproj" />
   </ItemGroup>
   <ItemGroup>

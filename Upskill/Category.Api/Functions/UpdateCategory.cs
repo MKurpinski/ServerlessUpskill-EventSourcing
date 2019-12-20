@@ -1,33 +1,73 @@
-using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Category.Api.CustomHttpRequests;
+using Category.Api.Events;
+using Category.DataStorage.Dtos;
+using Category.DataStorage.Repositories;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using Upskill.EventPublisher.Publishers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions
 {
     public class UpdateCategory
     {
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IValidator<IModifyCategoryHttpRequest> _createCategoryRequestValidator;
+        private readonly IEventPublisher _eventPublisher;
+
+        public UpdateCategory(
+            ICategoryRepository categoryRepository,
+            IValidator<IModifyCategoryHttpRequest> createCategoryRequestValidator,
+            IEventPublisher eventPublisher)
+        {
+            _categoryRepository = categoryRepository;
+            _createCategoryRequestValidator = createCategoryRequestValidator;
+            _eventPublisher = eventPublisher;
+        }
+
         [FunctionName(nameof(UpdateCategory))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Put, Route = "category")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Put, Route = "category/{id:guid}")] UpdateCategoryHttpRequest updateCategoryRequest,
+            string id)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            var existingCategoryResult = await _categoryRepository.GetById(id);
 
-            string name = req.Query["name"];
+            if (!existingCategoryResult.Success)
+            {
+                return new NotFoundResult();
+            }
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+            var validationResult = await _createCategoryRequestValidator.ValidateAsync(updateCategoryRequest);
 
-            return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            if (!validationResult.IsValid)
+            {
+                return new BadRequestObjectResult(validationResult.Errors);
+            }
+
+            var categoryToUpdate = new CategoryDto(
+                id,
+                updateCategoryRequest.Name,
+                updateCategoryRequest.Description,
+                updateCategoryRequest.SortOrder);
+
+            var updateResult = await _categoryRepository.Update(categoryToUpdate);
+
+            if (!updateResult.Success)
+            {
+                return new BadRequestResult();
+            }
+
+            await _eventPublisher.PublishEvent(this.BuildCategoryChangedEvent(categoryToUpdate));
+
+            return new NoContentResult();
+        }
+
+        private CategoryChangedEvent BuildCategoryChangedEvent(CategoryDto dto)
+        {
+            return new CategoryChangedEvent(dto.Id, dto.Name, dto.Description, dto.SortOrder);
         }
     }
 }

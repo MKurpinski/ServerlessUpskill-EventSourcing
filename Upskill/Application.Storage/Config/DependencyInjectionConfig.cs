@@ -1,7 +1,7 @@
-﻿using Application.Storage.Blob.Deleters;
-using Application.Storage.Blob.Providers;
-using Application.Storage.Blob.Writers;
-using Application.Storage.Table.Repository;
+﻿using Application.Storage.Blobs.Deleters;
+using Application.Storage.Blobs.Providers;
+using Application.Storage.Blobs.Writers;
+using Application.Storage.Tables.Repositories;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Upskill.Storage.Config;

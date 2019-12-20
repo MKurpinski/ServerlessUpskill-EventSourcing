@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Upskill.EventPublisher.Client;
+using Upskill.EventPublisher.Clients;
 using Upskill.EventPublisher.Options;
 using Upskill.Infrastructure;
 

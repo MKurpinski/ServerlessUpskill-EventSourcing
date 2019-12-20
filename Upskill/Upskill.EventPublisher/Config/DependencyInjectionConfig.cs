@@ -1,6 +1,6 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Upskill.EventPublisher.Client;
+using Upskill.EventPublisher.Clients;
 using Upskill.EventPublisher.Options;
 using Upskill.EventPublisher.Publishers;
 using Upskill.Infrastructure.Extensions;

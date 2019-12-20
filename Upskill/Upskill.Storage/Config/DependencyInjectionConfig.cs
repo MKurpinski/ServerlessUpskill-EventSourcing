@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Upskill.Infrastructure.Extensions;
-using Upskill.Storage.Blob;
+using Upskill.Storage.Blobs;
 using Upskill.Storage.Options;
 using Upskill.Storage.Providers;
 using Upskill.Storage.Table.Providers;

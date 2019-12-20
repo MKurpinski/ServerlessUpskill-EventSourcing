@@ -29,11 +29,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Search", "Appli
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Category", "Category", "{92584842-4161-4BD1-A832-3B0A57EFDAFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Category.Api", "Category.Api\Category.Api.csproj", "{C83D75CD-FED5-4F4C-9BFC-EA8876B678BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Category.Api", "Category.Api\Category.Api.csproj", "{C83D75CD-FED5-4F4C-9BFC-EA8876B678BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upskill.FunctionUtils", "Upskill.FunctionUtils\Upskill.FunctionUtils.csproj", "{AC95A61E-7EF9-4DC4-AB03-99E412BA8868}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.FunctionUtils", "Upskill.FunctionUtils\Upskill.FunctionUtils.csproj", "{AC95A61E-7EF9-4DC4-AB03-99E412BA8868}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upskill.Storage", "Upskill.Storage\Upskill.Storage.csproj", "{4834A6A0-8278-41CA-A829-C145C243AA3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.Storage", "Upskill.Storage\Upskill.Storage.csproj", "{4834A6A0-8278-41CA-A829-C145C243AA3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Category.DataStorage", "Category.DataStorage\Category.DataStorage.csproj", "{21845922-E64B-4751-9165-CEA3890D2FC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Category.Storage", "Category.Storage\Category.Storage.csproj", "{7F020B7B-423A-481F-9735-E2F49127AD4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +97,14 @@ Global
 		{4834A6A0-8278-41CA-A829-C145C243AA3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4834A6A0-8278-41CA-A829-C145C243AA3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4834A6A0-8278-41CA-A829-C145C243AA3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21845922-E64B-4751-9165-CEA3890D2FC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21845922-E64B-4751-9165-CEA3890D2FC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21845922-E64B-4751-9165-CEA3890D2FC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21845922-E64B-4751-9165-CEA3890D2FC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F020B7B-423A-481F-9735-E2F49127AD4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F020B7B-423A-481F-9735-E2F49127AD4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F020B7B-423A-481F-9735-E2F49127AD4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F020B7B-423A-481F-9735-E2F49127AD4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +123,8 @@ Global
 		{C83D75CD-FED5-4F4C-9BFC-EA8876B678BA} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
 		{AC95A61E-7EF9-4DC4-AB03-99E412BA8868} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 		{4834A6A0-8278-41CA-A829-C145C243AA3E} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
+		{21845922-E64B-4751-9165-CEA3890D2FC9} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
+		{7F020B7B-423A-481F-9735-E2F49127AD4A} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BEEA3619-2CA9-4BDD-B713-A656BE95FBB0}

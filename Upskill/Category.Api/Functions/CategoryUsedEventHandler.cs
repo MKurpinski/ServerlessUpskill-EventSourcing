@@ -1,19 +1,51 @@
-// Default URL for triggering event grid function in the local environment.
-// http://localhost:7071/runtime/webhooks/EventGrid?functionName={functionname}
-
+using System.Threading.Tasks;
+using Category.Api.Events;
+using Category.DataStorage.Repositories;
+using Category.Storage.Tables.Repositories;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Category.Api.Functions
 {
     public class CategoryUsedEventHandler
     {
-        [FunctionName(nameof(CategoryUsedEventHandler))]
-        public void Run([EventGridTrigger]EventGridEvent eventGridEvent, ILogger log)
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IUsedCategoryRepository _usedCategoryRepository;
+
+        public CategoryUsedEventHandler(
+            ICategoryRepository categoryRepository,
+            IUsedCategoryRepository usedCategoryRepository)
         {
-            log.LogInformation(eventGridEvent.Data.ToString());
+            _categoryRepository = categoryRepository;
+            _usedCategoryRepository = usedCategoryRepository;
+        }
+
+        [FunctionName(nameof(CategoryUsedEventHandler))]
+        public async Task Run([EventGridTrigger]EventGridEvent eventGridEvent, ILogger log)
+        {
+            var categoryUsed = JsonConvert.DeserializeObject<CategoryUsedEvent>(eventGridEvent.Data.ToString());
+            log.LogInformation($"{nameof(CategoryUsedEvent)} with name: {categoryUsed.Name}, has been used");
+
+            var categoryResult = await _categoryRepository.GetByName(categoryUsed.Name);
+
+            if (!categoryResult.Success)
+            {
+                log.LogError($"{nameof(CategoryUsedEvent)} with name: {categoryUsed.Name} cannot be find. Inconsistency of data!");
+                return;
+            }
+
+            var categoryUsage = await _usedCategoryRepository.GetByCategoryId(categoryResult.Value.Id);
+
+            var usageCounter = 1;
+            if (categoryUsage.Success)
+            {
+                usageCounter = categoryUsage.Value.UsageCounter + 1;
+            }
+
+            await _usedCategoryRepository.CreateOrUpdate(categoryResult.Value.Id, usageCounter);
         }
     }
 }

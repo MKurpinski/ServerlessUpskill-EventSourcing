@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Application.Storage.Table.Model;
-using Application.Storage.Table.Repository;
+using Application.Storage.Tables.Models;
+using Application.Storage.Tables.Repositories;
 using Upskill.Infrastructure;
 
 namespace Application.Search.Resolvers

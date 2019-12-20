@@ -1,33 +1,71 @@
-using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Category.Api.CustomHttpRequests;
+using Category.Api.Events;
+using Category.DataStorage.Dtos;
+using Category.DataStorage.Repositories;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using Upskill.EventPublisher.Publishers;
+using Upskill.Infrastructure;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions
 {
     public class CreateCategory
     {
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IGuidProvider _guidProvider;
+        private readonly IValidator<IModifyCategoryHttpRequest> _createCategoryRequestValidator;
+        private readonly IEventPublisher _eventPublisher;
+
+        public CreateCategory(
+            ICategoryRepository categoryRepository,
+            IValidator<IModifyCategoryHttpRequest> createCategoryRequestValidator,
+            IGuidProvider guidProvider,
+            IEventPublisher eventPublisher)
+        {
+            _categoryRepository = categoryRepository;
+            _createCategoryRequestValidator = createCategoryRequestValidator;
+            _guidProvider = guidProvider;
+            _eventPublisher = eventPublisher;
+        }
+
+
         [FunctionName(nameof(CreateCategory))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "category")] HttpRequest req,
-            ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "category")] CreateCategoryHttpRequest createCategoryRequest)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            var validationResult = await _createCategoryRequestValidator.ValidateAsync(createCategoryRequest);
 
-            string name = req.Query["name"];
+            if (!validationResult.IsValid)
+            {
+                return new BadRequestObjectResult(validationResult.Errors);
+            }
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+            var id = _guidProvider.GenerateGuid().ToString("N");
 
-            return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            var categoryToAdd = new CategoryDto(
+                id,
+                createCategoryRequest.Name,
+                createCategoryRequest.Description,
+                createCategoryRequest.SortOrder);
+
+            var createResult = await _categoryRepository.Create(categoryToAdd);
+
+            if (!createResult.Success)
+            {
+                return new BadRequestResult();
+            }
+
+            await _eventPublisher.PublishEvent(this.BuildCategoryChangedEvent(categoryToAdd));
+            return new CreatedResult(id, categoryToAdd);
+        }
+
+        private CategoryChangedEvent BuildCategoryChangedEvent(CategoryDto dto)
+        {
+            return new CategoryChangedEvent(dto.Id, dto.Name, dto.Description, dto.SortOrder);
         }
     }
 }
