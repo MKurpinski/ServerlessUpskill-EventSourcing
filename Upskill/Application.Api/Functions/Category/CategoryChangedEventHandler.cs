@@ -24,6 +24,14 @@ namespace Application.Api.Functions.Category
             ILogger log)
         {
             var categoryChangedEvent = JsonConvert.DeserializeObject<CategoryChangedEvent>(eventGridEvent.Data.ToString());
+
+            var existingCategoryResult = await _categoryRepository.GetById(categoryChangedEvent.Id);
+
+            if (existingCategoryResult.Success && !existingCategoryResult.Value.Name.Equals(categoryChangedEvent.Name))
+            {
+                // name changed, update the applications
+            }
+
             await _categoryRepository.CreateOrUpdate(new CategoryDto(categoryChangedEvent.Id, categoryChangedEvent.Name));
 
             log.LogInformation($"{nameof(CategoryChangedEventHandler)}: category: {categoryChangedEvent.Id}");
