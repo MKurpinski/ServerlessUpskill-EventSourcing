@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Linq;
 using Category.DataStorage.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace Category.DataStorage.Factories
 {
-    public class CategoryDbContextFactory: IDesignTimeDbContextFactory<CategoryDbContext>
+    public class CategoryDbContextFactory : IDesignTimeDbContextFactory<CategoryDbContext>
     {
         public CategoryDbContext CreateDbContext(string[] args)
         {
-            var connectionStrings = args.Any() ? args[0] : Environment.GetEnvironmentVariable(DataStorageConnections.SqlConnectionString);
+            var connectionStrings = Environment.GetEnvironmentVariable(DataStorageConnections.SqlConnectionString);
             var optionsBuilder = new DbContextOptionsBuilder<CategoryDbContext>();
             optionsBuilder.UseMySQL(connectionStrings);
 

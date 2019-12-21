@@ -1,5 +1,4 @@
-﻿using Category.Api;
-using Category.Api.CustomHttpRequests;
+﻿using Category.Api.CustomHttpRequests;
 using Category.Api.Validators;
 using Category.DataStorage.Config;
 using Category.Storage.Config;
@@ -10,7 +9,7 @@ using Upskill.EventPublisher.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
 
-[assembly: FunctionsStartup(typeof(Startup))]
+[assembly: FunctionsStartup(typeof(Category.Api.Startup))]
 
 namespace Category.Api
 {

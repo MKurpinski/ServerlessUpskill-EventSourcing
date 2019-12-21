@@ -1,5 +1,4 @@
-﻿
-using Upskill.EventPublisher;
+﻿using Upskill.EventPublisher;
 
 namespace Category.Api.Events
 {
