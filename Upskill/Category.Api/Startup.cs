@@ -1,6 +1,7 @@
 ﻿using Category.Api;
 using Category.Api.CustomHttpRequests;
 using Category.Api.Validators;
+using Category.DataStorage.Config;
 using Category.Storage.Config;
 using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ namespace Category.Api
             builder.Services.AddTransient<IValidator<IModifyCategoryHttpRequest>, ModifyCategoryHttpRequestValidator>();
 
             builder.AddAppSettingsToConfiguration();
+            builder.AddDataStorageModule();
             builder.AddStorageModule();
             builder.AddInfrastructureModule();
             builder.AddEventPublisher();
