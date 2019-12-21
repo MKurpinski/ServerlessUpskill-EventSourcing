@@ -27,9 +27,9 @@ namespace Category.Api.Functions
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Delete, Route = "category/{id:guid}")] HttpRequest req,
             string id)
         {
-            var categoryUsageResult = await _usedCategoryRepository.GetByCategoryId(id);
+            var categoryUsage = await _usedCategoryRepository.GetCategoryUsageById(id);
 
-            var canDelete = !categoryUsageResult.Success || categoryUsageResult.Value.UsageCounter == default;
+            var canDelete = categoryUsage.UsageCounter == default;
 
             if (!canDelete)
             {

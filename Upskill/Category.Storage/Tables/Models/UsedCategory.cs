@@ -5,19 +5,19 @@ namespace Category.Storage.Tables.Models
     public class UsedCategory : TableEntity, IUsedCategory
     {
         public string Id { get; set; }
-        public int UsageCounter { get; set; }
+        public string UsedIn { get; }
 
         public UsedCategory()
         {
 
         }
 
-        public UsedCategory(string id, int usageCounter)
+        public UsedCategory(string id, string usedIn)
         {
-            PartitionKey = nameof(UsedCategory);
+            PartitionKey = id;
             Id = id;
-            RowKey = Id;
-            UsageCounter = usageCounter;
+            RowKey = usedIn;
+            UsedIn = usedIn;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Application.Api.Functions.ApplicationProcess
         {
             var command = context.GetInput<SaveApplicationCommand>();
 
-            var categoryUsedEvent = new CategoryUsedEvent(command.Category);
+            var categoryUsedEvent = new CategoryUsedEvent(command.Category, $"{nameof(DataStorage.Models.Application)}_{command.Id}");
             await _eventPublisher.PublishEvent(categoryUsedEvent);
 
             var applicationAddedEvent = _mapper.Map<SaveApplicationCommand, ApplicationAddedEvent>(command);

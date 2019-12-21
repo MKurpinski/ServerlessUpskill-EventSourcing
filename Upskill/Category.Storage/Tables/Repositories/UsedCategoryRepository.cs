@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Category.Storage.Tables.Dtos;
 using Category.Storage.Tables.Models;
+using Microsoft.WindowsAzure.Storage.Table;
 using Upskill.Results;
 using Upskill.Results.Implementation;
 using Upskill.Storage.Table.Providers;
@@ -15,21 +18,20 @@ namespace Category.Storage.Tables.Repositories
         {
         }
 
-        public async Task CreateOrUpdate(string id, int usageCounter)
+        public async Task CreateOrUpdate(string id, string usedIn)
         {
-            await this.CreateOrUpdate(new UsedCategory(id, usageCounter));
+            await this.CreateOrUpdate(new UsedCategory(id, usedIn));
         }
 
-        public async Task<IDataResult<IUsedCategory>> GetByCategoryId(string categoryId)
+        public async Task<CategoryUsageDto> GetCategoryUsageById(string categoryId)
         {
-            var result = await this.GetById(categoryId);
+            var partitionKeyCondition = TableQuery.GenerateFilterCondition(nameof(UsedCategory.PartitionKey), QueryComparisons.Equal, nameof(UsedCategory));
 
-            if (!result.Success)
-            {
-                return new FailedDataResult<IUsedCategory>();
-            }
+            var query = new TableQuery<UsedCategory>().Where(partitionKeyCondition);
 
-            return new SuccessfulDataResult<IUsedCategory>(result.Value);
+            var queryResult = await this.GetBy(query);
+
+            return new CategoryUsageDto(categoryId, queryResult.Count);
         }
     }
 }

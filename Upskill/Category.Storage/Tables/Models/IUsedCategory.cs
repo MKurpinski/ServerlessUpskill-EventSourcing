@@ -3,6 +3,6 @@
     public interface IUsedCategory 
     {
         string Id { get; }
-        int UsageCounter { get;}
+        string UsedIn { get;}
     }
 }

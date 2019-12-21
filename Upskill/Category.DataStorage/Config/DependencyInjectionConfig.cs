@@ -16,7 +16,7 @@ namespace Category.DataStorage.Config
             builder.Services.AddDbContext<CategoryDbContext>(options =>
             {
                 options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                options.UseMySQL(mySqlConnectionString);
+                options.UseMySql(mySqlConnectionString);
             });
 
             return builder.Services

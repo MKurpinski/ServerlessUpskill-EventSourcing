@@ -27,7 +27,7 @@ namespace Category.Api.Functions
         public async Task Run([EventGridTrigger]EventGridEvent eventGridEvent, ILogger log)
         {
             var categoryUsed = JsonConvert.DeserializeObject<CategoryUsedEvent>(eventGridEvent.Data.ToString());
-            log.LogInformation($"{nameof(CategoryUsedEvent)} with name: {categoryUsed.Name}, has been used");
+            log.LogInformation($"{nameof(CategoryUsedEvent)} with name: {categoryUsed.Name}, has been used in {categoryUsed.UsedIn}");
 
             var categoryResult = await _categoryRepository.GetByName(categoryUsed.Name);
 
@@ -37,15 +37,7 @@ namespace Category.Api.Functions
                 return;
             }
 
-            var categoryUsage = await _usedCategoryRepository.GetByCategoryId(categoryResult.Value.Id);
-
-            var usageCounter = 1;
-            if (categoryUsage.Success)
-            {
-                usageCounter = categoryUsage.Value.UsageCounter + 1;
-            }
-
-            await _usedCategoryRepository.CreateOrUpdate(categoryResult.Value.Id, usageCounter);
+            await _usedCategoryRepository.CreateOrUpdate(categoryResult.Value.Id, categoryUsed.UsedIn);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Category.DataStorage.Factories
         {
             var connectionStrings = Environment.GetEnvironmentVariable(DataStorageConnections.SqlConnectionString);
             var optionsBuilder = new DbContextOptionsBuilder<CategoryDbContext>();
-            optionsBuilder.UseMySQL(connectionStrings);
+            optionsBuilder.UseMySql(connectionStrings);
 
             return new CategoryDbContext(optionsBuilder.Options);
         }
