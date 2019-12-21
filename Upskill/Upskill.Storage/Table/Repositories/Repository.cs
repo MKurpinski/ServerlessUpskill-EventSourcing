@@ -19,20 +19,16 @@ namespace Upskill.Storage.Table.Repositories
             _nameOfTypeT = typeof(T).Name;
         }
 
-        public async Task CreateOrUpdate(T entity)
+        protected async Task CreateOrUpdate(T entity)
         {
             var table = await _tableClientProvider.Get(_nameOfTypeT);
             var insertOrMergeOperation = TableOperation.InsertOrMerge(entity);
             await table.ExecuteAsync(insertOrMergeOperation);
         }
 
-        public async Task<IDataResult<T>> GetById(string id)
+        protected async Task<IDataResult<T>> GetById(string id)
         {
-            var table = await _tableClientProvider.Get(_nameOfTypeT);
-            var retrieveOperation = TableOperation.Retrieve<T>(_nameOfTypeT, id);
-            var result = await table.ExecuteAsync(retrieveOperation);
-            
-            var entity = result.Result as T;
+            var entity = await this.GetByIdInternal(id);
 
             if (entity == null)
             {
@@ -42,13 +38,37 @@ namespace Upskill.Storage.Table.Repositories
             return new SuccessfulDataResult<T>(entity);
         }
 
-        public async Task<IList<T>> GetBy(TableQuery<T> tableQuery)
+        protected async Task<IList<T>> GetBy(TableQuery<T> tableQuery)
         {
             var table = await _tableClientProvider.Get(_nameOfTypeT);
 
             var result = await table.ExecuteQueryAsync(tableQuery);
 
             return result;
+        }
+
+        protected async Task DeleteById(string rowKey)
+        {
+            var result = await this.GetByIdInternal(rowKey);
+
+            if (result == null)
+            {
+                return;
+            }
+
+            var table = await _tableClientProvider.Get(_nameOfTypeT);
+            await table.ExecuteAsync(TableOperation.Delete(result));
+        }
+
+        private async Task<T> GetByIdInternal(string id)
+        {
+            var table = await _tableClientProvider.Get(_nameOfTypeT);
+            var retrieveOperation = TableOperation.Retrieve<T>(_nameOfTypeT, id);
+            var result = await table.ExecuteAsync(retrieveOperation);
+
+            var entity = result.Result as T;
+
+            return entity;
         }
     }
 }

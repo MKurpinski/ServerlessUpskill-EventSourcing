@@ -19,6 +19,7 @@ namespace Application.Storage.Config
                 .AddTransient<IFileDeleter, FileDeleter>()
                 .AddTransient<IFileNameProvider, FileNameProvider>()
                 .AddTransient<IProcessStatusRepository, ProcessStatusRepository>()
+                .AddTransient<ICategoryRepository, CategoryRepository>()
                 .AddTransient<ISearchableIndexRepository, SearchableIndexRepository>();
         }
     }

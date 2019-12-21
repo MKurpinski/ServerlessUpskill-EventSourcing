@@ -1,6 +1,6 @@
 ﻿using Upskill.EventPublisher;
 
-namespace Application.Api.Events.External
+namespace Application.Api.Events.External.Category
 {
     public class CategoryUsedEvent : IEvent
     {

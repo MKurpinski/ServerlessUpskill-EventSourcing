@@ -1,7 +1,7 @@
-// http://localhost:7071/runtime/webhooks/EventGrid?functionName=CategoryChangedEventHandler
-
 using System.Threading.Tasks;
-using Application.Api.Events.External;
+using Application.Api.Events.External.Category;
+using Application.Storage.Dtos;
+using Application.Storage.Tables.Repositories;
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
@@ -12,13 +12,21 @@ namespace Application.Api.Functions.Category
 {
     public class CategoryChangedEventHandler
     {
+        private readonly ICategoryRepository _categoryRepository;
+
+        public CategoryChangedEventHandler(ICategoryRepository categoryRepository)
+        {
+            _categoryRepository = categoryRepository;
+        }
+
         [FunctionName(nameof(CategoryChangedEventHandler))]
-        public async Task Run([EventGridTrigger]EventGridEvent eventGridEvent, ILogger log)
+        public async Task Run([EventGridTrigger]EventGridEvent eventGridEvent,
+            ILogger log)
         {
             var categoryChangedEvent = JsonConvert.DeserializeObject<CategoryChangedEvent>(eventGridEvent.Data.ToString());
-            log.LogInformation($"{nameof(CategoryChangedEventHandler)}: starting updating applications from category: {categoryChangedEvent.Id}");
-            
-            log.LogInformation($"{nameof(CategoryChangedEventHandler)}: finished updating applications from category: {categoryChangedEvent.Id}");
+            await _categoryRepository.CreateOrUpdate(new CategoryDto(categoryChangedEvent.Id, categoryChangedEvent.Name));
+
+            log.LogInformation($"{nameof(CategoryChangedEventHandler)}: category: {categoryChangedEvent.Id}");
         }
     }
 }

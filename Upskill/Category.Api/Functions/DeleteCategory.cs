@@ -1,10 +1,12 @@
 using System.Threading.Tasks;
+using Category.Api.Events;
 using Category.DataStorage.Repositories;
 using Category.Storage.Tables.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Upskill.EventPublisher.Publishers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions
@@ -13,13 +15,16 @@ namespace Category.Api.Functions
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IUsedCategoryRepository _usedCategoryRepository;
+        private readonly IEventPublisher _eventPublisher;
 
         public DeleteCategory(
             ICategoryRepository categoryRepository,
-            IUsedCategoryRepository usedCategoryRepository)
+            IUsedCategoryRepository usedCategoryRepository,
+            IEventPublisher eventPublisher)
         {
             _categoryRepository = categoryRepository;
             _usedCategoryRepository = usedCategoryRepository;
+            _eventPublisher = eventPublisher;
         }
 
         [FunctionName(nameof(DeleteCategory))]
@@ -43,6 +48,7 @@ namespace Category.Api.Functions
                 return new NotFoundResult();
             }
 
+            await _eventPublisher.PublishEvent(new CategoryDeletedEvent(id));
             return new NoContentResult();
         }
     }

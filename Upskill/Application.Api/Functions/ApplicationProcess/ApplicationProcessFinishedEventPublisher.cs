@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Api.Events.External;
 using Application.Api.Events.External.ApplicationAdded;
+using Application.Api.Events.External.Category;
 using Application.Commands.Commands;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
