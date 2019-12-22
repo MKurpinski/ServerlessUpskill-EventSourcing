@@ -9,7 +9,8 @@ namespace Category.DataStorage.Factories
     {
         public CategoryDbContext CreateDbContext(string[] args)
         {
-            var connectionStrings = Environment.GetEnvironmentVariable(DataStorageConnections.SqlConnectionString) ?? nameof(CategoryDbContext);
+            const string fakeConnectionString = "Server=localhost;Database=Upskill;Uid=user;Pwd=password;";
+            var connectionStrings = Environment.GetEnvironmentVariable(DataStorageConnections.SqlConnectionString) ?? fakeConnectionString;
             var optionsBuilder = new DbContextOptionsBuilder<CategoryDbContext>();
             optionsBuilder.UseMySql(connectionStrings);
 
