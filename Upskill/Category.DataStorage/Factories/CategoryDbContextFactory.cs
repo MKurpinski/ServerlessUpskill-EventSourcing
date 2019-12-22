@@ -9,7 +9,7 @@ namespace Category.DataStorage.Factories
     {
         public CategoryDbContext CreateDbContext(string[] args)
         {
-            var connectionStrings = Environment.GetEnvironmentVariable(DataStorageConnections.SqlConnectionString);
+            var connectionStrings = Environment.GetEnvironmentVariable(DataStorageConnections.SqlConnectionString) ?? nameof(CategoryDbContext);
             var optionsBuilder = new DbContextOptionsBuilder<CategoryDbContext>();
             optionsBuilder.UseMySql(connectionStrings);
 
