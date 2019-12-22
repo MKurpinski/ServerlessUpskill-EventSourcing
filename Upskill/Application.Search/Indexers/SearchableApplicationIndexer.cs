@@ -13,7 +13,7 @@ namespace Application.Search.Indexers
 
         public SearchableApplicationIndexer(
             IMapper mapper,
-            ILogger logger,
+            ILogger<SearchableApplicationIndexer> logger,
             ISearchIndexClientProvider searchIndexClientProvider) : base(searchIndexClientProvider, logger)
         {
             _mapper = mapper;

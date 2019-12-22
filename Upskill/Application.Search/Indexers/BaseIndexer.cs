@@ -11,9 +11,9 @@ namespace Application.Search.Indexers
     public class BaseIndexer<T> where T : ISearchable
     {
         private readonly ISearchIndexClientProvider _searchIndexClientProvider;
-        private readonly ILogger _logger;
+        private readonly ILogger<BaseIndexer<T>> _logger;
 
-        public BaseIndexer(ISearchIndexClientProvider searchIndexClientProvider, ILogger logger)
+        public BaseIndexer(ISearchIndexClientProvider searchIndexClientProvider, ILogger<BaseIndexer<T>> logger)
         {
             _searchIndexClientProvider = searchIndexClientProvider;
             _logger = logger;
@@ -31,7 +31,6 @@ namespace Application.Search.Indexers
             }
             catch (IndexBatchException)
             {
-                // ToDo Ask
                 _logger.LogError($"Indexing failed for ${value.Id} in index {indexClient.IndexName}");
             }
         }

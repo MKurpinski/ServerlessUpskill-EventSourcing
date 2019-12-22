@@ -17,6 +17,7 @@ namespace Application.DataStorage.Providers
         {
             return new CosmosClientBuilder(_storageOptions.ConnectionString)
                 .WithSerializerOptions(new CosmosSerializationOptions{PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase})
+                .WithBulkExecution(true)
                 .Build();
         }
     }

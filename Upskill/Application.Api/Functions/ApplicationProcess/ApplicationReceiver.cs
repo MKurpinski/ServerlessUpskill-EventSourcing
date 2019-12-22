@@ -11,7 +11,7 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.Infrastructure;
-using HttpMethods = Application.Api.Constants.HttpMethods;
+using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Application.Api.Functions.ApplicationProcess
 {

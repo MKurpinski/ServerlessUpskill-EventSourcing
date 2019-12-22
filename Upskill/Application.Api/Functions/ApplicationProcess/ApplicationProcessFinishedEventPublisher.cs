@@ -1,7 +1,6 @@
-using System.Linq;
 using System.Threading.Tasks;
-using Application.Api.Events.External;
-using Application.Api.Events.External.ApplicationAdded;
+using Application.Api.Events.External.ApplicationChanged;
+using Application.Api.Events.External.Category;
 using Application.Commands.Commands;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
@@ -29,10 +28,10 @@ namespace Application.Api.Functions.ApplicationProcess
         {
             var command = context.GetInput<SaveApplicationCommand>();
 
-            var categoryUsedEvent = new CategoryUsedEvent(command.Category);
+            var categoryUsedEvent = new CategoryUsedEvent(command.Category, $"{nameof(DataStorage.Models.Application)}_{command.Id}");
             await _eventPublisher.PublishEvent(categoryUsedEvent);
 
-            var applicationAddedEvent = _mapper.Map<SaveApplicationCommand, ApplicationAddedEvent>(command);
+            var applicationAddedEvent = _mapper.Map<SaveApplicationCommand, ApplicationChangedEvent>(command);
             await _eventPublisher.PublishEvent(applicationAddedEvent);
         }
     }

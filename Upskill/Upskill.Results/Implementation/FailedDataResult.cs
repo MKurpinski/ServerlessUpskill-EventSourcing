@@ -3,9 +3,8 @@ using System.Linq;
 
 namespace Upskill.Results.Implementation
 {
-    public class FailedDataResult<T> : IDataResult<T>
+    public class FailedDataResult<T> : FailedResult, IDataResult<T>
     {
-        public bool Success => false;
         public T Value => default;
         public IReadOnlyCollection<KeyValuePair<string, string>> Errors { get; }
 

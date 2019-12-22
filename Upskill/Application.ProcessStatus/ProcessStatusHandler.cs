@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Application.ProcessStatus.Dtos;
-using Application.Storage.Table.Repository;
+using Application.Storage.Tables.Repositories;
 using Upskill.Results;
 using Upskill.Results.Implementation;
 

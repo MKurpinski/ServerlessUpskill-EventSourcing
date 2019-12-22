@@ -9,7 +9,7 @@ namespace Application.DataStorage.Models
         public DateTime CreationTime { get; }
         public string PhotoUri { get; }
         public string CvUri { get; }
-        public string Category { get; }
+        public string Category { get; private set; }
         public string FirstName { get; }
         public string LastName { get; }
         public Address Address { get; }
@@ -44,6 +44,11 @@ namespace Application.DataStorage.Models
             FinishedSchools = finishedSchools;
             ConfirmedSkills = confirmedSkills;
             WorkExperiences = workExperiences;
+        }
+
+        public void ChangeCategory(string newCategory)
+        {
+            this.Category = newCategory;
         }
     }
 }

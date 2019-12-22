@@ -1,7 +1,7 @@
 ﻿using Application.Api.CustomHttpRequests;
-using Application.Api.Extensions;
 using Application.Api.Profiles;
 using Application.Api.Validators;
+using Application.Category.Config;
 using Application.Commands.Config;
 using Application.Commands.Profiles;
 using Application.DataStorage.Config;
@@ -15,6 +15,7 @@ using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Upskill.EventPublisher.Config;
+using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
 
 [assembly: FunctionsStartup(typeof(Application.Api.Startup))]
@@ -41,6 +42,7 @@ namespace Application.Api
             builder.AddDataStorageModule();
             builder.AddProcessStatusModule();
             builder.AddSearchModule();
+            builder.AddCategories();
             builder.AddEventPublisher();
         }
     }

@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AzureFunctionsVersion>v2</AzureFunctionsVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="8.6.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventGrid" Version="2.1.0" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
+  </ItemGroup>
+  <ItemGroup>
+	  <ProjectReference Include="..\Category.DataStorage\Category.DataStorage.csproj" />
+	  <ProjectReference Include="..\Category.Storage\Category.Storage.csproj" />
+	  <ProjectReference Include="..\Upskill.EventPublisher\Upskill.EventPublisher.csproj" />
+	  <ProjectReference Include="..\Upskill.FunctionUtils\Upskill.FunctionUtils.csproj" />
+	  <ProjectReference Include="..\Upskill.Infrastructure\Upskill.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+	  <None Update="appsettings.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="host.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="local.settings.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+	  </None>
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="copy /Y &quot;$(TargetDir)bin\*.dll&quot; &quot;$(TargetDir)*.dll&quot;" />
+  </Target>
+</Project>

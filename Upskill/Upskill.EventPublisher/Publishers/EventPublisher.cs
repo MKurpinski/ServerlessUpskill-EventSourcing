@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Upskill.EventPublisher.Client;
+using Upskill.EventPublisher.Clients;
 using Upskill.EventPublisher.Options;
 using Upskill.Infrastructure;
 
@@ -19,11 +19,11 @@ namespace Upskill.EventPublisher.Publishers
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly EventOptions _eventOptions;
         private readonly Lazy<IDictionary<string, EventInformation>> _lazyTopicNameInformationMap;
-        private readonly ILogger _logger;
+        private readonly ILogger<EventPublisher> _logger;
         private readonly IEventGridClientFacade _eventGridClientFacade;
 
         public EventPublisher(
-            ILogger logger,
+            ILogger<EventPublisher> logger,
             IGuidProvider guidProvider,
             IDateTimeProvider dateTimeProvider,
             IOptions<EventOptions> eventOptionsAccessor,
@@ -68,6 +68,7 @@ namespace Upskill.EventPublisher.Publishers
                 Topic = typeName,
                 Subject = typeName
             };
+
             await _eventGridClientFacade.PublishEvent(domainCredentials, domainHostname, eventToPublish);
         }
 
