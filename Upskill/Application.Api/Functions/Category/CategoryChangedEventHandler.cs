@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Application.Api.Events.External.ApplicationChanged;
 using Application.Api.Events.External.Category;
-using Application.DataStorage.Repositories;
-using Application.DataStorage.Results;
+using Application.Category.Handlers;
 using Application.Storage.Dtos;
 using Application.Storage.Tables.Repositories;
 using AutoMapper;
@@ -20,20 +18,20 @@ namespace Application.Api.Functions.Category
     public class CategoryChangedEventHandler
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IApplicationRepository _applicationRepository;
+        private readonly ICategoryNameChangedHandler _categoryNameChangedHandler;
         private readonly IEventPublisher _eventPublisher;
         private readonly IMapper _mapper;
 
         public CategoryChangedEventHandler(
             ICategoryRepository categoryRepository,
-            IApplicationRepository applicationRepository,
             IMapper mapper,
-            IEventPublisher eventPublisher)
+            IEventPublisher eventPublisher,
+            ICategoryNameChangedHandler categoryNameChangedHandler)
         {
             _categoryRepository = categoryRepository;
-            _applicationRepository = applicationRepository;
             _mapper = mapper;
             _eventPublisher = eventPublisher;
+            _categoryNameChangedHandler = categoryNameChangedHandler;
         }
 
         [FunctionName(nameof(CategoryChangedEventHandler))]
@@ -46,7 +44,7 @@ namespace Application.Api.Functions.Category
 
             if (existingCategoryResult.Success && !existingCategoryResult.Value.Name.Equals(categoryChangedEvent.Name))
             {
-                await this.UpdateChangedApplications(existingCategoryResult.Value.Name, categoryChangedEvent.Name, log);
+                await this.HandleCategoryNameChange(existingCategoryResult.Value.Name, categoryChangedEvent.Name);
             }
 
             await _categoryRepository.CreateOrUpdate(new CategoryDto(categoryChangedEvent.Id, categoryChangedEvent.Name));
@@ -54,44 +52,19 @@ namespace Application.Api.Functions.Category
             log.LogInformation($"{nameof(CategoryChangedEventHandler)}: category: {categoryChangedEvent.Id}");
         }
 
-        private async Task UpdateChangedApplications(string oldCategoryName, string newCategoryName, ILogger logger)
+        private async Task HandleCategoryNameChange(string oldCategoryName, string newCategoryName)
         {
-            var oldCategoryApplications = await _applicationRepository.GetByCategoryName(oldCategoryName);
-
-            if (!oldCategoryApplications.Success)
-            {
-                // push the event back and try to consume later
-                logger.LogError($"Failed applications update for category old name: {oldCategoryName} to new categoryName: {newCategoryName}");
-                return;
-            }
-
-            var applicationsToUpdate = oldCategoryApplications.Value.ToList();
-
-            foreach (var applicationToUpdate in applicationsToUpdate)
-            {
-                applicationToUpdate.ChangeCategory(newCategoryName);
-            }
-
-            var result = await _applicationRepository.BulkUpdateDocuments(applicationsToUpdate);
-
-
-            if (!result.Success)
-            {
-                //try to retry the update
-                logger.LogError($"Failed applications update for category old name: {oldCategoryName} to new categoryName: {newCategoryName}" +
-                                $"for applications: {string.Join(',', result.FailedUpdatedDocuments.Select(x => x.Id))}");
-                return;
-            }
-
-            await PublishEvents(result);
+            var updatedApplications =
+               await _categoryNameChangedHandler.HandleCategoryNameChange(oldCategoryName, newCategoryName);
+            await PublishEvents(updatedApplications);
         }
 
-        private async Task PublishEvents(BulkUpdateResult<DataStorage.Models.Application> result)
+        private async Task PublishEvents(IReadOnlyCollection<DataStorage.Models.Application> updatedApplications)
         {
             var eventsToPush =
                 _mapper
                     .Map<IReadOnlyCollection<DataStorage.Models.Application>, IReadOnlyCollection<ApplicationChangedEvent>>(
-                        result.SuccessfulUpdatedDocuments);
+                        updatedApplications);
 
             foreach (var toPush in eventsToPush)
             {

@@ -39,6 +39,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Category.Api", "Category.Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Category.DataStorage", "Category.DataStorage\Category.DataStorage.csproj", "{781D739C-ACC9-404E-B6C1-8202FFA2B24B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Category", "Application.Category\Application.Category.csproj", "{8478DA3E-1C71-44A4-B503-33EF18C60C26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{781D739C-ACC9-404E-B6C1-8202FFA2B24B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{781D739C-ACC9-404E-B6C1-8202FFA2B24B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{781D739C-ACC9-404E-B6C1-8202FFA2B24B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8478DA3E-1C71-44A4-B503-33EF18C60C26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8478DA3E-1C71-44A4-B503-33EF18C60C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8478DA3E-1C71-44A4-B503-33EF18C60C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8478DA3E-1C71-44A4-B503-33EF18C60C26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,6 +131,7 @@ Global
 		{7F020B7B-423A-481F-9735-E2F49127AD4A} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
 		{538BD8AE-87FC-4FCA-A924-895B0FE14A9C} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
 		{781D739C-ACC9-404E-B6C1-8202FFA2B24B} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
+		{8478DA3E-1C71-44A4-B503-33EF18C60C26} = {4A07BF84-9C4F-479E-9541-DF1DBD96586A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BEEA3619-2CA9-4BDD-B713-A656BE95FBB0}

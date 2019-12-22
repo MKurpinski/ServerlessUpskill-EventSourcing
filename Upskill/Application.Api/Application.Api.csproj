@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Application.Category\Application.Category.csproj" />
     <ProjectReference Include="..\Application.Commands\Application.Commands.csproj" />
     <ProjectReference Include="..\Application.DataStorage\Application.DataStorage.csproj" />
     <ProjectReference Include="..\Application.ProcessStatus\Application.ProcessStatus.csproj" />

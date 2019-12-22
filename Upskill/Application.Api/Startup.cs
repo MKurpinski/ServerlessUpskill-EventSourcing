@@ -1,6 +1,7 @@
 ﻿using Application.Api.CustomHttpRequests;
 using Application.Api.Profiles;
 using Application.Api.Validators;
+using Application.Category.Config;
 using Application.Commands.Config;
 using Application.Commands.Profiles;
 using Application.DataStorage.Config;
@@ -41,6 +42,7 @@ namespace Application.Api
             builder.AddDataStorageModule();
             builder.AddProcessStatusModule();
             builder.AddSearchModule();
+            builder.AddCategories();
             builder.AddEventPublisher();
         }
     }
