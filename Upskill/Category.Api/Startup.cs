@@ -1,4 +1,5 @@
-﻿using Category.Api.CustomHttpRequests;
+﻿using Category.Api.Commands;
+using Category.Api.CustomHttpRequests;
 using Category.Api.Validators;
 using Category.DataStorage.Config;
 using Category.Storage.Config;
@@ -17,7 +18,8 @@ namespace Category.Api
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddTransient<IValidator<IModifyCategoryHttpRequest>, ModifyCategoryHttpRequestValidator>();
+            builder.Services.AddTransient<IValidator<CreateCategoryHttpRequest>, CreateCategoryHttpRequestValidator>();
+            builder.Services.AddTransient<IValidator<UpdateCategoryCommand>, UpdateCategoryCommandValidator>();
 
             builder.AddAppSettingsToConfiguration();
             builder.AddDataStorageModule();

@@ -1,6 +1,6 @@
 ﻿namespace Category.Api.CustomHttpRequests
 {
-    public class UpdateCategoryHttpRequest : IModifyCategoryHttpRequest
+    public class UpdateCategoryHttpRequest
     {
         public string Name { get; set; }
         public string Description { get; set; }

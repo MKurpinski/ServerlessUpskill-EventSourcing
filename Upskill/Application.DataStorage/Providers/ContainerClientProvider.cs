@@ -16,7 +16,7 @@ namespace Application.DataStorage.Providers
         public async Task<Container> Get(string databaseId, string containerId, string partitionKey)
         {
             var databaseClient = await _databaseClientProvider.Get(databaseId);
-            var containerProperties = new ContainerProperties(containerId, $"/{partitionKey}");
+            var containerProperties = new ContainerProperties(containerId, partitionKey);
             await databaseClient.CreateContainerIfNotExistsAsync(containerProperties);
             var container = databaseClient.GetContainer(containerId);
             return container;

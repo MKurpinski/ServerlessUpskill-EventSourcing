@@ -68,6 +68,7 @@ namespace Upskill.EventPublisher.Publishers
                 Topic = typeName,
                 Subject = typeName
             };
+
             await _eventGridClientFacade.PublishEvent(domainCredentials, domainHostname, eventToPublish);
         }
 

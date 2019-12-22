@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Category.Api.Commands;
 using Category.Api.CustomHttpRequests;
 using Category.Api.Events;
 using Category.DataStorage.Dtos;
@@ -15,17 +16,17 @@ namespace Category.Api.Functions
     public class UpdateCategory
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IValidator<IModifyCategoryHttpRequest> _createCategoryRequestValidator;
+        private readonly IValidator<UpdateCategoryCommand> _updateCommandValidator;
         private readonly IEventPublisher _eventPublisher;
 
         public UpdateCategory(
             ICategoryRepository categoryRepository,
-            IValidator<IModifyCategoryHttpRequest> createCategoryRequestValidator,
+            IValidator<UpdateCategoryCommand> updateCommandValidator,
             IEventPublisher eventPublisher)
         {
             _categoryRepository = categoryRepository;
-            _createCategoryRequestValidator = createCategoryRequestValidator;
             _eventPublisher = eventPublisher;
+            _updateCommandValidator = updateCommandValidator;
         }
 
         [FunctionName(nameof(UpdateCategory))]
@@ -40,7 +41,7 @@ namespace Category.Api.Functions
                 return new NotFoundResult();
             }
 
-            var validationResult = await _createCategoryRequestValidator.ValidateAsync(updateCategoryRequest);
+            var validationResult = await _updateCommandValidator.ValidateAsync(new UpdateCategoryCommand(id, updateCategoryRequest));
 
             if (!validationResult.IsValid)
             {

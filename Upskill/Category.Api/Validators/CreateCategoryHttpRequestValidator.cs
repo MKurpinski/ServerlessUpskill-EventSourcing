@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace Category.Api.Validators
 {
-    public class ModifyCategoryHttpRequestValidator : AbstractValidator<IModifyCategoryHttpRequest>
+    public class CreateCategoryHttpRequestValidator : AbstractValidator<CreateCategoryHttpRequest>
     {
-        public ModifyCategoryHttpRequestValidator(ICategoryRepository categoryRepository)
+        public CreateCategoryHttpRequestValidator(ICategoryRepository categoryRepository)
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
@@ -16,7 +16,7 @@ namespace Category.Api.Validators
 
                     if (existingCategoryResult.Success)
                     {
-                        context.AddFailure(nameof(IModifyCategoryHttpRequest.Name), "Name currently used.");
+                        context.AddFailure(nameof(CreateCategoryHttpRequest.Name), "Name currently used.");
                     }
                 });
 

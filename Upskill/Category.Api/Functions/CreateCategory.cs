@@ -17,12 +17,12 @@ namespace Category.Api.Functions
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IGuidProvider _guidProvider;
-        private readonly IValidator<IModifyCategoryHttpRequest> _createCategoryRequestValidator;
+        private readonly IValidator<CreateCategoryHttpRequest> _createCategoryRequestValidator;
         private readonly IEventPublisher _eventPublisher;
 
         public CreateCategory(
             ICategoryRepository categoryRepository,
-            IValidator<IModifyCategoryHttpRequest> createCategoryRequestValidator,
+            IValidator<CreateCategoryHttpRequest> createCategoryRequestValidator,
             IGuidProvider guidProvider,
             IEventPublisher eventPublisher)
         {

@@ -1,4 +1,4 @@
-﻿using Application.Api.Events.External.ApplicationAdded;
+﻿using Application.Api.Events.External.ApplicationChanged;
 using Application.Commands.Commands;
 using AutoMapper;
 
@@ -8,7 +8,7 @@ namespace Application.Api.Profiles
     {
         public SaveApplicationCommandToApplicationAddedEventProfile()
         {
-            CreateMap<SaveApplicationCommand, ApplicationAddedEvent>();
+            CreateMap<SaveApplicationCommand, ApplicationChangedEvent>();
             CreateMap<Commands.Commands.Candidate.Address, Address>();
             CreateMap<Commands.Commands.Candidate.ConfirmedSkill, ConfirmedSkill>();
             CreateMap<Commands.Commands.Candidate.FinishedSchool, FinishedSchool>();

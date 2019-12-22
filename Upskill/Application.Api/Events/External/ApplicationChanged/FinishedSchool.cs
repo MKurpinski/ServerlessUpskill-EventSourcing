@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Application.Api.Events.External.ApplicationAdded
+namespace Application.Api.Events.External.ApplicationChanged
 {
     public class FinishedSchool
     {

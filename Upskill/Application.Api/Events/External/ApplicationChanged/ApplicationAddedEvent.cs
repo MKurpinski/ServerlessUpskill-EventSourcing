@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Upskill.EventPublisher;
 
-namespace Application.Api.Events.External.ApplicationAdded
+namespace Application.Api.Events.External.ApplicationChanged
 {
-    public class ApplicationAddedEvent : IEvent
+    public class ApplicationChangedEvent : IEvent
     {
         public string Id { get; set; }
         public DateTime CreationTime { get; }
@@ -19,7 +19,7 @@ namespace Application.Api.Events.External.ApplicationAdded
         public IReadOnlyCollection<ConfirmedSkill> ConfirmedSkills { get; }
         public IReadOnlyCollection<WorkExperience> WorkExperiences { get; }
 
-        public ApplicationAddedEvent(
+        public ApplicationChangedEvent(
             string id,
             DateTime creationTime,
             string photoUri,

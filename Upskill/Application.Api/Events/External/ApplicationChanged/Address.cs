@@ -1,4 +1,4 @@
-﻿namespace Application.Api.Events.External.ApplicationAdded
+﻿namespace Application.Api.Events.External.ApplicationChanged
 {
     public class Address
     {
