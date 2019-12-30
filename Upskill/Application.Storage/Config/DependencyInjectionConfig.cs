@@ -17,6 +17,7 @@ namespace Application.Storage.Config
             return builder.Services
                 .AddTransient<IFileWriter, FileWriter>()
                 .AddTransient<IFileDeleter, FileDeleter>()
+                .AddTransient<ISharedAccessSignatureProvider, SharedAccessSignatureProvider>()
                 .AddTransient<IFileNameProvider, FileNameProvider>()
                 .AddTransient<IProcessStatusRepository, ProcessStatusRepository>()
                 .AddTransient<ICategoryRepository, CategoryRepository>()
