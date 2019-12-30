@@ -1,12 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Search.Dtos;
 using Application.Search.Models;
+using Application.Search.Options;
 using Application.Search.Providers;
 using Application.Search.Queries;
+using Application.Storage.Blobs.Providers;
+using Application.Storage.Constants;
 using AutoMapper;
 using Microsoft.Azure.Search.Models;
+using Microsoft.Extensions.Options;
 using Upskill.Results;
 using Upskill.Results.Implementation;
 
@@ -15,12 +20,18 @@ namespace Application.Search.Handlers
     public class ApplicationSearchHandler : BaseSearchHandler<SearchableApplication>, IApplicationSearchHandler
     {
         private readonly IMapper _mapper;
+        private readonly SearchOptions _searchOptions;
+        private readonly ISharedAccessSignatureProvider _sharedAccessSignatureProvider;
 
         public ApplicationSearchHandler(
             ISearchIndexClientProvider searchIndexClientProvider,
-            IMapper mapper) : base(searchIndexClientProvider)
+            IMapper mapper,
+            ISharedAccessSignatureProvider sharedAccessSignatureProvider,
+            IOptions<SearchOptions> searchOptionsAccessor) : base(searchIndexClientProvider)
         {
             _mapper = mapper;
+            _sharedAccessSignatureProvider = sharedAccessSignatureProvider;
+            _searchOptions = searchOptionsAccessor.Value;
         }
 
         public async Task<PagedSearchResultDto<SimpleApplicationDto>> Search(SimpleApplicationSearchQuery query)
@@ -36,7 +47,14 @@ namespace Application.Search.Handlers
             var searchResults = await this.WildcardSearch(query.SearchPhrase, searchParameters);
 
             var mappedResults = _mapper.Map<IReadOnlyCollection<SearchableApplication>, IReadOnlyCollection<SimpleApplicationDto>>(searchResults.Results.Select(x => x.Document).ToList());
-            var result = new PagedSearchResultDto<SimpleApplicationDto>(mappedResults, searchResults.Count.Value);
+
+            var validFor = TimeSpan.FromHours(_searchOptions.SharedAccessSignatureLifetimeInHours);
+            var photoToken = _sharedAccessSignatureProvider.GetContainerSasUri(FileStore.PhotosContainer, validFor);
+            var cvToken = _sharedAccessSignatureProvider.GetContainerSasUri(FileStore.CvsContainer, validFor);
+
+            var results = mappedResults.Select(x => this.EnrichDtoWithTokens(x, cvToken, photoToken)).ToList();
+
+            var result = new PagedSearchResultDto<SimpleApplicationDto>(results, searchResults.Count.Value);
             return result;
         }
 
@@ -53,7 +71,19 @@ namespace Application.Search.Handlers
 
             var mapped = _mapper.Map<SearchableApplication, ApplicationDto>(matchingApplication);
 
-            return new SuccessfulDataResult<ApplicationDto>(mapped);
+
+            var validFor = TimeSpan.FromHours(_searchOptions.SharedAccessSignatureLifetimeInHours);
+            var photoToken = _sharedAccessSignatureProvider.GetContainerSasUri(FileStore.PhotosContainer, validFor);
+            var cvToken = _sharedAccessSignatureProvider.GetContainerSasUri(FileStore.CvsContainer, validFor);
+
+            return new SuccessfulDataResult<ApplicationDto>(this.EnrichDtoWithTokens(mapped, cvToken, photoToken));
+        }
+
+        private T EnrichDtoWithTokens<T>(T dto, string cvToken, string photoToken) where T: SimpleApplicationDto
+        {
+            dto.CvUri = $"{dto.CvUri}{cvToken}";
+            dto.PhotoUri = $"{dto.PhotoUri}{photoToken}";
+            return dto;
         }
     }
 }
