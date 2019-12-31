@@ -6,6 +6,7 @@ using Application.Commands.Config;
 using Application.Commands.Profiles;
 using Application.DataStorage.Config;
 using Application.ProcessStatus.Config;
+using Application.PushNotifications.Config;
 using Application.RequestMappers.Config;
 using Application.Search.Config;
 using Application.Search.Profiles;
@@ -44,6 +45,7 @@ namespace Application.Api
             builder.AddSearchModule();
             builder.AddCategories();
             builder.AddEventPublisher();
+            builder.AddPushNotifications();
         }
     }
 }
