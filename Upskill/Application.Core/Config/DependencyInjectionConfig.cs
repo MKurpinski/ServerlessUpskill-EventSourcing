@@ -1,0 +1,20 @@
+﻿using Application.Core.EventHandlers;
+using Application.Core.Events.ApplicationChangedEvent;
+using Application.Core.Handlers;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using Upskill.Events.Extensions;
+
+namespace Application.Core.Config
+{
+    public static class DependencyInjectionConfig
+    {
+        public static IServiceCollection AddCoreModule(this IFunctionsHostBuilder builder)
+        {
+            builder.AddEventHandler<ApplicationChangedEvent, ApplicationChangedEventHandler>();
+
+            return builder.Services
+                .AddTransient<ICategoryNameChangedHandler, CategoryNameChangedHandler>();
+        }
+    }
+}

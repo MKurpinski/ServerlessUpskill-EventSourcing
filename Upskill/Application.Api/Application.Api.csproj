@@ -20,7 +20,8 @@
     <ProjectReference Include="..\Application.RequestMappers\Application.RequestMappers.csproj" />
     <ProjectReference Include="..\Application.Search\Application.Search.csproj" />
     <ProjectReference Include="..\Application.Storage\Application.Storage.csproj" />
-    <ProjectReference Include="..\Upskill.EventPublisher\Upskill.EventPublisher.csproj" />
+    <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />
+    <ProjectReference Include="..\Upskill.Events\Upskill.Events.csproj" />
     <ProjectReference Include="..\Upskill.FunctionUtils\Upskill.FunctionUtils.csproj" />
     <ProjectReference Include="..\Upskill.Infrastructure\Upskill.Infrastructure.csproj" />
   </ItemGroup>

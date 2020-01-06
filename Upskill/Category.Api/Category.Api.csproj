@@ -10,9 +10,11 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
   </ItemGroup>
   <ItemGroup>
+	  <ProjectReference Include="..\Category.Core\Category.Core.csproj" />
 	  <ProjectReference Include="..\Category.DataStorage\Category.DataStorage.csproj" />
 	  <ProjectReference Include="..\Category.Storage\Category.Storage.csproj" />
-	  <ProjectReference Include="..\Upskill.EventPublisher\Upskill.EventPublisher.csproj" />
+	  <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />
+	  <ProjectReference Include="..\Upskill.Events\Upskill.Events.csproj" />
 	  <ProjectReference Include="..\Upskill.FunctionUtils\Upskill.FunctionUtils.csproj" />
 	  <ProjectReference Include="..\Upskill.Infrastructure\Upskill.Infrastructure.csproj" />
   </ItemGroup>
