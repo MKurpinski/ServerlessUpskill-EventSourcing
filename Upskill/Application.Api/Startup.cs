@@ -4,6 +4,8 @@ using Application.Api.Validators;
 using Application.Category.Config;
 using Application.Commands.Config;
 using Application.Commands.Profiles;
+using Application.Core.Config;
+using Application.Core.Profiles;
 using Application.DataStorage.Config;
 using Application.ProcessStatus.Config;
 using Application.PushNotifications.Config;
@@ -15,7 +17,7 @@ using AutoMapper;
 using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Upskill.EventPublisher.Config;
+using Upskill.EventsInfrastructure.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
 
@@ -29,13 +31,14 @@ namespace Application.Api
         {
             builder.Services.AddAutoMapper(
                 typeof(SaveApplicationCommandToApplicationProfile).Assembly,
-                typeof(SaveApplicationCommandToApplicationProfile).Assembly,
+                typeof(ApplicationChangedEventToApplicationDtoProfile).Assembly,
                 typeof(CandidateDtoToCandidateProfile).Assembly,
                 typeof(SearchableApplicationToApplicationDtoProfile).Assembly);
 
             builder.Services.AddTransient<IValidator<SimpleApplicationSearchHttpRequest>, SimpleApplicationSearchHttpRequestValidator>();
 
             builder.AddAppSettingsToConfiguration();
+            builder.AddCoreModule();
             builder.AddRequestMappersModule();
             builder.AddInfrastructureModule();
             builder.AddCommandsModule();
@@ -44,7 +47,7 @@ namespace Application.Api
             builder.AddProcessStatusModule();
             builder.AddSearchModule();
             builder.AddCategories();
-            builder.AddEventPublisher();
+            builder.AddEvents();
             builder.AddPushNotifications();
         }
     }

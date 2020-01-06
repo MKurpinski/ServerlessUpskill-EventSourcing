@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Category.DataStorage\Category.DataStorage.csproj" />
+    <ProjectReference Include="..\Category.Storage\Category.Storage.csproj" />
+    <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />
+    <ProjectReference Include="..\Upskill.Events\Upskill.Events.csproj" />
+  </ItemGroup>
+
+</Project>

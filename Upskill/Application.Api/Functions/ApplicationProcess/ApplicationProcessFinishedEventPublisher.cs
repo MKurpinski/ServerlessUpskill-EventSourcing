@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
-using Application.Api.Events.External.ApplicationChanged;
-using Application.Api.Events.External.Category;
+using Application.Category.Events.Outcoming;
 using Application.Commands.Commands;
+using Application.Core.Events.ApplicationChangedEvent;
 using Application.PushNotifications.Senders;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Upskill.EventPublisher.Publishers;
+using Upskill.EventsInfrastructure.Publishers;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
