@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Category.Storage.Tables.Dtos;
 using Category.Storage.Tables.Models;
-using Microsoft.WindowsAzure.Storage.Table;
 using Upskill.Storage.Table.Providers;
 using Upskill.Storage.Table.Repositories;
 
@@ -31,11 +29,7 @@ namespace Category.Storage.Tables.Repositories
 
         private async Task<IList<UsedCategory>> GetByIdInternal(string categoryId)
         {
-            var partitionKeyCondition = TableQuery.GenerateFilterCondition(nameof(UsedCategory.PartitionKey), QueryComparisons.Equal, categoryId);
-
-            var query = new TableQuery<UsedCategory>().Where(partitionKeyCondition);
-
-            var queryResult = await this.GetBy(query);
+            var queryResult = await this.GetByField(nameof(UsedCategory.PartitionKey), categoryId);
             return queryResult;
         }
     }

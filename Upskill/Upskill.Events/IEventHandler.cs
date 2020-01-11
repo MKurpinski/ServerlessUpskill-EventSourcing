@@ -4,6 +4,6 @@ namespace Upskill.Events
 {
     public interface IEventHandler<T> where T: IEvent
     {
-        Task Handle(T @event);
+        Task Handle(T applicationAddedEvent);
     }
 }

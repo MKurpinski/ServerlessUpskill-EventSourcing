@@ -14,7 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Application.Category\Application.Category.csproj" />
     <ProjectReference Include="..\Application.Commands\Application.Commands.csproj" />
-    <ProjectReference Include="..\Application.DataStorage\Application.DataStorage.csproj" />
+    <ProjectReference Include="..\Application.Core\Application.Core.csproj" />
     <ProjectReference Include="..\Application.ProcessStatus\Application.ProcessStatus.csproj" />
     <ProjectReference Include="..\Application.PushNotifications\Application.PushNotifications.csproj" />
     <ProjectReference Include="..\Application.RequestMappers\Application.RequestMappers.csproj" />

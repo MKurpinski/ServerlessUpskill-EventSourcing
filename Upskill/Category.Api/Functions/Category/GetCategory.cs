@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Category.DataStorage.Repositories;
+using Category.Storage.Tables.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;

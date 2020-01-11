@@ -1,13 +1,13 @@
 using System.Threading.Tasks;
 using Category.Api.CustomHttpRequests;
 using Category.Core.Events;
-using Category.DataStorage.Dtos;
-using Category.DataStorage.Repositories;
+using Category.Core.Events.Internal;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
@@ -15,18 +15,15 @@ namespace Category.Api.Functions.Category
 {
     public class CreateCategory
     {
-        private readonly ICategoryRepository _categoryRepository;
         private readonly IGuidProvider _guidProvider;
         private readonly IValidator<CreateCategoryHttpRequest> _createCategoryRequestValidator;
         private readonly IEventPublisher _eventPublisher;
 
         public CreateCategory(
-            ICategoryRepository categoryRepository,
             IValidator<CreateCategoryHttpRequest> createCategoryRequestValidator,
             IGuidProvider guidProvider,
             IEventPublisher eventPublisher)
         {
-            _categoryRepository = categoryRepository;
             _createCategoryRequestValidator = createCategoryRequestValidator;
             _guidProvider = guidProvider;
             _eventPublisher = eventPublisher;
@@ -46,26 +43,17 @@ namespace Category.Api.Functions.Category
 
             var id = _guidProvider.GenerateGuid().ToString("N");
 
-            var categoryToAdd = new CategoryDto(
+            var categoryAddedEvent = new InternalCategoryAddedEvent(
                 id,
                 createCategoryRequest.Name,
                 createCategoryRequest.Description,
                 createCategoryRequest.SortOrder);
 
-            var createResult = await _categoryRepository.Create(categoryToAdd);
+            //save event
 
-            if (!createResult.Success)
-            {
-                return new BadRequestResult();
-            }
+            await _eventPublisher.PublishEvent(categoryAddedEvent);
 
-            await _eventPublisher.PublishEvent(this.BuildCategoryChangedEvent(categoryToAdd));
-            return new CreatedResult(id, categoryToAdd);
-        }
-
-        private CategoryChangedEvent BuildCategoryChangedEvent(CategoryDto dto)
-        {
-            return new CategoryChangedEvent(dto.Id, dto.Name, dto.Description, dto.SortOrder);
+            return new AcceptedWithCorrelationIdHeaderResult(id);
         }
     }
 }

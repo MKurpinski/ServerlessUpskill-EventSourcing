@@ -2,7 +2,6 @@
 using Category.Api.CustomHttpRequests;
 using Category.Api.Validators;
 using Category.Core.Config;
-using Category.DataStorage.Config;
 using Category.Storage.Config;
 using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -24,7 +23,6 @@ namespace Category.Api
 
             builder.AddCoreModule();
             builder.AddAppSettingsToConfiguration();
-            builder.AddDataStorageModule();
             builder.AddStorageModule();
             builder.AddInfrastructureModule();
             builder.AddEvents();

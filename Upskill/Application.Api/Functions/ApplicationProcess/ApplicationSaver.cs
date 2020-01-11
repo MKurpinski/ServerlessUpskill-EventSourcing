@@ -1,26 +1,26 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Application.Api.Events.Internal;
 using Application.Commands.Commands;
-using Application.DataStorage.Repositories;
+using Application.Core.Events.ApplicationAddedEvent;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using Upskill.EventsInfrastructure.Publishers;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
     public class ApplicationSaver
     {
-        private readonly IApplicationRepository _applicationRepository;
         private readonly IMapper _mapper;
+        private readonly IEventPublisher _eventPublisher;
 
         public ApplicationSaver(
-            IApplicationRepository applicationRepository,
-            IMapper mapper)
+            IMapper mapper, 
+            IEventPublisher eventPublisher)
         {
-            _applicationRepository = applicationRepository;
             _mapper = mapper;
+            _eventPublisher = eventPublisher;
         }
 
         [FunctionName(nameof(ApplicationSaver))]
@@ -30,18 +30,15 @@ namespace Application.Api.Functions.ApplicationProcess
             ILogger log)
         {
             var command = context.GetInput<SaveApplicationCommand>();
-            var applicationToSave = _mapper.Map<SaveApplicationCommand, DataStorage.Models.Application>(command);
-            var saveResult = await _applicationRepository.Create(applicationToSave);
 
-            if (!saveResult.Success)
-            {
-                this.LogError(log, context.InstanceId, string.Join(',', saveResult.Errors.Select(x => x.Value)));
-                var eventToDispatch = new ApplicationSaveFailedInternalFunctionEvent(saveResult.Errors);
-                await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailedInternalFunctionEvent), eventToDispatch);
-                return;
-            }
 
-            var applicationSavedEvent = new ApplicationSavedInternalFunctionEvent(applicationToSave);
+            var applicationAddedEvent = _mapper.Map<SaveApplicationCommand, ApplicationAddedEvent>(command);
+
+            // save event
+
+            await _eventPublisher.PublishEvent(applicationAddedEvent);
+
+            var applicationSavedEvent = new ApplicationSavedInternalFunctionEvent();
             await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSavedInternalFunctionEvent), applicationSavedEvent);
         }
 

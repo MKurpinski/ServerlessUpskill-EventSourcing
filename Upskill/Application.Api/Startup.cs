@@ -6,7 +6,6 @@ using Application.Commands.Config;
 using Application.Commands.Profiles;
 using Application.Core.Config;
 using Application.Core.Profiles;
-using Application.DataStorage.Config;
 using Application.ProcessStatus.Config;
 using Application.PushNotifications.Config;
 using Application.RequestMappers.Config;
@@ -30,8 +29,8 @@ namespace Application.Api
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.Services.AddAutoMapper(
-                typeof(SaveApplicationCommandToApplicationProfile).Assembly,
-                typeof(ApplicationChangedEventToApplicationDtoProfile).Assembly,
+                typeof(SaveApplicationCommandToApplicationAddedEventProfile).Assembly,
+                typeof(ApplicationAddedEventToApplicationDtoProfile).Assembly,
                 typeof(CandidateDtoToCandidateProfile).Assembly,
                 typeof(SearchableApplicationToApplicationDtoProfile).Assembly);
 
@@ -43,7 +42,6 @@ namespace Application.Api
             builder.AddInfrastructureModule();
             builder.AddCommandsModule();
             builder.AddStorageModule();
-            builder.AddDataStorageModule();
             builder.AddProcessStatusModule();
             builder.AddSearchModule();
             builder.AddCategories();

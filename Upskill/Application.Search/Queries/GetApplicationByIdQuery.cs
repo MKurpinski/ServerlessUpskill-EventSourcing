@@ -1,6 +1,6 @@
 ﻿namespace Application.Search.Queries
 {
-    public class GetApplicationByIdQuery
+    public class GetApplicationByIdQuery: IQuery
     {
         public string Id { get; }
 

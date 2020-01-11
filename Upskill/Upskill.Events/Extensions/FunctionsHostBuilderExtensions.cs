@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Upskill.EventsInfrastructure.Mappers;
+using Upskill.Events.Mappers;
 
 namespace Upskill.Events.Extensions
 {

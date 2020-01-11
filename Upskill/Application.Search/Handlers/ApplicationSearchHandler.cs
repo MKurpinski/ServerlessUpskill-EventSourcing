@@ -71,13 +71,22 @@ namespace Application.Search.Handlers
 
             var mapped = _mapper.Map<SearchableApplication, ApplicationDto>(matchingApplication);
 
-
             var validFor = TimeSpan.FromHours(_searchOptions.SharedAccessSignatureLifetimeInHours);
             var photoToken = _sharedAccessSignatureProvider.GetContainerSasUri(FileStore.PhotosContainer, validFor);
             var cvToken = _sharedAccessSignatureProvider.GetContainerSasUri(FileStore.CvsContainer, validFor);
 
             return new SuccessfulDataResult<ApplicationDto>(this.EnrichDtoWithTokens(mapped, cvToken, photoToken));
         }
+
+        public async Task<IEnumerable<ApplicationDto>> GetByCategory(GetApplicationsByCategoryQuery query)
+        {
+            var searchResults = await this.GetByField(nameof(SearchableApplication.Category), query.CategoryName);
+
+            var mappedResults = _mapper.Map<IReadOnlyCollection<SearchableApplication>, IReadOnlyCollection<ApplicationDto>>(searchResults.Results.Select(x => x.Document).ToList());
+
+            return mappedResults;
+        }
+
 
         private T EnrichDtoWithTokens<T>(T dto, string cvToken, string photoToken) where T: SimpleApplicationDto
         {

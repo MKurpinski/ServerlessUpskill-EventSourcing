@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Application.Category.Events.Incoming;
-using Application.Core.Handlers;
+using Application.Category.Events.Outcoming;
 using Application.Storage.Dtos;
 using Application.Storage.Tables.Repositories;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
+using Upskill.EventsInfrastructure.Publishers;
 
 namespace Application.Category.EventHandlers
 {
@@ -12,16 +13,16 @@ namespace Application.Category.EventHandlers
     {
         private readonly ILogger<CategoryChangedEventHandler> _logger;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly ICategoryNameChangedHandler _categoryNameChangedHandler;
+        private readonly IEventPublisher _eventPublisher;
 
         public CategoryChangedEventHandler(
             ILogger<CategoryChangedEventHandler> logger,
             ICategoryRepository categoryRepository,
-            ICategoryNameChangedHandler categoryNameChangedHandler)
+            IEventPublisher eventPublisher)
         {
             _logger = logger;
             _categoryRepository = categoryRepository;
-            _categoryNameChangedHandler = categoryNameChangedHandler;
+            _eventPublisher = eventPublisher;
         }
 
         public async Task Handle(CategoryChangedEvent categoryChangedEvent)
@@ -30,9 +31,11 @@ namespace Application.Category.EventHandlers
 
             if (existingCategoryResult.Success && !existingCategoryResult.Value.Name.Equals(categoryChangedEvent.Name))
             {
-                await _categoryNameChangedHandler.HandleCategoryNameChange(
-                    existingCategoryResult.Value.Name,
-                    categoryChangedEvent.Name);
+
+                await _eventPublisher.PublishEvent(
+                    new CategoryNameChangedEvent(
+                        existingCategoryResult.Value.Name,
+                        categoryChangedEvent.Name));
             }
 
             await _categoryRepository.CreateOrUpdate(new CategoryDto(categoryChangedEvent.Id, categoryChangedEvent.Name));

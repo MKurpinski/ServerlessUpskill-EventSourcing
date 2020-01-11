@@ -1,8 +1,10 @@
 ﻿using Category.Core.EventHandlers;
 using Category.Core.Events;
+using Category.Core.Events.External;
+using Category.Core.Events.Internal;
+using Category.Core.Validators;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Upskill.Events;
 using Upskill.Events.Extensions;
 
 namespace Category.Core.Config
@@ -11,9 +13,12 @@ namespace Category.Core.Config
     {
         public static IServiceCollection AddCoreModule(this IFunctionsHostBuilder builder)
         {
+            builder.Services.AddTransient<IDeleteValidator, DeleteValidator>();
+
             builder.AddEventHandler<CategoryUsedEvent, CategoryUsedEventHandler>();
-            builder.AddEventHandler<CategoryChangedEvent, CategoryChangedEventHandler>();
-            return builder.AddEventHandler<CategoryDeletedEvent, CategoryDeletedEventHandler>();
+            builder.AddEventHandler<InternalCategoryChangedEvent, CategoryChangedEventHandler>();
+            builder.AddEventHandler<InternalCategoryAddedEvent, CategoryAddedEventHandler>();
+            return builder.AddEventHandler<InternalCategoryDeletedEvent, CategoryDeletedEventHandler>();
         }
     }
 }
