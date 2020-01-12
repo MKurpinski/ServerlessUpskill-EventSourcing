@@ -1,11 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Application.Category.Events.Incoming;
-using Application.Category.Events.Outcoming;
 using Application.Storage.Dtos;
 using Application.Storage.Tables.Repositories;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
-using Upskill.EventsInfrastructure.Publishers;
 
 namespace Application.Category.EventHandlers
 {

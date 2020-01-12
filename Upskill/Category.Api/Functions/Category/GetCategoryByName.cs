@@ -20,7 +20,7 @@ namespace Category.Api.Functions.Category
 
         [FunctionName(nameof(GetCategoryByName))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Get, Route = "category/name/{name:guid}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Get, Route = "category/name/{name}")] HttpRequest req,
             string name)
         {
             var categoryResult = await _categoryRepository.GetByName(name);

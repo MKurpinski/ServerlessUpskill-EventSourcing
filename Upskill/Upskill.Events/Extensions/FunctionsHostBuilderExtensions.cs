@@ -9,7 +9,7 @@ namespace Upskill.Events.Extensions
     {
         public static IServiceCollection AddEventHandler<TEvent, THandler>(this IFunctionsHostBuilder builder) where TEvent : IEvent where THandler : class, IEventHandler<TEvent>
         {
-            builder.Services.TryAddSingleton<ITypeMapper, TypeMapper<TEvent>>();
+            builder.Services.AddSingleton<ITypeMapper, TypeMapper<TEvent>>();
 
             return builder.Services
                 .AddTransient<IEventHandler<TEvent>, THandler>();

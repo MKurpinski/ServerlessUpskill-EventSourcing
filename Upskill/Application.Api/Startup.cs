@@ -6,6 +6,7 @@ using Application.Commands.Config;
 using Application.Commands.Profiles;
 using Application.Core.Config;
 using Application.Core.Profiles;
+using Application.EventStore.Config;
 using Application.ProcessStatus.Config;
 using Application.PushNotifications.Config;
 using Application.RequestMappers.Config;
@@ -37,7 +38,7 @@ namespace Application.Api
 
             builder.Services.AddTransient<IValidator<SimpleApplicationSearchHttpRequest>, SimpleApplicationSearchHttpRequestValidator>();
 
-            builder.AddEventStore();
+            builder.AddApplicationEventStore();
             builder.AddAppSettingsToConfiguration();
             builder.AddCoreModule();
             builder.AddRequestMappersModule();

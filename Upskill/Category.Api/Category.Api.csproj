@@ -11,9 +11,9 @@
   </ItemGroup>
   <ItemGroup>
 	  <ProjectReference Include="..\Category.Core\Category.Core.csproj" />
+	  <ProjectReference Include="..\Category.EventStore\Category.EventStore.csproj" />
 	  <ProjectReference Include="..\Category.Storage\Category.Storage.csproj" />
 	  <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />
-	  <ProjectReference Include="..\Upskill.EventStore\Upskill.EventStore.csproj" />
 	  <ProjectReference Include="..\Upskill.Events\Upskill.Events.csproj" />
 	  <ProjectReference Include="..\Upskill.FunctionUtils\Upskill.FunctionUtils.csproj" />
 	  <ProjectReference Include="..\Upskill.Infrastructure\Upskill.Infrastructure.csproj" />

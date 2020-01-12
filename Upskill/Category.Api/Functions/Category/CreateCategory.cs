@@ -1,13 +1,13 @@
 using System.Threading.Tasks;
 using Category.Api.CustomHttpRequests;
 using Category.Core.Events.Internal;
+using Category.EventStore.Facades;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
-using Upskill.EventStore;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Extensions;
@@ -20,13 +20,13 @@ namespace Category.Api.Functions.Category
         private readonly IGuidProvider _guidProvider;
         private readonly IValidator<CreateCategoryHttpRequest> _createCategoryRequestValidator;
         private readonly IEventPublisher _eventPublisher;
-        private readonly IEventStore _eventStore;
+        private readonly IEventStoreFacade _eventStore;
 
         public CreateCategory(
             IValidator<CreateCategoryHttpRequest> createCategoryRequestValidator,
             IGuidProvider guidProvider,
             IEventPublisher eventPublisher,
-            IEventStore eventStore)
+            IEventStoreFacade eventStore)
         {
             _createCategoryRequestValidator = createCategoryRequestValidator;
             _guidProvider = guidProvider;

@@ -10,7 +10,8 @@ namespace Category.Storage.Config
         public static IServiceCollection AddStorageModule(this IFunctionsHostBuilder builder)
         {
             builder.AddStorage();
-
+            builder.Services
+                .AddTransient<ICategoryRepository, CategoryRepository>();
             return builder.Services
                 .AddTransient<IUsedCategoryRepository, UsedCategoryRepository>();
         }

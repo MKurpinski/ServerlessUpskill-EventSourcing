@@ -24,9 +24,9 @@ namespace Application.Core.EventHandlers
             _applicationSearchHandler = applicationSearchHandler;
         }
 
-        public async Task Handle(Events.ApplicationCategoryNameChangedEvent applicationCategoryNameChangedEvent)
+        public async Task Handle(ApplicationCategoryNameChangedEvent applicationCategoryNameChangedEvent)
         {
-            _logger.LogInformation($"{nameof(Events.ApplicationCategoryNameChangedEvent)} with id: {applicationCategoryNameChangedEvent.Id}, processing started");
+            _logger.LogInformation($"{nameof(ApplicationCategoryNameChangedEvent)} with id: {applicationCategoryNameChangedEvent.Id}, processing started");
             var applicationGetResult = await _applicationSearchHandler.GetById(new GetApplicationByIdQuery(applicationCategoryNameChangedEvent.Id));
 
             if (!applicationGetResult.Success)

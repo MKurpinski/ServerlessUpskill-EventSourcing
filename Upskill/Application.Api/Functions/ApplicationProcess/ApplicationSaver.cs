@@ -2,10 +2,10 @@ using System.Threading.Tasks;
 using Application.Api.Events.Internal;
 using Application.Commands.Commands;
 using Application.Core.Events.ApplicationAddedEvent;
+using Application.EventStore.Facades;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
 
@@ -15,12 +15,12 @@ namespace Application.Api.Functions.ApplicationProcess
     {
         private readonly IMapper _mapper;
         private readonly IEventPublisher _eventPublisher;
-        private readonly IEventStore _eventStore;
+        private readonly IEventStoreFacade _eventStore;
 
         public ApplicationSaver(
             IMapper mapper, 
-            IEventPublisher eventPublisher, 
-            IEventStore eventStore)
+            IEventPublisher eventPublisher,
+            IEventStoreFacade eventStore)
         {
             _mapper = mapper;
             _eventPublisher = eventPublisher;
@@ -30,8 +30,7 @@ namespace Application.Api.Functions.ApplicationProcess
         [FunctionName(nameof(ApplicationSaver))]
         public async Task Run(
             [DurableClient] IDurableOrchestrationClient client,
-            [ActivityTrigger] IDurableActivityContext context,
-            ILogger log)
+            [ActivityTrigger] IDurableActivityContext context)
         {
             var command = context.GetInput<SaveApplicationCommand>();
 
@@ -49,11 +48,6 @@ namespace Application.Api.Functions.ApplicationProcess
 
             var applicationSavedEvent = new ApplicationSavedInternalFunctionEvent();
             await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSavedInternalFunctionEvent), applicationSavedEvent);
-        }
-
-        private void LogError(ILogger log, string instanceId, string error)
-        {
-            log.LogError($"Saving application failed instanceId: {instanceId}, error: {error}");
         }
     }
 }
