@@ -2,20 +2,20 @@
 
 namespace Application.Storage.Tables.Models
 {
-    public class Category : TableEntity
+    public class ApplicationCategory : TableEntity
     {
         public string Id { get; set; }
         public string Name { get; set; }
 
-        public Category()
+        public ApplicationCategory()
         {
         }
 
-        public Category(string id, string name)
+        public ApplicationCategory(string id, string name)
         {
             Id = id;
             Name = name;
-            PartitionKey = nameof(Category);
+            PartitionKey = nameof(ApplicationCategory);
             RowKey = Id;
         }
     }
