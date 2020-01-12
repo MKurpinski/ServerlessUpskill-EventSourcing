@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Core", "Applica
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Category.Core", "Category.Core\Category.Core.csproj", "{CC2B6682-5AC4-489F-B2C1-21E2C15D98F9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.EventStore", "Upskill.EventStore\Upskill.EventStore.csproj", "{171F7985-9F21-4941-A82D-14F5C5CF6464}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,10 @@ Global
 		{CC2B6682-5AC4-489F-B2C1-21E2C15D98F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC2B6682-5AC4-489F-B2C1-21E2C15D98F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC2B6682-5AC4-489F-B2C1-21E2C15D98F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{171F7985-9F21-4941-A82D-14F5C5CF6464}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{171F7985-9F21-4941-A82D-14F5C5CF6464}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{171F7985-9F21-4941-A82D-14F5C5CF6464}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{171F7985-9F21-4941-A82D-14F5C5CF6464}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -146,6 +152,7 @@ Global
 		{0E9A6442-809B-4588-AF27-2A80F21B86B9} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 		{611F20EF-9664-4168-974A-7F5DF42A5362} = {4A07BF84-9C4F-479E-9541-DF1DBD96586A}
 		{CC2B6682-5AC4-489F-B2C1-21E2C15D98F9} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
+		{171F7985-9F21-4941-A82D-14F5C5CF6464} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BEEA3619-2CA9-4BDD-B713-A656BE95FBB0}

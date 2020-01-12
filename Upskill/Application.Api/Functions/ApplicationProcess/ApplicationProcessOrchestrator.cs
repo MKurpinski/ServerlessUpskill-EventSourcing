@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Api.Events.Internal;
-using Application.Api.Extensions;
 using Application.Commands.Commands;
 using Application.ProcessStatus.Enums;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using Upskill.Infrastructure.Extensions;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -93,7 +93,7 @@ namespace Application.Api.Functions.ApplicationProcess
             var applicationSavedSuccessfully = applicationSaveEvent == applicationSavedEvent;
             if (!applicationSavedSuccessfully)
             {
-                log.LogError($"Storing application failed with instance id: {context.InstanceId}");
+                log.LogErrors($"Storing application failed with instance id: {context.InstanceId}", applicationSaveFailed.Result.Errors);
                 var failedProcessCommand = this.BuildFailedProcessCommand(context, applicationSaveFailed.Result.Errors);
                 await context.CallActivityAsync<Task>(nameof(StatusTracker), failedProcessCommand);
                 await this.StartRecompensateProcess(processStarter, context, command, log);

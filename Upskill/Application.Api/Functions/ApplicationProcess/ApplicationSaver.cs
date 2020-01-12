@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -14,13 +15,16 @@ namespace Application.Api.Functions.ApplicationProcess
     {
         private readonly IMapper _mapper;
         private readonly IEventPublisher _eventPublisher;
+        private readonly IEventStore _eventStore;
 
         public ApplicationSaver(
             IMapper mapper, 
-            IEventPublisher eventPublisher)
+            IEventPublisher eventPublisher, 
+            IEventStore eventStore)
         {
             _mapper = mapper;
             _eventPublisher = eventPublisher;
+            _eventStore = eventStore;
         }
 
         [FunctionName(nameof(ApplicationSaver))]
@@ -31,10 +35,15 @@ namespace Application.Api.Functions.ApplicationProcess
         {
             var command = context.GetInput<SaveApplicationCommand>();
 
-
             var applicationAddedEvent = _mapper.Map<SaveApplicationCommand, ApplicationAddedEvent>(command);
 
-            // save event
+            var result = await _eventStore.AppendEvent(applicationAddedEvent.Id, applicationAddedEvent);
+            
+            if (!result.Success)
+            {
+                var applicationSaveFailedEvent = new ApplicationSaveFailedInternalFunctionEvent(result.Errors);
+                await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailedInternalFunctionEvent), applicationSaveFailedEvent);
+            }
 
             await _eventPublisher.PublishEvent(applicationAddedEvent);
 

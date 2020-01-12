@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Application.Search\Application.Search.csproj" />
     <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />
+    <ProjectReference Include="..\Upskill.EventStore\Upskill.EventStore.csproj" />
   </ItemGroup>
 
 </Project>

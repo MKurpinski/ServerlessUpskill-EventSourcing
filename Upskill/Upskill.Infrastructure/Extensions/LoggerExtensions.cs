@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Api.Extensions
+namespace Upskill.Infrastructure.Extensions
 {
     public static class LoggerExtensions
     {

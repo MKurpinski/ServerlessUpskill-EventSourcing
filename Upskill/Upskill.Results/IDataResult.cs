@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Upskill.Results
+﻿namespace Upskill.Results
 {
-    public interface IDataResult<T> : IResult
+    public interface IDataResult<T> : IMessageResult
     {
         T Value { get; }
-
-        IReadOnlyCollection<KeyValuePair<string, string>> Errors { get; }
     }
 }

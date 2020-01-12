@@ -7,6 +7,7 @@ using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Upskill.EventsInfrastructure.Config;
+using Upskill.EventStore.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
 
@@ -22,6 +23,7 @@ namespace Category.Api
             builder.Services.AddTransient<IValidator<UpdateCategoryCommand>, UpdateCategoryCommandValidator>();
 
             builder.AddCoreModule();
+            builder.AddEventStore();
             builder.AddAppSettingsToConfiguration();
             builder.AddStorageModule();
             builder.AddInfrastructureModule();

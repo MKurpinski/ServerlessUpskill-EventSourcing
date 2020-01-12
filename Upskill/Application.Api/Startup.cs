@@ -17,6 +17,7 @@ using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Upskill.EventsInfrastructure.Config;
+using Upskill.EventStore.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
 
@@ -36,6 +37,7 @@ namespace Application.Api
 
             builder.Services.AddTransient<IValidator<SimpleApplicationSearchHttpRequest>, SimpleApplicationSearchHttpRequestValidator>();
 
+            builder.AddEventStore();
             builder.AddAppSettingsToConfiguration();
             builder.AddCoreModule();
             builder.AddRequestMappersModule();
