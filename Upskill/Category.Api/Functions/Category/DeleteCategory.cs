@@ -1,62 +1,49 @@
 using System.Threading.Tasks;
-using Category.Core.Events;
-using Category.DataStorage.Repositories;
-using Category.Storage.Tables.Repositories;
+using Category.Core.Events.Internal;
+using Category.EventStore.Facades;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.FunctionUtils.Results;
+using Upskill.Infrastructure.Extensions;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions.Category
 {
     public class DeleteCategory
     {
-        private readonly ICategoryRepository _categoryRepository;
-        private readonly IUsedCategoryRepository _usedCategoryRepository;
         private readonly IEventPublisher _eventPublisher;
+        private readonly IEventStoreFacade _eventStore;
 
         public DeleteCategory(
-            ICategoryRepository categoryRepository,
-            IUsedCategoryRepository usedCategoryRepository,
-            IEventPublisher eventPublisher)
+            IEventPublisher eventPublisher,
+            IEventStoreFacade eventStore)
         {
-            _categoryRepository = categoryRepository;
-            _usedCategoryRepository = usedCategoryRepository;
             _eventPublisher = eventPublisher;
+            _eventStore = eventStore;
         }
 
         [FunctionName(nameof(DeleteCategory))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Delete, Route = "category/{id:guid}")] HttpRequest req,
-            string id)
+            string id,
+            ILogger log)
         {
-            var category = await _categoryRepository.GetById(id);
+            var categoryDeletedEvent = new InternalCategoryDeletedEvent(id);
 
-            if (!category.Success)
+            var saveEventResult = await _eventStore.AppendEvent(id, categoryDeletedEvent);
+
+            if (!saveEventResult.Success)
             {
-                return new NotFoundResult();
+                log.LogErrors(nameof(DeleteCategory), saveEventResult.Errors);
+                return new BadRequestResult();
             }
 
-            var categoryUsage = await _usedCategoryRepository.GetCategoryUsageById(id);
-
-            var canDelete = categoryUsage.UsageCounter == default;
-
-            if (!canDelete)
-            {
-                return new BadRequestObjectResult("Cannot delete the category, when it's used");
-            }
-
-            var deleteResult = await _categoryRepository.Delete(id);
-
-            if (!deleteResult.Success)
-            {
-                return new NotFoundResult();
-            }
-
-            await _eventPublisher.PublishEvent(new CategoryDeletedEvent(id));
-            return new NoContentResult();
+            await _eventPublisher.PublishEvent(new InternalCategoryDeletedEvent(id));
+            return new AcceptedWithCorrelationIdHeaderResult(id);
         }
     }
 }

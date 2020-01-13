@@ -30,15 +30,23 @@ namespace Application.Search.Handlers
 
         protected async Task<DocumentSearchResult<T>> GetById(string id)
         {
+            return await GetByField(nameof(ISearchable.Id), id);
+        }
+
+        protected async Task<DocumentSearchResult<T>> GetByField(string fieldName, string value, int? skip = null, int? top = null)
+        {
             var client = await SearchIndexClientProvider.Get<T>();
 
             var searchParameters = new SearchParameters
             {
-                 QueryType = QueryType.Full,
-                 SearchFields = new List<string> { nameof(ISearchable.Id).ToLowerInvariant() }
+                QueryType = QueryType.Full,
+                Skip = skip,
+                Top = top,
+                IncludeTotalResultCount = true,
+                SearchFields = new List<string> { fieldName.ToLowerInvariant() }
             };
 
-            var searchResults = await client.Documents.SearchAsync<T>(id, searchParameters);
+            var searchResults = await client.Documents.SearchAsync<T>(value, searchParameters);
 
             return searchResults;
         }

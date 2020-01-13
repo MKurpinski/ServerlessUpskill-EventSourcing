@@ -1,46 +1,42 @@
 using System.Threading.Tasks;
 using Category.Api.Commands;
 using Category.Api.CustomHttpRequests;
-using Category.Core.Events;
-using Category.DataStorage.Dtos;
-using Category.DataStorage.Repositories;
+using Category.Core.Events.Internal;
+using Category.EventStore.Facades;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.FunctionUtils.Results;
+using Upskill.Infrastructure.Extensions;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions.Category
 {
     public class UpdateCategory
     {
-        private readonly ICategoryRepository _categoryRepository;
         private readonly IValidator<UpdateCategoryCommand> _updateCommandValidator;
         private readonly IEventPublisher _eventPublisher;
+        private readonly IEventStoreFacade _eventStore;
 
         public UpdateCategory(
-            ICategoryRepository categoryRepository,
             IValidator<UpdateCategoryCommand> updateCommandValidator,
-            IEventPublisher eventPublisher)
+            IEventPublisher eventPublisher,
+            IEventStoreFacade eventStore)
         {
-            _categoryRepository = categoryRepository;
             _eventPublisher = eventPublisher;
+            _eventStore = eventStore;
             _updateCommandValidator = updateCommandValidator;
         }
 
         [FunctionName(nameof(UpdateCategory))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Put, Route = "category/{id:guid}")] UpdateCategoryHttpRequest updateCategoryRequest,
-            string id)
+            string id,
+            ILogger log)
         {
-            var existingCategoryResult = await _categoryRepository.GetById(id);
-
-            if (!existingCategoryResult.Success)
-            {
-                return new NotFoundResult();
-            }
-
             var validationResult = await _updateCommandValidator.ValidateAsync(new UpdateCategoryCommand(id, updateCategoryRequest));
 
             if (!validationResult.IsValid)
@@ -48,27 +44,23 @@ namespace Category.Api.Functions.Category
                 return new BadRequestObjectResult(validationResult.Errors);
             }
 
-            var categoryToUpdate = new CategoryDto(
+            var categoryChangedEvent = new InternalCategoryChangedEvent(
                 id,
                 updateCategoryRequest.Name,
                 updateCategoryRequest.Description,
                 updateCategoryRequest.SortOrder);
 
-            var updateResult = await _categoryRepository.Update(categoryToUpdate);
+            var saveEventResult = await _eventStore.AppendEvent(id, categoryChangedEvent);
 
-            if (!updateResult.Success)
+            if (!saveEventResult.Success)
             {
+                log.LogErrors(nameof(UpdateCategory), saveEventResult.Errors);
                 return new BadRequestResult();
             }
 
-            await _eventPublisher.PublishEvent(this.BuildCategoryChangedEvent(categoryToUpdate));
+            await _eventPublisher.PublishEvent(categoryChangedEvent);
 
-            return new NoContentResult();
-        }
-
-        private CategoryChangedEvent BuildCategoryChangedEvent(CategoryDto dto)
-        {
-            return new CategoryChangedEvent(dto.Id, dto.Name, dto.Description, dto.SortOrder);
+            return new AcceptedWithCorrelationIdHeaderResult(id);
         }
     }
 }

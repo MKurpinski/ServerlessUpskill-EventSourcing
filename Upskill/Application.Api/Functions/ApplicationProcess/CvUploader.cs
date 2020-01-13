@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Application.Api.Events.Internal;
-using Application.Api.Extensions;
 using Application.Commands.Commands;
 using Application.Storage.Blobs.Providers;
 using Application.Storage.Blobs.Writers;
@@ -8,6 +7,7 @@ using Application.Storage.Constants;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using Upskill.Infrastructure.Extensions;
 
 namespace Application.Api.Functions.ApplicationProcess
 {

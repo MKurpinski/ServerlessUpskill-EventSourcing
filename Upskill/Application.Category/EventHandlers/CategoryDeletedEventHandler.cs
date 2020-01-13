@@ -14,9 +14,9 @@ namespace Application.Category.EventHandlers
             _categoryRepository = categoryRepository;
         }
 
-        public async Task Handle(CategoryDeletedEvent categoryDeletedEvent)
+        public async Task Handle(CategoryDeletedEvent applicationAddedEvent)
         {
-            await _categoryRepository.Delete(categoryDeletedEvent.Id);
+            await _categoryRepository.Delete(applicationAddedEvent.Id);
         }
     }
 }

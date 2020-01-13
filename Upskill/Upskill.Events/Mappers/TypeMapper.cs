@@ -1,7 +1,6 @@
 ﻿using System;
-using Upskill.Events;
 
-namespace Upskill.EventsInfrastructure.Mappers
+namespace Upskill.Events.Mappers
 {
     public class TypeMapper<T> : ITypeMapper where T : IEvent
     {

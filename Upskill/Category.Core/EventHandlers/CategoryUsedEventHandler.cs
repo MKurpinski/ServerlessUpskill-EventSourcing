@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Category.Core.Events;
-using Category.DataStorage.Repositories;
+using Category.Core.Events.External;
 using Category.Storage.Tables.Repositories;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
@@ -23,19 +23,19 @@ namespace Category.Core.EventHandlers
             _logger = logger;
         }
 
-        public async Task Handle(CategoryUsedEvent categoryUsedEvent)
+        public async Task Handle(CategoryUsedEvent applicationAddedEvent)
         {
-            _logger.LogInformation($"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name}, has been used in {categoryUsedEvent.UsedIn}");
+            _logger.LogInformation($"{nameof(CategoryUsedEvent)} with name: {applicationAddedEvent.Name}, has been used in {applicationAddedEvent.UsedIn}");
 
-            var categoryResult = await _categoryRepository.GetByName(categoryUsedEvent.Name);
+            var categoryResult = await _categoryRepository.GetByName(applicationAddedEvent.Name);
 
             if (!categoryResult.Success)
             {
-                _logger.LogError($"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name} cannot be find. Inconsistency of data!");
+                _logger.LogError($"{nameof(CategoryUsedEvent)} with name: {applicationAddedEvent.Name} cannot be find. Inconsistency of data!");
                 return;
             }
 
-            await _usedCategoryRepository.CreateOrUpdate(categoryResult.Value.Id, categoryUsedEvent.UsedIn);
+            await _usedCategoryRepository.CreateOrUpdate(categoryResult.Value.Id, applicationAddedEvent.UsedIn);
         }
     }
 }

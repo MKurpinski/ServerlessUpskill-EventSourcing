@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Application.Category.Events.Outcoming;
 using Application.Commands.Commands;
-using Application.Core.Events.ApplicationChangedEvent;
+using Application.Core.Events.ApplicationAddedEvent;
 using Application.PushNotifications.Senders;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
@@ -12,6 +12,7 @@ namespace Application.Api.Functions.ApplicationProcess
 {
     public class ApplicationProcessFinishedEventPublisher
     {
+        private const string APPLICATION_NAME = "Application";
         private readonly IEventPublisher _eventPublisher;
         private readonly IPushNotificationSender _pushNotificationSender;
         private readonly IMapper _mapper;
@@ -32,12 +33,10 @@ namespace Application.Api.Functions.ApplicationProcess
         {
             var command = context.GetInput<SaveApplicationCommand>();
 
-            var categoryUsedEvent = new CategoryUsedEvent(command.Category, $"{nameof(DataStorage.Models.Application)}_{command.Id}");
+            var categoryUsedEvent = new CategoryUsedEvent(command.Category, $"{APPLICATION_NAME}_{command.Id}");
             await _eventPublisher.PublishEvent(categoryUsedEvent);
 
-            var applicationAddedEvent = _mapper.Map<SaveApplicationCommand, ApplicationChangedEvent>(command);
-            await _eventPublisher.PublishEvent(applicationAddedEvent);
-
+            var applicationAddedEvent = _mapper.Map<SaveApplicationCommand, ApplicationAddedEvent>(command);
             await _pushNotificationSender.SendNotification(applicationAddedEvent, "New candidate has registered!");
         }
     }

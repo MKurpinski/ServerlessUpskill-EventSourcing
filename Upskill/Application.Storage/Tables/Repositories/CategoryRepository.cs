@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Application.Storage.Dtos;
-using Application.Storage.Tables.Models;
 using Upskill.Results;
 using Upskill.Results.Implementation;
 using Upskill.Storage.Table.Providers;
@@ -8,7 +7,7 @@ using Upskill.Storage.Table.Repositories;
 
 namespace Application.Storage.Tables.Repositories
 {
-    public class CategoryRepository : Repository<Category>, ICategoryRepository
+    public class CategoryRepository : Repository<Models.ApplicationCategory>, ICategoryRepository
     {
         public CategoryRepository(ITableClientProvider tableClientProvider) 
             : base(tableClientProvider)
@@ -29,7 +28,7 @@ namespace Application.Storage.Tables.Repositories
 
         async Task ICategoryRepository.CreateOrUpdate(CategoryDto category)
         {
-            await this.CreateOrUpdate(new Category(category.Id, category.Name));
+            await this.CreateOrUpdate(new Models.ApplicationCategory(category.Id, category.Name));
         }
 
         public async Task Delete(string id)

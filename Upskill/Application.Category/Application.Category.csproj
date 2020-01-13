@@ -9,8 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Application.Core\Application.Core.csproj" />
-    <ProjectReference Include="..\Application.DataStorage\Application.DataStorage.csproj" />
     <ProjectReference Include="..\Application.Storage\Application.Storage.csproj" />
     <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />
     <ProjectReference Include="..\Upskill.Events\Upskill.Events.csproj" />

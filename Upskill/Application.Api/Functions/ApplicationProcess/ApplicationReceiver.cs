@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Application.Api.Results;
 using Application.Commands.CommandBuilders;
 using Application.Commands.Commands;
 using Application.RequestMappers.Dtos;
@@ -10,6 +9,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
