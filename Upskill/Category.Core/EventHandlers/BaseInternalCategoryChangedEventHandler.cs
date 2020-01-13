@@ -8,15 +8,15 @@ using Upskill.EventsInfrastructure.Publishers;
 
 namespace Category.Core.EventHandlers
 {
-    public abstract class BaseCategoryChangedEventHandler
+    public abstract class BaseInternalCategoryChangedEventHandler<T> where T : InternalCategoryChangedEvent
     {
         protected readonly ICategoryRepository CategoryRepository;
         protected readonly IEventPublisher EventPublisher;
-        private readonly ILogger<BaseCategoryChangedEventHandler> _logger;
+        private readonly ILogger<T> _logger;
 
-        protected BaseCategoryChangedEventHandler(
+        protected BaseInternalCategoryChangedEventHandler(
             ICategoryRepository categoryRepository,
-            ILogger<BaseCategoryChangedEventHandler> logger,
+            ILogger<T> logger,
             IEventPublisher eventPublisher)
         {
             CategoryRepository = categoryRepository;
@@ -24,10 +24,10 @@ namespace Category.Core.EventHandlers
             EventPublisher = eventPublisher;
         }
 
-        protected abstract Task<bool> CanBeSaved(InternalCategoryChangedEvent changedEvent);
-        protected abstract Task DispatchChangeEvent(InternalCategoryChangedEvent changedEvent);
+        protected abstract Task<bool> CanBeSaved(T changedEvent);
+        protected abstract Task HandleSuccessChange(T changedEvent);
 
-        protected async Task HandleInternal(InternalCategoryChangedEvent changedEvent)
+        protected async Task HandleInternal(T changedEvent)
         {
             var canBeSaved = await this.CanBeSaved(changedEvent);
 
@@ -50,7 +50,7 @@ namespace Category.Core.EventHandlers
                 _logger.LogError($"Problem occured while saving the category: {changedEvent.Id}");
             }
 
-            await this.DispatchChangeEvent(changedEvent);
+            await this.HandleSuccessChange(changedEvent);
         }
     }
 }

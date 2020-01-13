@@ -2,11 +2,14 @@
 
 namespace Category.Core.Events.External
 {
-    public class CategoryDeletedEvent : IEvent
+    public class CategoryDeletedEvent : BaseEvent
     {
-        public string Id { get; set; }
+        public string Id { get; }
 
-        public CategoryDeletedEvent(string id)
+        public CategoryDeletedEvent(
+            string id,
+            string correlationId) 
+            : base(correlationId)
         {
             Id = id;
         }

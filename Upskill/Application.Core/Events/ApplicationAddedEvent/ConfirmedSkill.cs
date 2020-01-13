@@ -4,8 +4,8 @@ namespace Application.Core.Events.ApplicationAddedEvent
 {
     public class ConfirmedSkill
     {
-        public string Name { get; set; }
-        public DateTime DateOfAchievement { get; set; }
+        public string Name { get; }
+        public DateTime DateOfAchievement { get; }
 
         public ConfirmedSkill(string name, DateTime dateOfAchievement)
         {

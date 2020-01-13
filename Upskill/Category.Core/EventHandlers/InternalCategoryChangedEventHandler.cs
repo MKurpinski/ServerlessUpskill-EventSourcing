@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Category.Core.Events;
 using Category.Core.Events.External;
 using Category.Core.Events.Internal;
 using Category.Storage.Tables.Repositories;
@@ -9,11 +8,11 @@ using Upskill.EventsInfrastructure.Publishers;
 
 namespace Category.Core.EventHandlers
 {
-    public class CategoryChangedEventHandler : BaseCategoryChangedEventHandler, IEventHandler<InternalCategoryChangedEvent>
+    public class InternalCategoryChangedEventHandler : BaseInternalCategoryChangedEventHandler<InternalCategoryChangedEvent>, IEventHandler<InternalCategoryChangedEvent>
     {
-        public CategoryChangedEventHandler(
+        public InternalCategoryChangedEventHandler(
             ICategoryRepository categoryRepository,
-            ILogger<BaseCategoryChangedEventHandler> logger,
+            ILogger<InternalCategoryChangedEvent> logger,
             IEventPublisher eventPublisher) 
             : base(categoryRepository, logger, eventPublisher)
         {
@@ -36,13 +35,13 @@ namespace Category.Core.EventHandlers
             return !existingCategoryWithSameNameResult.Success || (existingCategoryWithSameNameResult.Value.Id == changedEvent.Id);
         }
 
-        protected override async Task DispatchChangeEvent(InternalCategoryChangedEvent changedEvent)
-        {            await this.EventPublisher.PublishEvent(new CategoryChangedEvent(
+        protected override async Task HandleSuccessChange(InternalCategoryChangedEvent changedEvent)
+        {       await this.EventPublisher.PublishEvent(new CategoryChangedEvent(
                 changedEvent.Id,
                 changedEvent.Name,
                 changedEvent.Description,
-                changedEvent.SortOrder));
-
+                changedEvent.SortOrder,
+                changedEvent.CorrelationId));
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Category.Core.Events;
 using Category.Core.Events.External;
 using Category.Core.Events.Internal;
 using Category.Core.Validators;
@@ -7,20 +6,20 @@ using Category.Storage.Tables.Repositories;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.Infrastructure;
 
 namespace Category.Core.EventHandlers
 {
-    public class CategoryDeletedEventHandler : IEventHandler<InternalCategoryDeletedEvent>
+    public class InternalCategoryDeletedEventHandler : IEventHandler<InternalCategoryDeletedEvent>
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IDeleteValidator _deleteValidator;
         private readonly IEventPublisher _eventPublisher;
+        private readonly ILogger<InternalCategoryDeletedEventHandler> _logger;
 
-        private readonly ILogger<CategoryDeletedEventHandler> _logger;
-
-        public CategoryDeletedEventHandler(
+        public InternalCategoryDeletedEventHandler(
             ICategoryRepository categoryRepository,
-            ILogger<CategoryDeletedEventHandler> logger,
+            ILogger<InternalCategoryDeletedEventHandler> logger,
             IDeleteValidator deleteValidator, 
             IEventPublisher eventPublisher)
         {
@@ -46,7 +45,7 @@ namespace Category.Core.EventHandlers
                 _logger.LogError($"Problem occured while deleting the category: {categoryDeletedEvent.Id}");
             }
 
-            await _eventPublisher.PublishEvent(new CategoryDeletedEvent(categoryDeletedEvent.Id));
+            await _eventPublisher.PublishEvent(new CategoryDeletedEvent(categoryDeletedEvent.Id, categoryDeletedEvent.CorrelationId));
         }
     }
 }

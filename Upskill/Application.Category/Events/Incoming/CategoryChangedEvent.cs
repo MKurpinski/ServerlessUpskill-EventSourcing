@@ -2,9 +2,19 @@
 
 namespace Application.Category.Events.Incoming
 {
-    public class CategoryChangedEvent : IEvent
+    public class CategoryChangedEvent : BaseEvent
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string Id { get; }
+        public string Name { get; }
+
+        public CategoryChangedEvent(
+            string correlationId,
+            string id,
+            string name) 
+            : base(correlationId)
+        {
+            Id = id;
+            Name = name;
+        }
     }
 }

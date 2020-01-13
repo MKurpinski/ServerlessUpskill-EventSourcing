@@ -35,7 +35,8 @@ namespace Application.Category.EventHandlers
                 await _eventPublisher.PublishEvent(
                     new CategoryNameChangedEvent(
                         existingCategoryResult.Value.Name,
-                        categoryChangedEvent.Name));
+                        categoryChangedEvent.Name,
+                        categoryChangedEvent.CorrelationId));
             }
 
             await _categoryRepository.CreateOrUpdate(new CategoryDto(categoryChangedEvent.Id, categoryChangedEvent.Name));

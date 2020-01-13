@@ -2,14 +2,20 @@
 
 namespace Category.Core.Events.External
 {
-    public class CategoryChangedEvent : IEvent
+    public class CategoryChangedEvent : BaseEvent
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public int SortOrder { get; set; }
+        public string Id { get; }
+        public string Name { get; }
+        public string Description { get; }
+        public int SortOrder { get; }
 
-        public CategoryChangedEvent(string id, string name, string description, int sortOrder)
+        public CategoryChangedEvent(
+            string id, 
+            string name,
+            string description,
+            int sortOrder,
+            string correlationId) 
+            : base(correlationId)
         {
             Id = id;
             Name = name;

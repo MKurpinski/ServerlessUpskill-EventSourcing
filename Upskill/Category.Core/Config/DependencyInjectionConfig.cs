@@ -16,9 +16,9 @@ namespace Category.Core.Config
             builder.Services.AddTransient<IDeleteValidator, DeleteValidator>();
 
             builder.AddEventHandler<CategoryUsedEvent, CategoryUsedEventHandler>();
-            builder.AddEventHandler<InternalCategoryChangedEvent, CategoryChangedEventHandler>();
-            builder.AddEventHandler<InternalCategoryAddedEvent, CategoryAddedEventHandler>();
-            return builder.AddEventHandler<InternalCategoryDeletedEvent, CategoryDeletedEventHandler>();
+            builder.AddEventHandler<InternalCategoryChangedEvent, InternalCategoryChangedEventHandler>();
+            builder.AddEventHandler<InternalCategoryAddedEvent, InternalCategoryAddedEventHandler>();
+            return builder.AddEventHandler<InternalCategoryDeletedEvent, InternalCategoryDeletedEventHandler>();
         }
     }
 }

@@ -6,8 +6,9 @@
             string id,
             string name,
             string description,
-            int sortOrder) 
-            : base(id, name, description, sortOrder)
+            int sortOrder,
+            string correlationId) 
+            : base(id, name, description, sortOrder, correlationId)
         {
         }
     }

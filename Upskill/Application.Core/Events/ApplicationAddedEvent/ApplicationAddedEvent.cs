@@ -4,9 +4,9 @@ using Upskill.Events;
 
 namespace Application.Core.Events.ApplicationAddedEvent
 {
-    public class ApplicationAddedEvent : IEvent
+    public class ApplicationAddedEvent : BaseEvent
     {
-        public string Id { get; set; }
+        public string Id { get; }
         public DateTime CreationTime { get; }
         public string PhotoUri { get; }
         public string CvUri { get; }
@@ -31,7 +31,9 @@ namespace Application.Core.Events.ApplicationAddedEvent
             Address address,
             IReadOnlyCollection<FinishedSchool> finishedSchools,
             IReadOnlyCollection<ConfirmedSkill> confirmedSkills,
-            IReadOnlyCollection<WorkExperience> workExperiences)
+            IReadOnlyCollection<WorkExperience> workExperiences,
+            string correlationId) 
+        :base(correlationId)
         {
             Id = id;
             CreationTime = creationTime;
