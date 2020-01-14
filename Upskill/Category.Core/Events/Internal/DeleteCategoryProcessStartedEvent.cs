@@ -2,11 +2,11 @@
 
 namespace Category.Core.Events.Internal
 {
-    public class InternalCategoryDeletedEvent : BaseEvent
+    public class DeleteCategoryProcessStartedEvent : BaseEvent
     {
         public string Id { get; set; }
 
-        public InternalCategoryDeletedEvent(
+        public DeleteCategoryProcessStartedEvent(
             string id,
             string correlationId) : base(correlationId)
         {

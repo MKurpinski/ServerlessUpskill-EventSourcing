@@ -1,8 +1,8 @@
 ﻿namespace Category.Core.Events.External
 {
-    public class CategoryAddedEvent : CategoryChangedEvent
+    public class CategoryCreatedEvent : CategoryUpdatedEvent
     {
-        public CategoryAddedEvent(
+        public CategoryCreatedEvent(
             string id,
             string name,
             string description,

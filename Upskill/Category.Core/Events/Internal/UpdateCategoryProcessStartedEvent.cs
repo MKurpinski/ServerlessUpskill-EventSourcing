@@ -2,14 +2,14 @@
 
 namespace Category.Core.Events.Internal
 {
-    public class InternalCategoryChangedEvent : BaseEvent
+    public class UpdateCategoryProcessStartedEvent : BaseEvent
     {
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int SortOrder { get; set; }
 
-        public InternalCategoryChangedEvent(
+        public UpdateCategoryProcessStartedEvent(
             string id, 
             string name,
             string description,

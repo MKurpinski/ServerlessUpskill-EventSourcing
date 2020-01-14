@@ -36,7 +36,7 @@ namespace Category.Api.Functions.Category
             ILogger log)
         {
             var correlationId = _guidProvider.GenerateGuid();
-            var categoryDeletedEvent = new InternalCategoryDeletedEvent(id, correlationId);
+            var categoryDeletedEvent = new DeleteCategoryProcessStartedEvent(id, correlationId);
 
             var saveEventResult = await _eventStore.AppendEvent(id, categoryDeletedEvent);
 

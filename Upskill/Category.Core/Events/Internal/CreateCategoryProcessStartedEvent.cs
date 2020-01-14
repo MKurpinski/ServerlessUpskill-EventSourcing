@@ -1,8 +1,8 @@
 ﻿namespace Category.Core.Events.Internal
 {
-    public class InternalCategoryAddedEvent : InternalCategoryChangedEvent
+    public class CreateCategoryProcessStartedEvent : UpdateCategoryProcessStartedEvent
     {
-        public InternalCategoryAddedEvent(
+        public CreateCategoryProcessStartedEvent(
             string id,
             string name,
             string description,

@@ -48,7 +48,7 @@ namespace Category.Api.Functions.Category
                 return new BadRequestObjectResult(validationResult.Errors);
             }
 
-            var categoryChangedEvent = new InternalCategoryChangedEvent(
+            var categoryChangedEvent = new UpdateCategoryProcessStartedEvent(
                 id,
                 updateCategoryRequest.Name,
                 updateCategoryRequest.Description,

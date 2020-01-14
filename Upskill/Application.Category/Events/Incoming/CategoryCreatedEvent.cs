@@ -1,8 +1,8 @@
 ﻿namespace Application.Category.Events.Incoming
 {
-    public class CategoryAddedEvent : CategoryChangedEvent
+    public class CategoryCreatedEvent : CategoryUpdatedEvent
     {
-        public CategoryAddedEvent(
+        public CategoryCreatedEvent(
             string correlationId,
             string id, 
             string name) 

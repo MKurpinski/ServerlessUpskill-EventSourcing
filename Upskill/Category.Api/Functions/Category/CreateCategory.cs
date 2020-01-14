@@ -51,7 +51,7 @@ namespace Category.Api.Functions.Category
             var id = _guidProvider.GenerateGuid();
             var correlationId = id;
 
-            var categoryAddedEvent = new InternalCategoryAddedEvent(
+            var categoryAddedEvent = new CreateCategoryProcessStartedEvent(
                 id,
                 createCategoryRequest.Name,
                 createCategoryRequest.Description,

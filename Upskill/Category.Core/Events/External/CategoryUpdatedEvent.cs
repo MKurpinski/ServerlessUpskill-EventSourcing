@@ -2,14 +2,14 @@
 
 namespace Category.Core.Events.External
 {
-    public class CategoryChangedEvent : BaseEvent
+    public class CategoryUpdatedEvent : BaseEvent
     {
         public string Id { get; }
         public string Name { get; }
         public string Description { get; }
         public int SortOrder { get; }
 
-        public CategoryChangedEvent(
+        public CategoryUpdatedEvent(
             string id, 
             string name,
             string description,

@@ -1,31 +1,36 @@
 ﻿using System.Threading.Tasks;
-using Category.Core.Events;
 using Category.Core.Events.Internal;
+using Category.EventStore.Facades;
 using Category.Storage.Tables.Dtos;
 using Category.Storage.Tables.Repositories;
 using Microsoft.Extensions.Logging;
+using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.Infrastructure.Extensions;
 
 namespace Category.Core.EventHandlers
 {
-    public abstract class BaseInternalCategoryChangedEventHandler<T> where T : InternalCategoryChangedEvent
+    public abstract class BaseModifyCategoryProcessEventHandler<T> where T : UpdateCategoryProcessStartedEvent
     {
         protected readonly ICategoryRepository CategoryRepository;
-        protected readonly IEventPublisher EventPublisher;
+        private readonly IEventPublisher _eventPublisher;
+        private readonly IEventStoreFacade _eventStore;
         private readonly ILogger<T> _logger;
 
-        protected BaseInternalCategoryChangedEventHandler(
+        protected BaseModifyCategoryProcessEventHandler(
             ICategoryRepository categoryRepository,
             ILogger<T> logger,
-            IEventPublisher eventPublisher)
+            IEventPublisher eventPublisher,
+            IEventStoreFacade eventStore)
         {
             CategoryRepository = categoryRepository;
             _logger = logger;
-            EventPublisher = eventPublisher;
+            _eventPublisher = eventPublisher;
+            _eventStore = eventStore;
         }
 
         protected abstract Task<bool> CanBeSaved(T changedEvent);
-        protected abstract Task HandleSuccessChange(T changedEvent);
+        protected abstract IEvent GetSuccessEvent(T changedEvent);
 
         protected async Task HandleInternal(T changedEvent)
         {
@@ -50,7 +55,17 @@ namespace Category.Core.EventHandlers
                 _logger.LogError($"Problem occured while saving the category: {changedEvent.Id}");
             }
 
-            await this.HandleSuccessChange(changedEvent);
+            var successEvent = this.GetSuccessEvent(changedEvent);
+
+            var saveEventStatus = await _eventStore.AppendEvent(changedEvent.Id, successEvent);
+
+            if (!saveEventStatus.Success)
+            {
+                _logger.LogErrors("Problem occured while saving the success event", saveEventStatus.Errors);
+                return;
+            }
+
+            await _eventPublisher.PublishEvent(successEvent);
         }
     }
 }

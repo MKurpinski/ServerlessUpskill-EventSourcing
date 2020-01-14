@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Category.EventStore\Category.EventStore.csproj" />
     <ProjectReference Include="..\Category.Storage\Category.Storage.csproj" />
     <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />
     <ProjectReference Include="..\Upskill.Events\Upskill.Events.csproj" />

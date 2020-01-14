@@ -9,14 +9,14 @@ using Upskill.EventsInfrastructure.Publishers;
 
 namespace Application.Category.EventHandlers
 {
-    public class CategoryChangedEventHandler: IEventHandler<CategoryChangedEvent>
+    public class CategoryUpdatedEventHandler: IEventHandler<CategoryUpdatedEvent>
     {
-        private readonly ILogger<CategoryChangedEventHandler> _logger;
+        private readonly ILogger<CategoryUpdatedEventHandler> _logger;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IEventPublisher _eventPublisher;
 
-        public CategoryChangedEventHandler(
-            ILogger<CategoryChangedEventHandler> logger,
+        public CategoryUpdatedEventHandler(
+            ILogger<CategoryUpdatedEventHandler> logger,
             ICategoryRepository categoryRepository,
             IEventPublisher eventPublisher)
         {
@@ -25,23 +25,23 @@ namespace Application.Category.EventHandlers
             _eventPublisher = eventPublisher;
         }
 
-        public async Task Handle(CategoryChangedEvent categoryChangedEvent)
+        public async Task Handle(CategoryUpdatedEvent categoryUpdatedEvent)
         {
-            var existingCategoryResult = await _categoryRepository.GetById(categoryChangedEvent.Id);
+            var existingCategoryResult = await _categoryRepository.GetById(categoryUpdatedEvent.Id);
 
-            if (existingCategoryResult.Success && !existingCategoryResult.Value.Name.Equals(categoryChangedEvent.Name))
+            if (existingCategoryResult.Success && !existingCategoryResult.Value.Name.Equals(categoryUpdatedEvent.Name))
             {
 
                 await _eventPublisher.PublishEvent(
                     new CategoryNameChangedEvent(
                         existingCategoryResult.Value.Name,
-                        categoryChangedEvent.Name,
-                        categoryChangedEvent.CorrelationId));
+                        categoryUpdatedEvent.Name,
+                        categoryUpdatedEvent.CorrelationId));
             }
 
-            await _categoryRepository.CreateOrUpdate(new CategoryDto(categoryChangedEvent.Id, categoryChangedEvent.Name));
+            await _categoryRepository.CreateOrUpdate(new CategoryDto(categoryUpdatedEvent.Id, categoryUpdatedEvent.Name));
 
-            _logger.LogInformation($"{nameof(CategoryChangedEventHandler)}: category: {categoryChangedEvent.Id}");
+            _logger.LogInformation($"{nameof(CategoryUpdatedEventHandler)}: category: {categoryUpdatedEvent.Id}");
         }
     }
 }

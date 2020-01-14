@@ -11,9 +11,9 @@ namespace Application.Category.Config
         public static IServiceCollection AddCategories(this IFunctionsHostBuilder builder)
         {
             builder.AddEventHandler<CategoryDeletedEvent, CategoryDeletedEventHandler>();
-            builder.AddEventHandler<CategoryAddedEvent, CategoryAddedEventHandler>();
+            builder.AddEventHandler<CategoryCreatedEvent, CategoryCreatedEventHandler>();
             return builder
-                .AddEventHandler<CategoryChangedEvent, CategoryChangedEventHandler>();
+                .AddEventHandler<CategoryUpdatedEvent, CategoryUpdatedEventHandler>();
         }
     }
 }
