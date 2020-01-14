@@ -61,7 +61,7 @@ namespace Upskill.EventsInfrastructure.Publishers
 
             var eventToPublish = new EventGridEvent
             {
-                Id = _guidProvider.GenerateGuid().ToString(),
+                Id = _guidProvider.GenerateGuid(),
                 Data = serializedEventContent,
                 DataVersion = eventInformation.EventVersion,
                 EventTime = _dateTimeProvider.GetCurrentDateTime(),

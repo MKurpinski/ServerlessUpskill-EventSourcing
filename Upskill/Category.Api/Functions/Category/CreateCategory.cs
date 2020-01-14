@@ -47,13 +47,16 @@ namespace Category.Api.Functions.Category
                 return new BadRequestObjectResult(validationResult.Errors);
             }
 
-            var id = _guidProvider.GenerateGuid().ToString("N");
+            
+            var id = _guidProvider.GenerateGuid();
+            var correlationId = id;
 
             var categoryAddedEvent = new InternalCategoryAddedEvent(
                 id,
                 createCategoryRequest.Name,
                 createCategoryRequest.Description,
-                createCategoryRequest.SortOrder);
+                createCategoryRequest.SortOrder,
+                correlationId);
 
             var saveEventResult = await _eventStore.AppendEvent(id, categoryAddedEvent);
 
@@ -65,7 +68,7 @@ namespace Category.Api.Functions.Category
 
             await _eventPublisher.PublishEvent(categoryAddedEvent);
 
-            return new AcceptedWithCorrelationIdHeaderResult(id);
+            return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }
     }
 }

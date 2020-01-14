@@ -39,7 +39,7 @@ namespace Application.Api.Functions.ApplicationProcess
         {
             var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.MapRequest(req);
 
-            var instanceId = _guidProvider.GenerateGuid().ToString("N");
+            var instanceId = _guidProvider.GenerateGuid();
 
             if (!mappingResult.Success)
             {
