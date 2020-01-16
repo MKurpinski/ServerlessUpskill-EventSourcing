@@ -7,7 +7,6 @@ using AutoMapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventsInfrastructure.Publishers;
-using Upskill.EventStore;
 
 namespace Application.Api.Functions.ApplicationProcess
 {

@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Category.Core.Events;
 using Category.Core.Events.External;
 using Category.Storage.Tables.Repositories;
 using Microsoft.Extensions.Logging;
