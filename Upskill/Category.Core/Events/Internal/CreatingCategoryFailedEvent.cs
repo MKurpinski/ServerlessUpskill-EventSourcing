@@ -5,10 +5,10 @@ namespace Category.Core.Events.Internal
 {
     public class CreatingCategoryFailedEvent : BaseEvent
     {
-        public CategoryModificationStatus Reason { get; }
-        public CreatingCategoryFailedEvent(CategoryModificationStatus reason, string correlationId) : base(correlationId)
+        public CategoryModificationStatus Status { get; }
+        public CreatingCategoryFailedEvent(CategoryModificationStatus status, string correlationId) : base(correlationId)
         {
-            Reason = reason;
+            Status = status;
         }
     }
 }

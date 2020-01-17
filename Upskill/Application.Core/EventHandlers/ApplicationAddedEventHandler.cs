@@ -30,7 +30,6 @@ namespace Application.Core.EventHandlers
 
             var applicationDto = _mapper.Map<ApplicationAddedEvent, ApplicationDto>(applicationAddedEvent);
             await _searchableApplicationIndexer.Index(applicationDto);
-
             _logger.LogInformation($"{nameof(ApplicationAddedEvent)} with id: {applicationAddedEvent.Id}, indexing finished");
         }
     }

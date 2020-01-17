@@ -33,8 +33,8 @@ namespace Application.Api.Functions.ApplicationProcess
         {
             var command = context.GetInput<SaveApplicationCommand>();
 
-            //var categoryUsedEvent = new CategoryUsedEvent(command.Category, $"{APPLICATION_NAME}_{command.Id}");
-            //await _eventPublisher.PublishEvent(categoryUsedEvent);
+            var categoryUsedEvent = new CategoryUsedEvent(command.Category, $"{APPLICATION_NAME}_{command.Id}", command.Id);
+            await _eventPublisher.PublishEvent(categoryUsedEvent);
 
             var applicationAddedEvent = _mapper.Map<SaveApplicationCommand, ApplicationAddedEvent>(command);
             await _pushNotificationSender.SendNotification(applicationAddedEvent, "New candidate has registered!");

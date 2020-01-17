@@ -135,6 +135,7 @@ namespace Application.Api.Functions.ApplicationProcess
             RegisterApplicationCommand command,
             ILogger log)
         {
+            await context.CallActivityAsync(nameof(ApplicationProcessFailedEventPublisher), context.InstanceId);
             var recompensateCommand = this.BuildRecompensationCommand(context, command);
             var recompensationId = await processStarter.StartNewAsync(nameof(ApplicationProcessRecompensationOrchiestrator), recompensateCommand);
             log.LogInformation($"Started recompensation process for application process with instanceId: {context.InstanceId}." +

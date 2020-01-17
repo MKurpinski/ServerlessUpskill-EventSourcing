@@ -8,7 +8,6 @@ using Application.Search.Queries;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
-using Upskill.EventStore;
 using Upskill.Infrastructure.Extensions;
 
 namespace Application.Core.EventHandlers
