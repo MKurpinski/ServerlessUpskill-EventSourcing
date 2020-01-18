@@ -70,7 +70,7 @@ namespace Application.Api.Functions.ApplicationProcess
             var cvUri = cvUploadedEventTask.Result.CvUri;
             var photoUri = photoUploadedEventTask.Result.PhotoUri;
 
-            var saveApplicationCommand = new SaveApplicationCommand(
+            var saveApplicationCommand = new CreateApplicationCommand(
                 context.InstanceId,
                 command.Candidate.FirstName,
                 command.Candidate.LastName,
@@ -82,7 +82,8 @@ namespace Application.Api.Functions.ApplicationProcess
                 command.Candidate.Address,
                 command.Candidate.FinishedSchools,
                 command.Candidate.ConfirmedSkills,
-                command.Candidate.WorkExperiences);
+                command.Candidate.WorkExperiences,
+                context.InstanceId);
 
             await context.CallActivityAsync<Task>(nameof(ApplicationSaver), saveApplicationCommand);
 
@@ -125,7 +126,6 @@ namespace Application.Api.Functions.ApplicationProcess
 
             log.LogErrors($"Uploading files failed: {context.InstanceId}", errors);
             await this.StartRecompensateProcess(processStarter, context, command, log);
-            return;
         }
 
 
@@ -135,7 +135,7 @@ namespace Application.Api.Functions.ApplicationProcess
             RegisterApplicationCommand command,
             ILogger log)
         {
-            await context.CallActivityAsync(nameof(ApplicationProcessFailedEventPublisher), context.InstanceId);
+            await context.CallActivityAsync(nameof(ApplicationProcessFailedEventPublisher), ApplicationProcessStatus.Failed.ToString());
             var recompensateCommand = this.BuildRecompensationCommand(context, command);
             var recompensationId = await processStarter.StartNewAsync(nameof(ApplicationProcessRecompensationOrchiestrator), recompensateCommand);
             log.LogInformation($"Started recompensation process for application process with instanceId: {context.InstanceId}." +

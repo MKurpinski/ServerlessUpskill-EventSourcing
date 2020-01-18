@@ -3,12 +3,13 @@ using Upskill.Events;
 
 namespace Category.Core.Events.Internal
 {
-    public class CreatingCategoryFailedEvent : BaseEvent
+    public class CreatingCategoryFailedEvent : BaseStatusEvent
     {
-        public CategoryModificationStatus Status { get; }
-        public CreatingCategoryFailedEvent(CategoryModificationStatus status, string correlationId) : base(correlationId)
+        public CreatingCategoryFailedEvent(
+            CategoryModificationStatus status,
+            string correlationId) 
+            : base(status.ToString(), correlationId)
         {
-            Status = status;
         }
     }
 }

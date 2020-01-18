@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Nito.AsyncEx;
 using StackExchange.Redis;
 using Upskill.Cache.Providers;
@@ -34,12 +35,12 @@ namespace Upskill.Cache
             return new SuccessfulDataResult<T>(result);
         }
 
-        public async Task Set<T>(string key, T value)
+        public async Task Set<T>(string key, T value, TimeSpan? expiresOn = null)
         {
             var cache = await _lazyCache;
             var bytes = _byteSerializer.ToByteArray(value);
 
-            await cache.StringSetAsync(key, bytes);
+            await cache.StringSetAsync(key, bytes, expiresOn);
         }
 
         public async Task Delete(string key)

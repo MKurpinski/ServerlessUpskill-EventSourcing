@@ -22,19 +22,19 @@ namespace Category.Core.EventHandlers
             _logger = logger;
         }
 
-        public async Task Handle(CategoryUsedEvent applicationAddedEvent)
+        public async Task Handle(CategoryUsedEvent categoryUsedEvent)
         {
-            _logger.LogInformation($"{nameof(CategoryUsedEvent)} with name: {applicationAddedEvent.Name}, has been used in {applicationAddedEvent.UsedIn}");
+            _logger.LogInformation($"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name}, has been used in {categoryUsedEvent.UsedIn}");
 
-            var categoryResult = await _categoryRepository.GetByName(applicationAddedEvent.Name);
+            var categoryResult = await _categoryRepository.GetByName(categoryUsedEvent.Name);
 
             if (!categoryResult.Success)
             {
-                _logger.LogError($"{nameof(CategoryUsedEvent)} with name: {applicationAddedEvent.Name} cannot be find. Inconsistency of data!");
+                _logger.LogError($"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name} cannot be find. Inconsistency of data!");
                 return;
             }
 
-            await _usedCategoryRepository.CreateOrUpdate(categoryResult.Value.Id, applicationAddedEvent.UsedIn);
+            await _usedCategoryRepository.CreateOrUpdate(categoryResult.Value.Id, categoryUsedEvent.UsedIn);
         }
     }
 }

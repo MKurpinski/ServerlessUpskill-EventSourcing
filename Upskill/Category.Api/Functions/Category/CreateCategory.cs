@@ -11,6 +11,8 @@ using Upskill.EventsInfrastructure.Publishers;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Extensions;
+using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
+using Upskill.RealTimeNotifications.Subscribers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions.Category
@@ -21,23 +23,27 @@ namespace Category.Api.Functions.Category
         private readonly IValidator<CreateCategoryHttpRequest> _createCategoryRequestValidator;
         private readonly IEventPublisher _eventPublisher;
         private readonly IEventStoreFacade _eventStore;
+        private readonly ISubscriber _subscriber;
 
         public CreateCategory(
             IValidator<CreateCategoryHttpRequest> createCategoryRequestValidator,
             IGuidProvider guidProvider,
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore)
+            IEventStoreFacade eventStore, 
+            ISubscriber subscriber)
         {
             _createCategoryRequestValidator = createCategoryRequestValidator;
             _guidProvider = guidProvider;
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;
+            _subscriber = subscriber;
         }
 
 
         [FunctionName(nameof(CreateCategory))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "category")] CreateCategoryHttpRequest createCategoryRequest,
+            [NotificationSubscriber] string subscriber,
             ILogger log)
         {
             var validationResult = await _createCategoryRequestValidator.ValidateAsync(createCategoryRequest);
@@ -47,9 +53,9 @@ namespace Category.Api.Functions.Category
                 return new BadRequestObjectResult(validationResult.Errors);
             }
 
-            
             var id = _guidProvider.GenerateGuid();
             var correlationId = id;
+            await _subscriber.Register(correlationId, subscriber);
 
             var categoryAddedEvent = new CreateCategoryProcessStartedEvent(
                 id,

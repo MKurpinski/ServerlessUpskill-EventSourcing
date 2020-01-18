@@ -24,9 +24,9 @@ namespace Application.Api.Functions.ApplicationProcess
         public async Task Run(
             [ActivityTrigger] IDurableActivityContext context)
         {
-            var correlationId = context.GetInput<string>();
-            var applicationFailedEvent = new ApplicationAddingFailedEvent(correlationId);
-            await _eventStore.AppendEvent(correlationId, applicationFailedEvent);
+            var status = context.GetInput<string>();
+            var applicationFailedEvent = new CreatingApplicationFailedEvent(status, context.InstanceId);
+            await _eventStore.AppendEvent(context.InstanceId, applicationFailedEvent);
             await _eventPublisher.PublishEvent(applicationFailedEvent);
         }
     }

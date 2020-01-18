@@ -5,8 +5,8 @@ using Upskill.Results;
 
 namespace Upskill.EventStore
 {
-    public interface IEventStore
+    public interface IEventStore<T> where T : IAggregate
     {
-        Task<IMessageResult> AppendEvent<T>(string streamId, IEvent @event) where T: IAggregate;
+        Task<IMessageResult> AppendEvent(string streamId, IEvent @event);
     }
 }

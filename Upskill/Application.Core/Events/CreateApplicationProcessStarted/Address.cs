@@ -1,4 +1,4 @@
-﻿namespace Application.Core.Events.ApplicationAddedEvent
+﻿namespace Application.Core.Events.CreateApplicationProcessStarted
 {
     public class Address
     {

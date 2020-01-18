@@ -59,7 +59,7 @@ namespace Category.Core.EventHandlers
             await this.SaveAndDispatchEvent(categoryChangedEvent.Id, successEvent);
         }
 
-        protected IEvent GetSuccessEvent(CreateCategoryProcessStartedEvent changedEvent)
+        private CategoryCreatedEvent GetSuccessEvent(CreateCategoryProcessStartedEvent changedEvent)
         {
             return new CategoryCreatedEvent(
                 changedEvent.Id,

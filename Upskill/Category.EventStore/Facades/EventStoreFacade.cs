@@ -7,16 +7,16 @@ namespace Category.EventStore.Facades
 {
     public class EventStoreFacade : IEventStoreFacade
     {
-        private readonly IEventStore _eventStore;
+        private readonly IEventStore<Aggregates.Category> _eventStore;
 
-        public EventStoreFacade(IEventStore eventStore)
+        public EventStoreFacade(IEventStore<Aggregates.Category> eventStore)
         {
             _eventStore = eventStore;
         }
 
         public Task<IMessageResult> AppendEvent(string streamId, IEvent @event)
         {
-            return _eventStore.AppendEvent<Aggregates.Category>(streamId, @event);
+            return _eventStore.AppendEvent(streamId, @event);
         }
     }
 }

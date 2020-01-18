@@ -1,6 +1,6 @@
 ﻿using Application.Core.EventHandlers;
 using Application.Core.Events;
-using Application.Core.Events.ApplicationAddedEvent;
+using Application.Core.Events.CreateApplicationProcessStarted;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Upskill.Events.Extensions;
@@ -11,7 +11,7 @@ namespace Application.Core.Config
     {
         public static IServiceCollection AddCoreModule(this IFunctionsHostBuilder builder)
         {
-            builder.AddEventHandler<ApplicationAddedEvent, ApplicationAddedEventHandler>();
+            builder.AddEventHandler<CreateApplicationProcessStartedEvent, CreateApplicationProcessStartedEventHandler>();
             builder.AddEventHandler<ApplicationCategoryNameChangedEvent, ApplicationCategoryNameChangedEventHandler>();
             return builder.AddEventHandler<CategoryNameChangedEvent, CategoryNameChangedEventHandler>();
         }

@@ -12,6 +12,8 @@ using Upskill.EventsInfrastructure.Publishers;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Extensions;
+using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
+using Upskill.RealTimeNotifications.Subscribers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions.Category
@@ -22,15 +24,19 @@ namespace Category.Api.Functions.Category
         private readonly IGuidProvider _guidProvider;
         private readonly IEventPublisher _eventPublisher;
         private readonly IEventStoreFacade _eventStore;
+        private readonly ISubscriber _subscriber;
 
         public UpdateCategory(
             IValidator<UpdateCategoryCommand> updateCommandValidator,
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore, IGuidProvider guidProvider)
+            IEventStoreFacade eventStore, 
+            IGuidProvider guidProvider,
+            ISubscriber subscriber)
         {
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;
             _guidProvider = guidProvider;
+            _subscriber = subscriber;
             _updateCommandValidator = updateCommandValidator;
         }
 
@@ -38,6 +44,7 @@ namespace Category.Api.Functions.Category
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Put, Route = "category/{id:guid}")] UpdateCategoryHttpRequest updateCategoryRequest,
             string id,
+            [NotificationSubscriber] string subscriber,
             ILogger log)
         {
             var correlationId = _guidProvider.GenerateGuid(); 
@@ -47,6 +54,8 @@ namespace Category.Api.Functions.Category
             {
                 return new BadRequestObjectResult(validationResult.Errors);
             }
+
+            await _subscriber.Register(correlationId, subscriber);
 
             var categoryChangedEvent = new UpdateCategoryProcessStartedEvent(
                 id,

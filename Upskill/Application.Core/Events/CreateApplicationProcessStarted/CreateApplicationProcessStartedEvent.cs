@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Application.Commands.Commands.Candidate;
+using Upskill.Events;
 
-namespace Application.Commands.Commands
+namespace Application.Core.Events.CreateApplicationProcessStarted
 {
-    public class SaveApplicationCommand
+    public class CreateApplicationProcessStartedEvent : BaseEvent
     {
         public string Id { get; }
         public DateTime CreationTime { get; }
@@ -19,32 +19,34 @@ namespace Application.Commands.Commands
         public IReadOnlyCollection<ConfirmedSkill> ConfirmedSkills { get; }
         public IReadOnlyCollection<WorkExperience> WorkExperiences { get; }
 
-        public SaveApplicationCommand(
+        public CreateApplicationProcessStartedEvent(
             string id,
-            string firstName,
-            string lastName,
+            DateTime creationTime,
             string photoUri,
             string cvUri,
             string category,
-            DateTime creationTime, 
+            string firstName,
+            string lastName,
             string educationLevel,
             Address address,
             IReadOnlyCollection<FinishedSchool> finishedSchools,
             IReadOnlyCollection<ConfirmedSkill> confirmedSkills,
-            IReadOnlyCollection<WorkExperience> workExperiences)
+            IReadOnlyCollection<WorkExperience> workExperiences,
+            string correlationId) 
+            : base(correlationId)
         {
             Id = id;
             CreationTime = creationTime;
-            EducationLevel = educationLevel;
-            Address = address;
-            FinishedSchools = finishedSchools;
-            ConfirmedSkills = confirmedSkills;
-            WorkExperiences = workExperiences;
             PhotoUri = photoUri;
             CvUri = cvUri;
             Category = category;
             FirstName = firstName;
             LastName = lastName;
+            EducationLevel = educationLevel;
+            Address = address;
+            FinishedSchools = finishedSchools;
+            ConfirmedSkills = confirmedSkills;
+            WorkExperiences = workExperiences;
         }
     }
 }

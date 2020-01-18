@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Upskill.Events;
+using Application.Commands.Commands.Candidate;
 
-namespace Application.Core.Events.ApplicationAddedEvent
+namespace Application.Commands.Commands
 {
-    public class ApplicationAddedEvent : BaseEvent
+    public class CreateApplicationCommand
     {
         public string Id { get; }
         public DateTime CreationTime { get; }
@@ -18,35 +18,36 @@ namespace Application.Core.Events.ApplicationAddedEvent
         public IReadOnlyCollection<FinishedSchool> FinishedSchools { get; }
         public IReadOnlyCollection<ConfirmedSkill> ConfirmedSkills { get; }
         public IReadOnlyCollection<WorkExperience> WorkExperiences { get; }
+        public string CorrelationId { get; }
 
-        public ApplicationAddedEvent(
+        public CreateApplicationCommand(
             string id,
-            DateTime creationTime,
+            string firstName,
+            string lastName,
             string photoUri,
             string cvUri,
             string category,
-            string firstName,
-            string lastName,
+            DateTime creationTime, 
             string educationLevel,
             Address address,
             IReadOnlyCollection<FinishedSchool> finishedSchools,
             IReadOnlyCollection<ConfirmedSkill> confirmedSkills,
             IReadOnlyCollection<WorkExperience> workExperiences,
-            string correlationId) 
-        :base(correlationId)
+            string correlationId)
         {
             Id = id;
             CreationTime = creationTime;
-            PhotoUri = photoUri;
-            CvUri = cvUri;
-            Category = category;
-            FirstName = firstName;
-            LastName = lastName;
             EducationLevel = educationLevel;
             Address = address;
             FinishedSchools = finishedSchools;
             ConfirmedSkills = confirmedSkills;
             WorkExperiences = workExperiences;
+            CorrelationId = correlationId;
+            PhotoUri = photoUri;
+            CvUri = cvUri;
+            Category = category;
+            FirstName = firstName;
+            LastName = lastName;
         }
     }
 }

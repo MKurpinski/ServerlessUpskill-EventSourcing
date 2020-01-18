@@ -7,7 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
-namespace Application.Api.Functions.Notification
+namespace Application.Api.Functions.Notification.Push
 {
     public class DeleteSubscriptionToNotifications
     {

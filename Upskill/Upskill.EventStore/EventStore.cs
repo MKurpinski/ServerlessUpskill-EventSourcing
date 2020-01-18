@@ -12,9 +12,9 @@ using Upskill.Storage.Table.Providers;
 
 namespace Upskill.EventStore
 {
-    public class EventStore : IEventStore
+    public class EventStore<T> : IEventStore<T> where T: IAggregate
     {
-        private const string STREAMS_TABLE_NAME = "Stream";
+        private const string STREAMS_TABLE_SUFFIX = "Stream";
         private readonly AsyncLazy<CloudTable> _lazyTableClient;
         private readonly IEventDataBuilder _eventDataBuilder;
 
@@ -23,14 +23,13 @@ namespace Upskill.EventStore
             IEventDataBuilder eventDataBuilder)
         {
             _eventDataBuilder = eventDataBuilder;
-            _lazyTableClient = new AsyncLazy<CloudTable>(() => tableClientProvider.Get(STREAMS_TABLE_NAME));
+            _lazyTableClient = new AsyncLazy<CloudTable>(() => tableClientProvider.Get($"{typeof(T).Name}{STREAMS_TABLE_SUFFIX}"));
         }
 
-        public async Task<IMessageResult> AppendEvent<T>(string streamId, IEvent @event) where T : IAggregate
+        public async Task<IMessageResult> AppendEvent(string streamId, IEvent @event)
         {
             var tableClient = await _lazyTableClient;
             var partition = new Partition(tableClient, streamId);
-
 
             var stream = await this.GetStream(partition);
 

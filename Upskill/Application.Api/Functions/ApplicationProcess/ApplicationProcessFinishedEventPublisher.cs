@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Application.Category.Events.Outcoming;
 using Application.Commands.Commands;
-using Application.Core.Events.ApplicationAddedEvent;
+using Application.Core.Events.CreateApplicationProcessStarted;
 using Application.PushNotifications.Senders;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
@@ -31,13 +31,13 @@ namespace Application.Api.Functions.ApplicationProcess
         public async Task Run(
             [ActivityTrigger] IDurableActivityContext context)
         {
-            var command = context.GetInput<SaveApplicationCommand>();
+            var command = context.GetInput<CreateApplicationCommand>();
 
             var categoryUsedEvent = new CategoryUsedEvent(command.Category, $"{APPLICATION_NAME}_{command.Id}", command.Id);
             await _eventPublisher.PublishEvent(categoryUsedEvent);
 
-            var applicationAddedEvent = _mapper.Map<SaveApplicationCommand, ApplicationAddedEvent>(command);
-            await _pushNotificationSender.SendNotification(applicationAddedEvent, "New candidate has registered!");
+            var applicationCreatedEvent = _mapper.Map<CreateApplicationCommand, CreateApplicationProcessStartedEvent>(command);
+            await _pushNotificationSender.SendNotification(applicationCreatedEvent, "New candidate has registered!");
         }
     }
 }

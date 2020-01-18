@@ -83,7 +83,7 @@ namespace Category.Core.EventHandlers
             return true;
         }
 
-        private IEvent GetSuccessEvent(UpdateCategoryProcessStartedEvent changedEvent)
+        private CategoryUpdatedEvent GetSuccessEvent(UpdateCategoryProcessStartedEvent changedEvent)
         {       return new CategoryUpdatedEvent(
                 changedEvent.Id,
                 changedEvent.Name,

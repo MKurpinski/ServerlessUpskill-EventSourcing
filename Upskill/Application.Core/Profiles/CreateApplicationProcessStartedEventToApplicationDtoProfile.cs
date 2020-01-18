@@ -1,14 +1,14 @@
-﻿using Application.Core.Events.ApplicationAddedEvent;
+﻿using Application.Core.Events.CreateApplicationProcessStarted;
 using Application.Search.Dtos;
 using AutoMapper;
 
 namespace Application.Core.Profiles
 {
-    public class ApplicationAddedEventToApplicationDtoProfile : Profile
+    public class CreateApplicationProcessStartedEventToApplicationDtoProfile : Profile
     {
-        public ApplicationAddedEventToApplicationDtoProfile()
+        public CreateApplicationProcessStartedEventToApplicationDtoProfile()
         {
-            CreateMap<ApplicationAddedEvent, ApplicationDto>();
+            CreateMap<CreateApplicationProcessStartedEvent, ApplicationDto>();
             CreateMap<Address, AddressDto>();
             CreateMap<FinishedSchool, FinishedSchoolDto>();
             CreateMap<WorkExperience, WorkExperienceDto>();

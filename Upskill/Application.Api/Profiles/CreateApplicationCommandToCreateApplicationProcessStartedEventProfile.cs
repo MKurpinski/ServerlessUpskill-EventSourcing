@@ -1,15 +1,14 @@
 ﻿using Application.Commands.Commands;
-using Application.Core.Events.ApplicationAddedEvent;
+using Application.Core.Events.CreateApplicationProcessStarted;
 using AutoMapper;
 
 namespace Application.Api.Profiles
 {
-    public class SaveApplicationCommandToApplicationAddedEventProfile : Profile
+    public class CreateApplicationCommandToCreateApplicationProcessStartedEventProfile : Profile
     {
-        public SaveApplicationCommandToApplicationAddedEventProfile()
+        public CreateApplicationCommandToCreateApplicationProcessStartedEventProfile()
         {
-            CreateMap<SaveApplicationCommand, ApplicationAddedEvent>()
-                .ForMember(dest => dest.CorrelationId, opts => opts.MapFrom(src => src.Id));
+            CreateMap<CreateApplicationCommand, CreateApplicationProcessStartedEvent>();
             CreateMap<Commands.Commands.Candidate.Address, Address>();
             CreateMap<Commands.Commands.Candidate.ConfirmedSkill, ConfirmedSkill>();
             CreateMap<Commands.Commands.Candidate.FinishedSchool, FinishedSchool>();

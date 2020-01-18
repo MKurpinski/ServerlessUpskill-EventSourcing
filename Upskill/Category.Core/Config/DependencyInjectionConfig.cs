@@ -1,5 +1,4 @@
 ﻿using Category.Core.EventHandlers;
-using Category.Core.Events;
 using Category.Core.Events.External;
 using Category.Core.Events.Internal;
 using Category.Core.Validators;

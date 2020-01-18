@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Upskill.EventsInfrastructure.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
+using Upskill.RealTimeNotifications.Config;
 
 [assembly: FunctionsStartup(typeof(Category.Api.Startup))]
 
@@ -22,6 +23,7 @@ namespace Category.Api
             builder.Services.AddTransient<IValidator<CreateCategoryHttpRequest>, CreateCategoryHttpRequestValidator>();
             builder.Services.AddTransient<IValidator<UpdateCategoryCommand>, UpdateCategoryCommandValidator>();
 
+            builder.AddRealTimeNotifications();
             builder.AddCoreModule();
             builder.AddCategoryEventStore();
             builder.AddAppSettingsToConfiguration();
