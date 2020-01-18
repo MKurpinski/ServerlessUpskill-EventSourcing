@@ -105,7 +105,6 @@ namespace Application.Api.Functions.ApplicationProcess
             await context.CallActivityAsync<Task>(nameof(StatusTracker), finishProcessCommand);
 
             log.LogInformation($"Application process finished: {context.InstanceId}");
-            await context.CallActivityAsync<Task>(nameof(ApplicationProcessFinishedEventPublisher), saveApplicationCommand);
         }
 
         private async Task HandleUploadFilesFailure(IDurableOrchestrationContext context,

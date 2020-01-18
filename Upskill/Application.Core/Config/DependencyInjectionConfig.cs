@@ -13,6 +13,7 @@ namespace Application.Core.Config
         {
             builder.AddEventHandler<CreateApplicationProcessStartedEvent, CreateApplicationProcessStartedEventHandler>();
             builder.AddEventHandler<ApplicationCategoryNameChangedEvent, ApplicationCategoryNameChangedEventHandler>();
+            builder.AddEventHandler<ApplicationCreatedEvent, ApplicationCreatedEventHandler>();
             return builder.AddEventHandler<CategoryNameChangedEvent, CategoryNameChangedEventHandler>();
         }
     }
