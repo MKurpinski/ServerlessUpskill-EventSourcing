@@ -10,7 +10,10 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.FunctionUtils.Results;
+using Upskill.Infrastructure;
 using Upskill.Infrastructure.Extensions;
+using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
+using Upskill.RealTimeNotifications.Subscribers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions.Category
@@ -18,16 +21,22 @@ namespace Category.Api.Functions.Category
     public class UpdateCategory
     {
         private readonly IValidator<UpdateCategoryCommand> _updateCommandValidator;
+        private readonly IGuidProvider _guidProvider;
         private readonly IEventPublisher _eventPublisher;
         private readonly IEventStoreFacade _eventStore;
+        private readonly ISubscriber _subscriber;
 
         public UpdateCategory(
             IValidator<UpdateCategoryCommand> updateCommandValidator,
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore)
+            IEventStoreFacade eventStore, 
+            IGuidProvider guidProvider,
+            ISubscriber subscriber)
         {
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;
+            _guidProvider = guidProvider;
+            _subscriber = subscriber;
             _updateCommandValidator = updateCommandValidator;
         }
 
@@ -35,8 +44,10 @@ namespace Category.Api.Functions.Category
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Put, Route = "category/{id:guid}")] UpdateCategoryHttpRequest updateCategoryRequest,
             string id,
+            [NotificationSubscriber] string subscriber,
             ILogger log)
         {
+            var correlationId = _guidProvider.GenerateGuid(); 
             var validationResult = await _updateCommandValidator.ValidateAsync(new UpdateCategoryCommand(id, updateCategoryRequest));
 
             if (!validationResult.IsValid)
@@ -44,11 +55,14 @@ namespace Category.Api.Functions.Category
                 return new BadRequestObjectResult(validationResult.Errors);
             }
 
-            var categoryChangedEvent = new InternalCategoryChangedEvent(
+            await _subscriber.Register(correlationId, subscriber);
+
+            var categoryChangedEvent = new UpdateCategoryProcessStartedEvent(
                 id,
                 updateCategoryRequest.Name,
                 updateCategoryRequest.Description,
-                updateCategoryRequest.SortOrder);
+                updateCategoryRequest.SortOrder,
+                correlationId);
 
             var saveEventResult = await _eventStore.AppendEvent(id, categoryChangedEvent);
 
@@ -60,7 +74,7 @@ namespace Category.Api.Functions.Category
 
             await _eventPublisher.PublishEvent(categoryChangedEvent);
 
-            return new AcceptedWithCorrelationIdHeaderResult(id);
+            return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }
     }
 }

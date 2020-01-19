@@ -18,9 +18,9 @@ using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Upskill.EventsInfrastructure.Config;
-using Upskill.EventStore.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
+using Upskill.RealTimeNotifications.Config;
 
 [assembly: FunctionsStartup(typeof(Application.Api.Startup))]
 
@@ -31,14 +31,15 @@ namespace Application.Api
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.Services.AddAutoMapper(
-                typeof(SaveApplicationCommandToApplicationAddedEventProfile).Assembly,
-                typeof(ApplicationAddedEventToApplicationDtoProfile).Assembly,
+                typeof(CreateApplicationCommandToCreateApplicationProcessStartedEventProfile).Assembly,
+                typeof(CreateApplicationProcessStartedEventToApplicationDtoProfile).Assembly,
                 typeof(CandidateDtoToCandidateProfile).Assembly,
                 typeof(SearchableApplicationToApplicationDtoProfile).Assembly);
 
             builder.Services.AddTransient<IValidator<SimpleApplicationSearchHttpRequest>, SimpleApplicationSearchHttpRequestValidator>();
 
             builder.AddApplicationEventStore();
+            builder.AddRealTimeNotifications();
             builder.AddAppSettingsToConfiguration();
             builder.AddCoreModule();
             builder.AddRequestMappersModule();

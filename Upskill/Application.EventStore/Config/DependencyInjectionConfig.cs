@@ -1,7 +1,7 @@
 ﻿using Application.EventStore.Facades;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Upskill.EventStore.Config;
+using Upskill.EventStore.Extensions;
 
 namespace Application.EventStore.Config
 {
@@ -9,7 +9,7 @@ namespace Application.EventStore.Config
     {
         public static IServiceCollection AddApplicationEventStore(this IFunctionsHostBuilder builder)
         {
-            builder.AddEventStore();
+            builder.AddEventStore<Aggregates.Application>();
             return builder.Services.AddTransient<IEventStoreFacade, EventStoreFacade>();
         }
     }

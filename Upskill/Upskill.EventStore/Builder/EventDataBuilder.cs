@@ -21,7 +21,7 @@ namespace Upskill.EventStore.Builder
 
             var properties = new EventStorageData(
                 typeof(T).Name,
-                id.ToString("D"),
+                id,
                 eventData.GetType().AssemblyQualifiedName,
                 JsonConvert.SerializeObject(eventData));
 

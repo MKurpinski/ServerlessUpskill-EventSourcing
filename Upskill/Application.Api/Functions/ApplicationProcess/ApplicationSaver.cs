@@ -1,13 +1,12 @@
 using System.Threading.Tasks;
 using Application.Api.Events.Internal;
 using Application.Commands.Commands;
-using Application.Core.Events.ApplicationAddedEvent;
+using Application.Core.Events.CreateApplicationProcessStarted;
 using Application.EventStore.Facades;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventsInfrastructure.Publishers;
-using Upskill.EventStore;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -32,11 +31,11 @@ namespace Application.Api.Functions.ApplicationProcess
             [DurableClient] IDurableOrchestrationClient client,
             [ActivityTrigger] IDurableActivityContext context)
         {
-            var command = context.GetInput<SaveApplicationCommand>();
+            var command = context.GetInput<CreateApplicationCommand>();
 
-            var applicationAddedEvent = _mapper.Map<SaveApplicationCommand, ApplicationAddedEvent>(command);
+            var applicationCreatedEvent = _mapper.Map<CreateApplicationCommand, CreateApplicationProcessStartedEvent>(command);
 
-            var result = await _eventStore.AppendEvent(applicationAddedEvent.Id, applicationAddedEvent);
+            var result = await _eventStore.AppendEvent(applicationCreatedEvent.Id, applicationCreatedEvent);
             
             if (!result.Success)
             {
@@ -44,7 +43,7 @@ namespace Application.Api.Functions.ApplicationProcess
                 await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailedInternalFunctionEvent), applicationSaveFailedEvent);
             }
 
-            await _eventPublisher.PublishEvent(applicationAddedEvent);
+            await _eventPublisher.PublishEvent(applicationCreatedEvent);
 
             var applicationSavedEvent = new ApplicationSavedInternalFunctionEvent();
             await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSavedInternalFunctionEvent), applicationSavedEvent);

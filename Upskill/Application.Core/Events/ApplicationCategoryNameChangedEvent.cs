@@ -2,12 +2,15 @@
 
 namespace Application.Core.Events
 {
-    public class ApplicationCategoryNameChangedEvent : IEvent
+    public class ApplicationCategoryNameChangedEvent : BaseEvent
     {
         public string Id { get; }
         public string NewCategoryName { get; }
 
-        public ApplicationCategoryNameChangedEvent(string id, string newCategoryName)
+        public ApplicationCategoryNameChangedEvent(
+            string id, 
+            string newCategoryName,
+            string correlationId) : base(correlationId)
         {
             Id = id;
             NewCategoryName = newCategoryName;

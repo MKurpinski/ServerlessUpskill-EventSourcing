@@ -40,7 +40,7 @@ namespace Upskill.EventsInfrastructure.Publishers
 
         public async Task PublishEvent<T>(T eventContent) where T : IEvent
         {
-            var typeName = typeof(T).Name;
+            var typeName = eventContent.GetType().Name;
 
             var canHandle = _lazyTopicNameInformationMap.Value.TryGetValue(typeName, out var eventInformation);
 
@@ -61,7 +61,7 @@ namespace Upskill.EventsInfrastructure.Publishers
 
             var eventToPublish = new EventGridEvent
             {
-                Id = _guidProvider.GenerateGuid().ToString(),
+                Id = _guidProvider.GenerateGuid(),
                 Data = serializedEventContent,
                 DataVersion = eventInformation.EventVersion,
                 EventTime = _dateTimeProvider.GetCurrentDateTime(),

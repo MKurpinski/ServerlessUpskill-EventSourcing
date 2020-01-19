@@ -4,6 +4,6 @@ namespace Upskill.Infrastructure
 {
     public interface IGuidProvider
     {
-        Guid GenerateGuid();
+        string GenerateGuid(string format = "N");
     }
 }

@@ -11,6 +11,8 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
+using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
+using Upskill.RealTimeNotifications.Subscribers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Application.Api.Functions.ApplicationProcess
@@ -20,32 +22,37 @@ namespace Application.Api.Functions.ApplicationProcess
         private readonly IGuidProvider _guidProvider;
         private readonly IFromFormToApplicationAddDtoRequestMapper _fromFormToApplicationAddDtoRequestMapper;
         private readonly ICommandBuilder<RegisterApplicationDto, RegisterApplicationCommand> _commandBuilder;
+        private readonly ISubscriber _subscriber;
 
         public ApplicationReceiver(
             IGuidProvider guidProvider, 
             IFromFormToApplicationAddDtoRequestMapper fromFormToApplicationAddDtoRequestMapper,
-            ICommandBuilder<RegisterApplicationDto, RegisterApplicationCommand> commandBuilder)
+            ICommandBuilder<RegisterApplicationDto, RegisterApplicationCommand> commandBuilder,
+            ISubscriber subscriber)
         {
             _guidProvider = guidProvider;
             _fromFormToApplicationAddDtoRequestMapper = fromFormToApplicationAddDtoRequestMapper;
             _commandBuilder = commandBuilder;
+            _subscriber = subscriber;
         }
 
         [FunctionName(nameof(ApplicationReceiver))]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "application")] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient processStarter,
+            [NotificationSubscriber] string subscriber,
             ILogger log)
         {
             var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.MapRequest(req);
-
-            var instanceId = _guidProvider.GenerateGuid().ToString("N");
+            var instanceId = _guidProvider.GenerateGuid();
 
             if (!mappingResult.Success)
             {
                 log.LogInformation($"Invalid data provided to the application process with instanceId: {instanceId}");
                 return new BadRequestObjectResult(mappingResult.Errors);
             }
+
+            await _subscriber.Register(instanceId, subscriber);
 
             var command = await _commandBuilder.Build(mappingResult.Value);
 

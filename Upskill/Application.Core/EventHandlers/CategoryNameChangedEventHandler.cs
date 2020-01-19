@@ -8,7 +8,6 @@ using Application.Search.Queries;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
-using Upskill.EventStore;
 using Upskill.Infrastructure.Extensions;
 
 namespace Application.Core.EventHandlers
@@ -49,7 +48,10 @@ namespace Application.Core.EventHandlers
             ApplicationDto applicationToChange)
         {
             var applicationCategoryNameChangedEvent =
-                new ApplicationCategoryNameChangedEvent(applicationToChange.Id, categoryNameChangedEvent.NewName);
+                new ApplicationCategoryNameChangedEvent(
+                    applicationToChange.Id, 
+                    categoryNameChangedEvent.NewName,
+                    categoryNameChangedEvent.CorrelationId);
             var saveEventResult = await _eventStore.AppendEvent(applicationToChange.Id, applicationCategoryNameChangedEvent);
 
             if (saveEventResult.Success)

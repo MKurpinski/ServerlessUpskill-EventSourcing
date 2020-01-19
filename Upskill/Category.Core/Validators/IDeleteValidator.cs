@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Upskill.Results;
+using Category.Core.Results;
 
 namespace Category.Core.Validators
 {
     public interface IDeleteValidator
     {
-        Task<IResult> CanDelete(string id);
+        Task<ICategoryDeleteValidationResult> CanDelete(string id);
     }
 }
