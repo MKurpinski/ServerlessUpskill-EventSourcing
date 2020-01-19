@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Application.Core.Events.CreateApplicationProcessStarted;
+using Newtonsoft.Json;
 
 namespace Application.Core.Events
 {
     public class ApplicationCreatedEvent : CreateApplicationProcessStartedEvent
     {
+        [JsonConstructor]
         public ApplicationCreatedEvent(
             string id,
             DateTime creationTime,
@@ -31,7 +33,9 @@ namespace Application.Core.Events
                 educationLevel,
                 address, 
                 finishedSchools, 
-                confirmedSkills, workExperiences, correlationId)
+                confirmedSkills,
+                workExperiences,
+                correlationId)
         {
         }
 
