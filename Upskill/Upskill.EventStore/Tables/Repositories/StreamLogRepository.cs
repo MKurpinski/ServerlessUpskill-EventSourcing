@@ -1,0 +1,22 @@
+﻿using System.Threading.Tasks;
+using Upskill.EventStore.Models;
+using Upskill.EventStore.Tables.Models;
+using Upskill.Storage.Table.Providers;
+using Upskill.Storage.Table.Repositories;
+
+namespace Upskill.EventStore.Tables.Repositories
+{
+    public class StreamLogRepository<T> : Repository<StreamLog>, IStreamLogRepository<T> where T : IAggregate
+    {
+        private const string STREAM_LOG_TABLE_SUFFIX = "StreamLog";
+        public StreamLogRepository(ITableClientProvider tableClientProvider) 
+            : base(tableClientProvider, $"{typeof(T).Name}{STREAM_LOG_TABLE_SUFFIX}")
+        {
+        }
+
+        public async Task CreateStreamEntry(string id)
+        {
+            await this.CreateOrUpdate(new StreamLog(id));
+        }
+    }
+}

@@ -6,6 +6,7 @@ using Streamstone;
 using Upskill.Events;
 using Upskill.EventStore.Builder;
 using Upskill.EventStore.Models;
+using Upskill.EventStore.Providers;
 using Upskill.Results;
 using Upskill.Results.Implementation;
 using Upskill.Storage.Table.Providers;
@@ -17,12 +18,15 @@ namespace Upskill.EventStore
         private const string STREAMS_TABLE_SUFFIX = "Stream";
         private readonly AsyncLazy<CloudTable> _lazyTableClient;
         private readonly IEventDataBuilder _eventDataBuilder;
+        private readonly IStreamProvider<T> _streamProvider;
 
         public EventStore(
             ITableClientProvider tableClientProvider,
-            IEventDataBuilder eventDataBuilder)
+            IEventDataBuilder eventDataBuilder,
+            IStreamProvider<T> streamProvider)
         {
             _eventDataBuilder = eventDataBuilder;
+            _streamProvider = streamProvider;
             _lazyTableClient = new AsyncLazy<CloudTable>(() => tableClientProvider.Get($"{typeof(T).Name}{STREAMS_TABLE_SUFFIX}"));
         }
 
@@ -31,7 +35,7 @@ namespace Upskill.EventStore
             var tableClient = await _lazyTableClient;
             var partition = new Partition(tableClient, streamId);
 
-            var stream = await this.GetStream(partition);
+            var stream = await _streamProvider.GetStream(partition);
 
             try
             {
@@ -47,20 +51,6 @@ namespace Upskill.EventStore
             {
                 return new FailedMessageResult(nameof(Exception), ex.Message);
             }
-        }
-
-        private async Task<Stream> GetStream(Partition partition)
-        {
-            var streamOpenResult = await Stream.TryOpenAsync(partition);
-
-            if (streamOpenResult.Found)
-            {
-                return streamOpenResult.Stream;
-            }
-
-            await Stream.ProvisionAsync(partition);
-            var stream = await Stream.OpenAsync(partition);
-            return stream;
         }
     }
 }
