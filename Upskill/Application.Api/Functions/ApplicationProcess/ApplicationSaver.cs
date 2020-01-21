@@ -2,11 +2,11 @@ using System.Threading.Tasks;
 using Application.Api.Events.Internal;
 using Application.Commands.Commands;
 using Application.Core.Events.CreateApplicationProcessStarted;
-using Application.EventStore.Facades;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -14,12 +14,12 @@ namespace Application.Api.Functions.ApplicationProcess
     {
         private readonly IMapper _mapper;
         private readonly IEventPublisher _eventPublisher;
-        private readonly IEventStoreFacade _eventStore;
+        private readonly IEventStore<Core.Aggregates.Application> _eventStore;
 
         public ApplicationSaver(
             IMapper mapper, 
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore)
+            IEventStore<Core.Aggregates.Application> eventStore)
         {
             _mapper = mapper;
             _eventPublisher = eventPublisher;

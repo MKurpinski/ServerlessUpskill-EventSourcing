@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Application.Core.Events;
-using Application.EventStore.Facades;
 using Application.Search.Dtos;
 using Application.Search.Handlers;
 using Application.Search.Queries;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
 using Upskill.Infrastructure.Extensions;
 
 namespace Application.Core.EventHandlers
@@ -16,13 +16,13 @@ namespace Application.Core.EventHandlers
     {
         private readonly IApplicationSearchHandler _applicationSearchHandler;
         private readonly IEventPublisher _eventPublisher;
-        private readonly IEventStoreFacade _eventStore;
+        private readonly IEventStore<Aggregates.Application> _eventStore;
         private readonly ILogger<CategoryNameChangedEventHandler> _logger;
 
         public CategoryNameChangedEventHandler(
             IEventPublisher eventPublisher,
             IApplicationSearchHandler applicationSearchHandler,
-            IEventStoreFacade eventStore,
+            IEventStore<Aggregates.Application> eventStore,
             ILogger<CategoryNameChangedEventHandler> logger)
         {
             _eventPublisher = eventPublisher;

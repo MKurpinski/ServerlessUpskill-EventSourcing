@@ -3,11 +3,11 @@ using Category.Core.Enums;
 using Category.Core.Events.External;
 using Category.Core.Events.Internal;
 using Category.Core.Validators;
-using Category.EventStore.Facades;
 using Category.Storage.Tables.Repositories;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
 
 namespace Category.Core.EventHandlers
 {
@@ -22,7 +22,7 @@ namespace Category.Core.EventHandlers
             ILogger<DeleteCategoryProcessStartedEventHandler> logger,
             IDeleteValidator deleteValidator, 
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore)
+            IEventStore<Aggregates.Category> eventStore)
             :base(eventPublisher, eventStore)
         {
             _categoryRepository = categoryRepository;

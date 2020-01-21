@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Application.Core.Events;
 using Application.Core.Events.CreateApplicationProcessStarted;
-using Application.EventStore.Facades;
 using Application.Search.Dtos;
 using Application.Search.Indexers;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
 
 namespace Application.Core.EventHandlers
 {
@@ -15,15 +15,15 @@ namespace Application.Core.EventHandlers
     {
         private readonly ISearchableApplicationIndexer _searchableApplicationIndexer;
         private readonly IMapper _mapper;
-        private readonly IEventStoreFacade _eventStore;
+        private readonly IEventStore<Aggregates.Application> _eventStore;
         private readonly IEventPublisher _eventPublisher;
         private readonly ILogger<CreateApplicationProcessStartedEventHandler> _logger;
 
         public CreateApplicationProcessStartedEventHandler(
             ISearchableApplicationIndexer searchableApplicationIndexer,
             IMapper mapper,
-            ILogger<CreateApplicationProcessStartedEventHandler> logger, 
-            IEventStoreFacade eventStore, 
+            ILogger<CreateApplicationProcessStartedEventHandler> logger,
+            IEventStore<Aggregates.Application> eventStore, 
             IEventPublisher eventPublisher)
         {
             _searchableApplicationIndexer = searchableApplicationIndexer;

@@ -1,5 +1,6 @@
 ﻿using Application.Search.Handlers;
 using Application.Search.Indexers;
+using Application.Search.Managers;
 using Application.Search.Options;
 using Application.Search.Providers;
 using Application.Search.Resolvers;
@@ -18,7 +19,8 @@ namespace Application.Search.Config
             return builder.Services
                 .AddTransient<ISearchServiceClientProvider, SearchServiceClientProvider>()
                 .AddTransient<ISearchIndexClientProvider, SearchIndexClientProvider>()
-                .AddTransient<ICurrentIndexNameResolver, CurrentIndexNameResolver>()
+                .AddTransient<IIndexNameResolver, IndexNameResolver>()
+                .AddTransient<IIndexManager, IndexManager>()
                 .AddTransient<IApplicationSearchHandler, ApplicationSearchHandler>()
                 .AddTransient<ISearchableApplicationIndexer, SearchableApplicationIndexer>();
         }

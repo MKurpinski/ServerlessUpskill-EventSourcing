@@ -18,6 +18,16 @@ namespace Application.Storage.Tables.Repositories
             return this.CreateOrUpdate(searchableIndex);
         }
 
+        public async Task UpdateBatch(params SearchableIndex[] indexes)
+        {
+            var batchOperations = new TableBatchOperation();
+            foreach (var index in indexes)
+            {
+                batchOperations.Add(TableOperation.InsertOrReplace(index));
+            }
+            await this.ExecuteBatch(batchOperations);
+        }
+
         public async Task<SearchableIndex> GetByTypeAndStatus(string type, string status)
         {
             var typeCondition = TableQuery.GenerateFilterCondition(nameof(SearchableIndex.PartitionKey), QueryComparisons.Equal, type);

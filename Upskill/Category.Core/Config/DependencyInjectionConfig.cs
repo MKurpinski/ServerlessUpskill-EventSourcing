@@ -5,6 +5,7 @@ using Category.Core.Validators;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Upskill.Events.Extensions;
+using Upskill.EventStore.Extensions;
 
 namespace Category.Core.Config
 {
@@ -13,6 +14,7 @@ namespace Category.Core.Config
         public static IServiceCollection AddCoreModule(this IFunctionsHostBuilder builder)
         {
             builder.Services.AddTransient<IDeleteValidator, DeleteValidator>();
+            builder.AddEventStore<Aggregates.Category>();
 
             builder.AddEventHandler<CategoryUsedEvent, CategoryUsedEventHandler>();
             builder.AddEventHandler<UpdateCategoryProcessStartedEvent, UpdateCategoryProcessStartedEventHandler>();

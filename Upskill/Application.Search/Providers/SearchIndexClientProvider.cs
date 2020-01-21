@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Application.Search.Enums;
 using Application.Search.Models;
 using Application.Search.Resolvers;
 using Microsoft.Azure.Search;
@@ -9,19 +10,19 @@ namespace Application.Search.Providers
     public class SearchIndexClientProvider : ISearchIndexClientProvider
     {
         private readonly ISearchServiceClient _searchServiceClient;
-        private readonly ICurrentIndexNameResolver _currentIndexNameResolver;
+        private readonly IIndexNameResolver _indexNameResolver;
 
         public SearchIndexClientProvider(
             ISearchServiceClientProvider searchServiceClientProvider,
-            ICurrentIndexNameResolver currentIndexNameResolver)
+            IIndexNameResolver indexNameResolver)
         {
-            _currentIndexNameResolver = currentIndexNameResolver;
+            _indexNameResolver = indexNameResolver;
             _searchServiceClient = searchServiceClientProvider.Get();
         }
 
-        public async Task<ISearchIndexClient> Get<T>() where T : ISearchable
+        public async Task<ISearchIndexClient> Get<T>(IndexType indexType = IndexType.Active) where T : ISearchable
         {
-            var indexName = await _currentIndexNameResolver.ResolveCurrentIndexName<T>();
+            var indexName = await _indexNameResolver.ResolveIndexName<T>(indexType);
             await CreateIndexIfNotExist<T>(indexName);
             return _searchServiceClient.Indexes.GetClient(indexName);
         }

@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application.Category\Application.Category.csproj" />
-    <ProjectReference Include="..\Application.EventStore\Application.EventStore.csproj" />
     <ProjectReference Include="..\Application.PushNotifications\Application.PushNotifications.csproj" />
     <ProjectReference Include="..\Application.Search\Application.Search.csproj" />
     <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />

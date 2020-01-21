@@ -68,6 +68,13 @@ namespace Upskill.Storage.Table.Repositories
             return result;
         }
 
+        protected async Task ExecuteBatch(TableBatchOperation batchOperation)
+        {
+            var table = await _tableClientProvider.Get(_nameOfTable);
+
+            await table.ExecuteBatchAsync(batchOperation);
+        }
+
         protected async Task<IResult> DeleteById(string rowKey)
         {
             var result = await this.GetByIdInternal(rowKey);

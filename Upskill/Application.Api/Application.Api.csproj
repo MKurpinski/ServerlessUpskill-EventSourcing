@@ -16,13 +16,13 @@
     <ProjectReference Include="..\Application.Category\Application.Category.csproj" />
     <ProjectReference Include="..\Application.Commands\Application.Commands.csproj" />
     <ProjectReference Include="..\Application.Core\Application.Core.csproj" />
-    <ProjectReference Include="..\Application.EventStore\Application.EventStore.csproj" />
     <ProjectReference Include="..\Application.ProcessStatus\Application.ProcessStatus.csproj" />
     <ProjectReference Include="..\Application.PushNotifications\Application.PushNotifications.csproj" />
     <ProjectReference Include="..\Application.RequestMappers\Application.RequestMappers.csproj" />
     <ProjectReference Include="..\Application.Search\Application.Search.csproj" />
     <ProjectReference Include="..\Application.Storage\Application.Storage.csproj" />
     <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />
+    <ProjectReference Include="..\Upskill.EventStore\Upskill.EventStore.csproj" />
     <ProjectReference Include="..\Upskill.Events\Upskill.Events.csproj" />
     <ProjectReference Include="..\Upskill.FunctionUtils\Upskill.FunctionUtils.csproj" />
     <ProjectReference Include="..\Upskill.Infrastructure\Upskill.Infrastructure.csproj" />

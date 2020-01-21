@@ -1,18 +1,18 @@
 ﻿using System.Threading.Tasks;
-using Category.EventStore.Facades;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
 
 namespace Category.Core.EventHandlers
 {
     public abstract class BaseCategoryModificationHandler
     {
         private readonly IEventPublisher _eventPublisher;
-        private readonly IEventStoreFacade _eventStore;
+        private readonly IEventStore<Aggregates.Category> _eventStore;
 
         protected BaseCategoryModificationHandler(
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore)
+            IEventStore<Aggregates.Category> eventStore)
         {
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;

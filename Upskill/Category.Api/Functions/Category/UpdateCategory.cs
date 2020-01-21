@@ -2,13 +2,13 @@ using System.Threading.Tasks;
 using Category.Api.Commands;
 using Category.Api.CustomHttpRequests;
 using Category.Core.Events.Internal;
-using Category.EventStore.Facades;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Extensions;
@@ -23,13 +23,13 @@ namespace Category.Api.Functions.Category
         private readonly IValidator<UpdateCategoryCommand> _updateCommandValidator;
         private readonly IGuidProvider _guidProvider;
         private readonly IEventPublisher _eventPublisher;
-        private readonly IEventStoreFacade _eventStore;
+        private readonly IEventStore<Core.Aggregates.Category> _eventStore;
         private readonly ISubscriber _subscriber;
 
         public UpdateCategory(
             IValidator<UpdateCategoryCommand> updateCommandValidator,
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore, 
+            IEventStore<Core.Aggregates.Category> eventStore, 
             IGuidProvider guidProvider,
             ISubscriber subscriber)
         {

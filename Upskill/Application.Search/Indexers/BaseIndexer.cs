@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Search.Enums;
 using Application.Search.Models;
 using Application.Search.Providers;
 using Microsoft.Azure.Search;
@@ -19,9 +20,9 @@ namespace Application.Search.Indexers
             _logger = logger;
         }
 
-        protected async Task Index(T value)
+        protected async Task Index(T value, IndexType indexType)
         {
-            var indexClient = await _searchIndexClientProvider.Get<T>();
+            var indexClient = await _searchIndexClientProvider.Get<T>(indexType);
 
             var batch = IndexBatch.MergeOrUpload<T>(new List<T> { value });
 
@@ -33,6 +34,11 @@ namespace Application.Search.Indexers
             {
                 _logger.LogError($"Indexing failed for ${value.Id} in index {indexClient.IndexName}");
             }
+        }
+
+        protected async Task OpenNewIndex()
+        {
+            await _searchIndexClientProvider.Get<T>(IndexType.InProgress);
         }
     }
 }
