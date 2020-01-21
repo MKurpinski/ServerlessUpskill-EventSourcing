@@ -5,7 +5,7 @@ using Upskill.EventStore.Tables.Repositories;
 
 namespace Upskill.EventStore.Providers
 {
-    public class StreamProvider<T> : IStreamProvider<T> where T : IAggregate
+    public class StreamProvider<T> : IStreamProvider<T> where T : IAggregateRoot
     {
         private readonly IStreamLogRepository<T> _streamLogRepository;
 

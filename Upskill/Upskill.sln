@@ -51,6 +51,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.Cache", "Upskill.Ca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.RealTimeNotifications", "Upskill.RealTimeNotifications\Upskill.RealTimeNotifications.csproj", "{B923E462-3E04-4AAF-AEB9-25641B339D8C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.Search", "Upskill.Search\Upskill.Search.csproj", "{63BBB486-2AAE-47B5-A590-88A61FA87FEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Category.Search", "Category.Search\Category.Search.csproj", "{162A5D3D-1296-40A9-9823-745C5B80428B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +145,14 @@ Global
 		{B923E462-3E04-4AAF-AEB9-25641B339D8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B923E462-3E04-4AAF-AEB9-25641B339D8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B923E462-3E04-4AAF-AEB9-25641B339D8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63BBB486-2AAE-47B5-A590-88A61FA87FEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63BBB486-2AAE-47B5-A590-88A61FA87FEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63BBB486-2AAE-47B5-A590-88A61FA87FEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63BBB486-2AAE-47B5-A590-88A61FA87FEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{162A5D3D-1296-40A9-9823-745C5B80428B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{162A5D3D-1296-40A9-9823-745C5B80428B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{162A5D3D-1296-40A9-9823-745C5B80428B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{162A5D3D-1296-40A9-9823-745C5B80428B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -167,6 +179,8 @@ Global
 		{171F7985-9F21-4941-A82D-14F5C5CF6464} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 		{5BA76E6C-2732-43E4-ADE3-5A4C62A335C9} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 		{B923E462-3E04-4AAF-AEB9-25641B339D8C} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
+		{63BBB486-2AAE-47B5-A590-88A61FA87FEF} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
+		{162A5D3D-1296-40A9-9823-745C5B80428B} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BEEA3619-2CA9-4BDD-B713-A656BE95FBB0}

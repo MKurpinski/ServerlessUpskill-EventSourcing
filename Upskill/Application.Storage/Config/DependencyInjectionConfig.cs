@@ -20,8 +20,7 @@ namespace Application.Storage.Config
                 .AddTransient<ISharedAccessSignatureProvider, SharedAccessSignatureProvider>()
                 .AddTransient<IFileNameProvider, FileNameProvider>()
                 .AddTransient<IProcessStatusRepository, ProcessStatusRepository>()
-                .AddTransient<ICategoryRepository, CategoryRepository>()
-                .AddTransient<ISearchableIndexRepository, SearchableIndexRepository>();
+                .AddTransient<ICategoryRepository, CategoryRepository>();
         }
     }
 }

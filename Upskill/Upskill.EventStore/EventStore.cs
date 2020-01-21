@@ -13,7 +13,7 @@ using Upskill.Storage.Table.Providers;
 
 namespace Upskill.EventStore
 {
-    public class EventStore<T> : IEventStore<T> where T: IAggregate
+    public class EventStore<T> : IEventStore<T> where T: IAggregateRoot
     {
         private const string STREAMS_TABLE_SUFFIX = "Stream";
         private readonly AsyncLazy<CloudTable> _lazyTableClient;

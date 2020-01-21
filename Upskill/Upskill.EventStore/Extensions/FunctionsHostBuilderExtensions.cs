@@ -10,7 +10,7 @@ namespace Upskill.EventStore.Extensions
 {
     public static class FunctionsHostBuilderExtensions
     {
-        public static IServiceCollection AddEventStore<T>(this IFunctionsHostBuilder builder) where T : IAggregate
+        public static IServiceCollection AddEventStore<T>(this IFunctionsHostBuilder builder) where T : IAggregateRoot
         {
             builder.Services.TryAddTransient<IEventDataBuilder, EventDataBuilder>();
             builder.Services

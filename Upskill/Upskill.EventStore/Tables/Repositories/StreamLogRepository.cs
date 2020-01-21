@@ -6,7 +6,7 @@ using Upskill.Storage.Table.Repositories;
 
 namespace Upskill.EventStore.Tables.Repositories
 {
-    public class StreamLogRepository<T> : Repository<StreamLog>, IStreamLogRepository<T> where T : IAggregate
+    public class StreamLogRepository<T> : Repository<StreamLog>, IStreamLogRepository<T> where T : IAggregateRoot
     {
         private const string STREAM_LOG_TABLE_SUFFIX = "StreamLog";
         public StreamLogRepository(ITableClientProvider tableClientProvider) 

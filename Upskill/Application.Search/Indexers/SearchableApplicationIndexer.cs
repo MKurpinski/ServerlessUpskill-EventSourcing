@@ -1,11 +1,11 @@
-﻿using System.Linq.Expressions;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Application.Search.Dtos;
-using Application.Search.Enums;
 using Application.Search.Models;
-using Application.Search.Providers;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Upskill.Search.Enums;
+using Upskill.Search.Indexers;
+using Upskill.Search.Providers;
 
 namespace Application.Search.Indexers
 {
