@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Upskill.EventsInfrastructure.Extensions
+namespace Upskill.Events.Extensions
 {
     public static class ObjectExtensions
     {
@@ -19,6 +19,21 @@ namespace Upskill.EventsInfrastructure.Extensions
             }
 
             await method.InvokeAsync(item, param);
+        }
+
+        public static void Invoke(this object item, string methodName, object param)
+        {
+            var method = item
+                .GetType()
+                .GetMethods()
+                .SingleOrDefault(m => m.Name == methodName);
+
+            if (method == null)
+            {
+                return;
+            }
+
+            method.Invoke(item, new []{ param });
         }
 
         public static async Task InvokeAsync(this MethodInfo method, object obj, params object[] parameters)

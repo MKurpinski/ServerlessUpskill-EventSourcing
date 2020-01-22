@@ -8,5 +8,6 @@ namespace Upskill.EventStore
     public interface IEventStore<T> where T : IAggregateRoot
     {
         Task<IMessageResult> AppendEvent(string streamId, IEvent @event);
+        Task<IDataResult<T>> AggregateStream(string streamId);
     }
 }

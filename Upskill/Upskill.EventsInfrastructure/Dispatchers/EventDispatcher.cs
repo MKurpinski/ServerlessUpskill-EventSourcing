@@ -4,7 +4,7 @@ using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Upskill.Events;
-using Upskill.EventsInfrastructure.Extensions;
+using Upskill.Events.Extensions;
 using Upskill.EventsInfrastructure.Providers;
 
 namespace Upskill.EventsInfrastructure.Dispatchers
