@@ -1,4 +1,5 @@
-﻿using Category.Search.Indexers;
+﻿using Category.Search.Handlers;
+using Category.Search.Indexers;
 using Category.Search.Managers;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ namespace Category.Search.Config
 
             return builder.Services
                 .AddTransient<ISearchableCategoryReindexManager, SearchableCategoryReindexManager>()
+                .AddTransient<ICategorySearchHandler, CategorySearchHandler>()
                 .AddTransient<ISearchableCategoryIndexer, SearchableCategoryIndexer>();
         }
     }

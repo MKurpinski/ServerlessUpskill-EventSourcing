@@ -1,4 +1,7 @@
 using System.Threading.Tasks;
+using Category.Api.CustomHttpRequests;
+using Category.Search.Handlers;
+using Category.Search.Queries;
 using Category.Storage.Tables.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,18 +13,18 @@ namespace Category.Api.Functions.Category
 {
     public class GetCategories
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ICategorySearchHandler _categorySearchHandler;
 
-        public GetCategories(ICategoryRepository categoryRepository)
+        public GetCategories(ICategorySearchHandler categorySearchHandler)
         {
-            _categoryRepository = categoryRepository;
+            _categorySearchHandler = categorySearchHandler;
         }
 
         [FunctionName(nameof(GetCategories))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Get, Route = "category")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "categories")] GetCategoriesHttpRequest req)
         {
-            var categories = await _categoryRepository.GetAll();
+            var categories = await _categorySearchHandler.Get(new GetCategoriesQuery(req.Skip, req.Take));
             return new OkObjectResult(categories);
         }
     }

@@ -22,6 +22,7 @@ namespace Category.Api
         {
             builder.Services.AddTransient<IValidator<CreateCategoryHttpRequest>, CreateCategoryHttpRequestValidator>();
             builder.Services.AddTransient<IValidator<UpdateCategoryCommand>, UpdateCategoryCommandValidator>();
+            builder.Services.AddTransient<IValidator<GetCategoriesHttpRequest>, GetCategoriesHttpRequestValidator>();
 
             builder.AddRealTimeNotifications();
             builder.AddCoreModule();

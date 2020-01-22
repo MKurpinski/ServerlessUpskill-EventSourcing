@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Application.Search.Dtos
+namespace Upskill.Search.Dtos
 {
     public class PagedSearchResultDto<T>
     {

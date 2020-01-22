@@ -22,7 +22,7 @@ namespace Upskill.Search.Indexers
             _logger = logger;
         }
 
-        protected async Task Index(T value, IndexType indexType)
+        protected async Task<IResult> Index(T value, IndexType indexType)
         {
             var indexClient = await _searchIndexClientProvider.Get<T>(indexType);
 
@@ -31,10 +31,12 @@ namespace Upskill.Search.Indexers
             try
             {
                 await indexClient.Documents.IndexAsync<T>(batch);
+                return new SuccessfulResult();
             }
             catch (IndexBatchException)
             {
                 _logger.LogError($"Indexing failed for ${value.Id} in index {indexClient.IndexName}");
+                return new FailedResult();
             }
         }
 

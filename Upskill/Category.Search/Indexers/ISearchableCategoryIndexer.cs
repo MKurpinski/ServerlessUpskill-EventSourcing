@@ -6,8 +6,8 @@ namespace Category.Search.Indexers
 {
     public interface ISearchableCategoryIndexer
     {
-        Task Index(CategoryDto toIndex);
-        Task Reindex(CategoryDto toIndex);
+        Task<IResult> Index(CategoryDto toIndex);
+        Task<IResult> Reindex(CategoryDto toIndex);
         Task<IResult> Delete(string id);
     }
 }

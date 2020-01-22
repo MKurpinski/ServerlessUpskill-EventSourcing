@@ -3,7 +3,7 @@ using Category.Core.Enums;
 using Category.Core.Events.External;
 using Category.Core.Events.Internal;
 using Category.Core.Validators;
-using Category.Storage.Tables.Repositories;
+using Category.Search.Indexers;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
@@ -13,19 +13,19 @@ namespace Category.Core.EventHandlers
 {
     public class DeleteCategoryProcessStartedEventHandler : BaseCategoryModificationHandler, IEventHandler<DeleteCategoryProcessStartedEvent>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ISearchableCategoryIndexer _categoryIndexer;
         private readonly IDeleteValidator _deleteValidator;
         private readonly ILogger<DeleteCategoryProcessStartedEventHandler> _logger;
 
         public DeleteCategoryProcessStartedEventHandler(
-            ICategoryRepository categoryRepository,
+            ISearchableCategoryIndexer categoryIndexer,
             ILogger<DeleteCategoryProcessStartedEventHandler> logger,
             IDeleteValidator deleteValidator, 
             IEventPublisher eventPublisher,
             IEventStore<Aggregates.Category> eventStore)
             :base(eventPublisher, eventStore)
         {
-            _categoryRepository = categoryRepository;
+            _categoryIndexer = categoryIndexer;
             _logger = logger;
             _deleteValidator = deleteValidator;
         }
@@ -42,7 +42,7 @@ namespace Category.Core.EventHandlers
                 return;
             }
 
-            var deleteResult = await _categoryRepository.Delete(categoryDeletedEvent.Id);
+            var deleteResult = await _categoryIndexer.Delete(categoryDeletedEvent.Id);
             if (!deleteResult.Success)
             {
                 var failedEvent = new DeletingCategoryFailedEvent(CategoryModificationStatus.UnexpectedProblem, categoryDeletedEvent.CorrelationId);

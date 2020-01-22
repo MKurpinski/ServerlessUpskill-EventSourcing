@@ -12,6 +12,7 @@ using Microsoft.Azure.Search.Models;
 using Microsoft.Extensions.Options;
 using Upskill.Results;
 using Upskill.Results.Implementation;
+using Upskill.Search.Dtos;
 using Upskill.Search.Handlers;
 using Upskill.Search.Options;
 using Upskill.Search.Providers;

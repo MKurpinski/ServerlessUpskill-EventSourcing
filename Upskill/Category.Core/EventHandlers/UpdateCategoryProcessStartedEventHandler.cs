@@ -2,6 +2,10 @@
 using Category.Core.Enums;
 using Category.Core.Events.External;
 using Category.Core.Events.Internal;
+using Category.Search.Dtos;
+using Category.Search.Handlers;
+using Category.Search.Indexers;
+using Category.Search.Queries;
 using Category.Storage.Tables.Dtos;
 using Category.Storage.Tables.Repositories;
 using Microsoft.Extensions.Logging;
@@ -13,18 +17,21 @@ namespace Category.Core.EventHandlers
 {
     public class UpdateCategoryProcessStartedEventHandler : BaseCategoryModificationHandler, IEventHandler<UpdateCategoryProcessStartedEvent>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ISearchableCategoryIndexer _categoryIndexer;
+        private readonly ICategorySearchHandler _categorySearchHandler;
         private readonly ILogger<UpdateCategoryProcessStartedEventHandler> _logger;
 
         public UpdateCategoryProcessStartedEventHandler(
-            ICategoryRepository categoryRepository,
+            ISearchableCategoryIndexer categoryIndexer,
             ILogger<UpdateCategoryProcessStartedEventHandler> logger,
             IEventPublisher eventPublisher,
-            IEventStore<Aggregates.Category> eventStore)
+            IEventStore<Aggregates.Category> eventStore,
+            ICategorySearchHandler categorySearchHandler)
             :base(eventPublisher, eventStore)
         {
-            _categoryRepository = categoryRepository;
+            _categoryIndexer = categoryIndexer;
             _logger = logger;
+            _categorySearchHandler = categorySearchHandler;
         }
 
         public async Task Handle(UpdateCategoryProcessStartedEvent categoryChangedEvent)
@@ -42,7 +49,7 @@ namespace Category.Core.EventHandlers
                 categoryChangedEvent.Description,
                 categoryChangedEvent.SortOrder);
 
-            var saveResult = await _categoryRepository.CreateOrUpdate(category);
+            var saveResult = await _categoryIndexer.Index(category);
 
             if (!saveResult.Success)
             {
@@ -58,7 +65,7 @@ namespace Category.Core.EventHandlers
 
         private async Task<bool> SaveGuard(UpdateCategoryProcessStartedEvent categoryChangedEvent)
         {
-            var existingCategoryResult = await _categoryRepository.GetById(categoryChangedEvent.Id);
+            var existingCategoryResult = await _categorySearchHandler.GetById(new GetCategoryByIdQuery(categoryChangedEvent.Id));
 
             if (!existingCategoryResult.Success)
             {
@@ -69,7 +76,7 @@ namespace Category.Core.EventHandlers
                 return false;
             }
 
-            var existingCategoryWithSameNameResult = await _categoryRepository.GetByName(categoryChangedEvent.Name);
+            var existingCategoryWithSameNameResult = await _categorySearchHandler.GetByName(new GetCategoryByNameQuery(categoryChangedEvent.Name));
 
             if (existingCategoryWithSameNameResult.Success)
             {

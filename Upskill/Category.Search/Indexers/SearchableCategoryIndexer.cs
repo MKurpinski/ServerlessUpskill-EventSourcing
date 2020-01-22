@@ -17,14 +17,14 @@ namespace Category.Search.Indexers
         {
         }
 
-        public async Task Index(CategoryDto toIndex)
+        public async Task<IResult> Index(CategoryDto toIndex)
         {
-            await this.IndexInternal(toIndex, IndexType.Active);
+            return await this.IndexInternal(toIndex, IndexType.Active);
         }
 
-        public async Task Reindex(CategoryDto toIndex)
+        public async Task<IResult> Reindex(CategoryDto toIndex)
         {
-            await this.IndexInternal(toIndex, IndexType.InProgress);
+            return await this.IndexInternal(toIndex, IndexType.InProgress);
         }
 
         public async Task<IResult> Delete(string id)
@@ -32,10 +32,10 @@ namespace Category.Search.Indexers
             return await this.DeleteInternal(id);
         }
 
-        private async Task IndexInternal(CategoryDto toIndex, IndexType indexType)
+        private async Task<IResult> IndexInternal(CategoryDto toIndex, IndexType indexType)
         {
             var searchableCategory = new SearchableCategory(toIndex.Id, toIndex.Name, toIndex.Description, toIndex.SortOrder);
-            await this.Index(searchableCategory, indexType);
+           return await this.Index(searchableCategory, indexType);
         }
     }
 }

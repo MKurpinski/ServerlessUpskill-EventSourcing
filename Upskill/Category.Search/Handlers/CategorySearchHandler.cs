@@ -9,6 +9,7 @@ using Microsoft.Azure.Search.Models;
 using Microsoft.Extensions.Options;
 using Upskill.Results;
 using Upskill.Results.Implementation;
+using Upskill.Search.Dtos;
 using Upskill.Search.Handlers;
 using Upskill.Search.Options;
 using Upskill.Search.Providers;
@@ -26,9 +27,20 @@ namespace Category.Search.Handlers
             _searchOptions = searchOptionsAccessor.Value;
         }
 
-        public Task<IReadOnlyCollection<CategoryDto>> GetAll()
+        public async Task<PagedSearchResultDto<CategoryDto>> Get(GetCategoriesQuery query)
         {
-            throw new NotImplementedException();
+            var searchParameters = new SearchParameters
+            {
+                IncludeTotalResultCount = true,
+                Top = query.Take,
+                Skip = query.Skip,
+            };
+
+            var searchResults = await this.WildcardSearch("*", searchParameters);
+            var mappedResults = searchResults.Results.Select(x =>
+                new CategoryDto(x.Document.Id, x.Document.Name, x.Document.Description, x.Document.SortOrder)).ToList();
+
+            return new PagedSearchResultDto<CategoryDto>(mappedResults, searchResults.Count.Value);
         }
 
         public async Task<IDataResult<CategoryDto>> GetById(GetCategoryByIdQuery query)

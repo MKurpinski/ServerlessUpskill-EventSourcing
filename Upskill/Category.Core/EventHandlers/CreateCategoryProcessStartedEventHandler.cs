@@ -2,8 +2,10 @@
 using Category.Core.Enums;
 using Category.Core.Events.External;
 using Category.Core.Events.Internal;
-using Category.Storage.Tables.Dtos;
-using Category.Storage.Tables.Repositories;
+using Category.Search.Dtos;
+using Category.Search.Handlers;
+using Category.Search.Indexers;
+using Category.Search.Queries;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
@@ -13,23 +15,26 @@ namespace Category.Core.EventHandlers
 {
     public class CreateCategoryProcessStartedEventHandler : BaseCategoryModificationHandler, IEventHandler<CreateCategoryProcessStartedEvent>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ISearchableCategoryIndexer _categoryIndexer;
+        private readonly ICategorySearchHandler _categorySearchHandler;
         private readonly ILogger<CreateCategoryProcessStartedEventHandler> _logger;
 
         public CreateCategoryProcessStartedEventHandler(
-            ICategoryRepository categoryRepository,
+            ISearchableCategoryIndexer categoryIndexer,
             ILogger<CreateCategoryProcessStartedEventHandler> logger,
             IEventPublisher eventPublisher,
-            IEventStore<Aggregates.Category> eventStore)
+            IEventStore<Aggregates.Category> eventStore,
+            ICategorySearchHandler categorySearchHandler)
             :base(eventPublisher, eventStore)
         {
-            _categoryRepository = categoryRepository;
+            _categoryIndexer = categoryIndexer;
             _logger = logger;
+            _categorySearchHandler = categorySearchHandler;
         }
 
         public async Task Handle(CreateCategoryProcessStartedEvent categoryChangedEvent)
         {
-            var existingCategoryWithName = await _categoryRepository.GetByName(categoryChangedEvent.Name);
+            var existingCategoryWithName = await _categorySearchHandler.GetByName(new GetCategoryByNameQuery(categoryChangedEvent.Name));
 
             if (existingCategoryWithName.Success)
             {
@@ -45,7 +50,7 @@ namespace Category.Core.EventHandlers
                 categoryChangedEvent.Description,
                 categoryChangedEvent.SortOrder);
 
-            var saveResult = await _categoryRepository.CreateOrUpdate(category);
+            var saveResult = await _categoryIndexer.Index(category);
 
             if (!saveResult.Success)
             {
