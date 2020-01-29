@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Category.Core.Enums;
-using Category.Core.Events.External;
-using Category.Core.Events.Internal;
+using Category.Core.Events;
 using Category.Core.Validators;
 using Category.Search.Indexers;
 using Microsoft.Extensions.Logging;

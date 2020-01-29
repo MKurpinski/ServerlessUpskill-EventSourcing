@@ -1,4 +1,4 @@
-﻿namespace Category.Core.Events.External
+﻿namespace Category.Core.Events
 {
     public class CategoryCreatedEvent : CategoryUpdatedEvent
     {

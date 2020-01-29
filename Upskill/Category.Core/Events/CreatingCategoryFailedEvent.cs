@@ -1,13 +1,13 @@
 ﻿using Category.Core.Enums;
 using Upskill.Events;
 
-namespace Category.Core.Events.Internal
+namespace Category.Core.Events
 {
-    public class DeletingCategoryFailedEvent : BaseStatusEvent
+    public class CreatingCategoryFailedEvent : BaseStatusEvent
     {
-        public DeletingCategoryFailedEvent(
+        public CreatingCategoryFailedEvent(
             CategoryModificationStatus status,
-            string correlationId)
+            string correlationId) 
             : base(status.ToString(), correlationId)
         {
         }

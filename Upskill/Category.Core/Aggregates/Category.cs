@@ -1,4 +1,4 @@
-﻿using Category.Core.Events.External;
+﻿using Category.Core.Events;
 using Upskill.EventStore.Models;
 
 namespace Category.Core.Aggregates

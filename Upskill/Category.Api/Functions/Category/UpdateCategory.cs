@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Category.Api.Commands;
 using Category.Api.CustomHttpRequests;
-using Category.Core.Events.Internal;
+using Category.Core.Events;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;

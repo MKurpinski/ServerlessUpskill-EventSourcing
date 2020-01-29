@@ -1,6 +1,6 @@
 ﻿using Upskill.Events;
 
-namespace Category.Core.Events.Internal
+namespace Category.Core.Events
 {
     public class UpdateCategoryProcessStartedEvent : BaseEvent
     {

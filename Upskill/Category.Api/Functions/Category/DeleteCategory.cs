@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Category.Core.Events.Internal;
+using Category.Core.Events;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;

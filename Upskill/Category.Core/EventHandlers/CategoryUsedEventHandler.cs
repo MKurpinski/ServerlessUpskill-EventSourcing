@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Category.Core.Events.External;
+using Category.Core.Events;
 using Category.Search.Handlers;
 using Category.Search.Queries;
 using Category.Storage.Tables.Repositories;

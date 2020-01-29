@@ -17,7 +17,8 @@ namespace Upskill.EventsInfrastructure.Dispatchers
 
         public EventDispatcher(
             ILogger<EventDispatcher> logger,
-            IHandlerImplementationProvider serviceProvider, IEventTypeProvider typeProvider)
+            IHandlerImplementationProvider serviceProvider,
+            IEventTypeProvider typeProvider)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;

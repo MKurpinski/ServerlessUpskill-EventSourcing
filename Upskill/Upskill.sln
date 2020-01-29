@@ -53,7 +53,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.RealTimeNotificatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.Search", "Upskill.Search\Upskill.Search.csproj", "{63BBB486-2AAE-47B5-A590-88A61FA87FEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Category.Search", "Category.Search\Category.Search.csproj", "{162A5D3D-1296-40A9-9823-745C5B80428B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Category.Search", "Category.Search\Category.Search.csproj", "{162A5D3D-1296-40A9-9823-745C5B80428B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

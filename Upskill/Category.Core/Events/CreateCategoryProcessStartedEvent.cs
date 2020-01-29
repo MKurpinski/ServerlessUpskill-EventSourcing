@@ -1,4 +1,4 @@
-﻿namespace Category.Core.Events.Internal
+﻿namespace Category.Core.Events
 {
     public class CreateCategoryProcessStartedEvent : UpdateCategoryProcessStartedEvent
     {

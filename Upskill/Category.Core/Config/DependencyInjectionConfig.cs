@@ -1,6 +1,5 @@
 ﻿using Category.Core.EventHandlers;
-using Category.Core.Events.External;
-using Category.Core.Events.Internal;
+using Category.Core.Events;
 using Category.Core.Validators;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
