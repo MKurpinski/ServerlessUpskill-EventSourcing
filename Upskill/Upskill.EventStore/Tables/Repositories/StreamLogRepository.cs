@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Upskill.EventStore.Models;
 using Upskill.EventStore.Tables.Models;
 using Upskill.Storage.Table.Providers;
@@ -17,6 +19,12 @@ namespace Upskill.EventStore.Tables.Repositories
         public async Task CreateStreamEntry(string id)
         {
             await this.CreateOrUpdate(new StreamLog(id));
+        }
+
+        public async Task<IReadOnlyCollection<string>> GetStreams()
+        {
+            var all = await this.GetAll();
+            return all.Select(x => x.Id).ToList();
         }
     }
 }

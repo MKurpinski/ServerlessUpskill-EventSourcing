@@ -17,6 +17,8 @@ namespace Upskill.EventStore.Extensions
                 .AddTransient<IStreamProvider<T>, StreamProvider<T>>();
             builder.Services
                 .AddTransient<IStreamLogRepository<T>, StreamLogRepository<T>>();
+            builder.Services
+                .AddTransient<IStreamLogProvider<T>, StreamLogProvider<T>>();
 
             return builder.Services
                 .AddTransient<IEventStore<T>, EventStore<T>>();

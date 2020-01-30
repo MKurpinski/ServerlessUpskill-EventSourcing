@@ -68,6 +68,15 @@ namespace Upskill.Storage.Table.Repositories
             return result;
         }
 
+        protected async Task<IList<T>> GetAll()
+        {
+            var table = await _tableClientProvider.Get(_nameOfTable);
+
+            var result = await table.ExecuteQueryAsync(new TableQuery<T>());
+
+            return result;
+        }
+
         protected async Task ExecuteBatch(TableBatchOperation batchOperation)
         {
             var table = await _tableClientProvider.Get(_nameOfTable);
