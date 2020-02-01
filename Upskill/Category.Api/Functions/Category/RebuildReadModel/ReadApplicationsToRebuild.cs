@@ -4,19 +4,19 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventStore.Providers;
 
-namespace Application.Api.Functions.Rebuild
+namespace Category.Api.Functions.Category.RebuildReadModel
 {
-    public class ReadApplicationsToRebuild
+    public class ReadCategoriesToRebuild
     {
-        private readonly IStreamLogProvider<Core.Aggregates.Application> _streamLogProvider;
+        private readonly IStreamLogProvider<Core.Aggregates.Category> _streamLogProvider;
 
-        public ReadApplicationsToRebuild(
-            IStreamLogProvider<Core.Aggregates.Application> streamLogProvider)
+        public ReadCategoriesToRebuild(
+            IStreamLogProvider<Core.Aggregates.Category> streamLogProvider)
         {
             _streamLogProvider = streamLogProvider;
         }
 
-        [FunctionName(nameof(ReadApplicationsToRebuild))]
+        [FunctionName(nameof(ReadCategoriesToRebuild))]
         public async Task<IReadOnlyCollection<string>> Run([ActivityTrigger] IDurableActivityContext context)
         {
             var application = await _streamLogProvider.GetStreams();

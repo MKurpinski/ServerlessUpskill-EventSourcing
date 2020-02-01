@@ -11,7 +11,7 @@ using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
-namespace Application.Api.Functions.Rebuild
+namespace Application.Api.Functions.RebuildReadModel
 {
     public class RequestReadModelRebuild
     {

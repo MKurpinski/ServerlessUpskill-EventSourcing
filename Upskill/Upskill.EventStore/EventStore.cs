@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Nito.AsyncEx;
 using Streamstone;
 using Upskill.Events;
-using Upskill.Events.Extensions;
+using Upskill.EventStore.Appliers;
 using Upskill.EventStore.Builder;
 using Upskill.EventStore.Models;
 using Upskill.EventStore.Providers;
@@ -24,14 +24,17 @@ namespace Upskill.EventStore
         private readonly AsyncLazy<CloudTable> _lazyTableClient;
         private readonly IEventDataBuilder _eventDataBuilder;
         private readonly IStreamProvider<T> _streamProvider;
+        private readonly IEventsApplier _eventsApplier;
 
         public EventStore(
             ITableClientProvider tableClientProvider,
             IEventDataBuilder eventDataBuilder,
-            IStreamProvider<T> streamProvider)
+            IStreamProvider<T> streamProvider,
+            IEventsApplier eventsApplier)
         {
             _eventDataBuilder = eventDataBuilder;
             _streamProvider = streamProvider;
+            _eventsApplier = eventsApplier;
             _lazyTableClient =
                 new AsyncLazy<CloudTable>(() => tableClientProvider.Get($"{typeof(T).Name}{STREAMS_TABLE_SUFFIX}"));
         }
@@ -61,8 +64,6 @@ namespace Upskill.EventStore
 
         public async Task<IDataResult<T>> AggregateStream(string streamId)
         {
-            var aggregate = (T) Activator.CreateInstance(typeof(T), true);
-
             var events = await this.GetEvents(streamId);
 
             if (!events.Any())
@@ -70,10 +71,7 @@ namespace Upskill.EventStore
                 return new FailedDataResult<T>();
             }
 
-            foreach (var @event in events)
-            {
-                aggregate.Invoke(nameof(IBuildBy<IEvent>.ApplyEvent), @event);
-            }
+            var aggregate = _eventsApplier.ApplyEvents<T>(events);
 
             return new SuccessfulDataResult<T>(aggregate);
         }

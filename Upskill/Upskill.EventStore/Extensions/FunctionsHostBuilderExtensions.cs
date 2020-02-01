@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Upskill.EventStore.Appliers;
 using Upskill.EventStore.Builder;
 using Upskill.EventStore.Models;
 using Upskill.EventStore.Providers;
@@ -13,6 +14,7 @@ namespace Upskill.EventStore.Extensions
         public static IServiceCollection AddEventStore<T>(this IFunctionsHostBuilder builder) where T : IAggregateRoot
         {
             builder.Services.TryAddTransient<IEventDataBuilder, EventDataBuilder>();
+            builder.Services.TryAddTransient<IEventsApplier, EventsApplier>();
             builder.Services
                 .AddTransient<IStreamProvider<T>, StreamProvider<T>>();
             builder.Services

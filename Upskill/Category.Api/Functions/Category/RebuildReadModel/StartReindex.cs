@@ -1,19 +1,19 @@
 using System.Threading.Tasks;
-using Application.Core.Events;
-using Application.Search.Managers;
+using Category.Core.Events;
+using Category.Search.Managers;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventsInfrastructure.Publishers;
 
-namespace Application.Api.Functions.Rebuild
+namespace Category.Api.Functions.Category.RebuildReadModel
 {
     public class StartReindex
     {
-        private readonly ISearchableApplicationReindexManager _reindexManager;
+        private readonly ISearchableCategoryReindexManager _reindexManager;
         private readonly IEventPublisher _eventPublisher;
 
         public StartReindex(
-            ISearchableApplicationReindexManager reindexManager,
+            ISearchableCategoryReindexManager reindexManager,
             IEventPublisher eventPublisher)
         {
             _reindexManager = reindexManager;
@@ -24,7 +24,7 @@ namespace Application.Api.Functions.Rebuild
         public async Task Run([ActivityTrigger] IDurableActivityContext context)
         {
             await _reindexManager.StartReindex();
-            await _eventPublisher.PublishEvent(new ApplicationReindexStartedEvent(context.InstanceId));
+            await _eventPublisher.PublishEvent(new CategoriesReindexStartedEvent(context.InstanceId));
         }
     }
 }

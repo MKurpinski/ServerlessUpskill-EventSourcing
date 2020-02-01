@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
-namespace Application.Api.Functions.Rebuild
+namespace Application.Api.Functions.RebuildReadModel
 {
     public class RebuildReadModelProcessOrchestrator
     {
@@ -20,10 +20,21 @@ namespace Application.Api.Functions.Rebuild
             var rebuildTasks = applicationIds.Select(id =>
             {
                 var proxy = this.GetApplicationEntityProxy(context, id);
-                return proxy.Rebuild();
+                return proxy.Reindex();
             });
 
             await Task.WhenAll(rebuildTasks);
+
+            applicationIds =
+                await context.CallActivityAsync<IReadOnlyCollection<string>>(nameof(ReadApplicationsToRebuild), null);
+
+            var applyEventTasks = applicationIds.Select(id =>
+            {
+                var proxy = this.GetApplicationEntityProxy(context, id);
+                return proxy.ApplyPendingEvents();
+            });
+
+            await Task.WhenAll(applyEventTasks);
 
             var deleteStateTasks = applicationIds.Select(id =>
             {

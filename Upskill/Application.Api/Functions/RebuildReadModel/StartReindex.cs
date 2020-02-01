@@ -5,14 +5,14 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventsInfrastructure.Publishers;
 
-namespace Application.Api.Functions.Rebuild
+namespace Application.Api.Functions.RebuildReadModel
 {
-    public class FinishReindex
+    public class StartReindex
     {
         private readonly ISearchableApplicationReindexManager _reindexManager;
         private readonly IEventPublisher _eventPublisher;
 
-        public FinishReindex(
+        public StartReindex(
             ISearchableApplicationReindexManager reindexManager,
             IEventPublisher eventPublisher)
         {
@@ -20,11 +20,11 @@ namespace Application.Api.Functions.Rebuild
             _eventPublisher = eventPublisher;
         }
 
-        [FunctionName(nameof(FinishReindex))]
+        [FunctionName(nameof(StartReindex))]
         public async Task Run([ActivityTrigger] IDurableActivityContext context)
         {
-            await _reindexManager.FinishReindexing();
-            await _eventPublisher.PublishEvent(new ApplicationReindexFinishedEvent(context.InstanceId));
+            await _reindexManager.StartReindex();
+            await _eventPublisher.PublishEvent(new ApplicationReindexStartedEvent(context.InstanceId));
         }
     }
 }
