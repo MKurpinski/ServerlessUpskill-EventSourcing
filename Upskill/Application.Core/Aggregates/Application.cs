@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Application.Core.Events;
 using Application.Core.ValueObjects;
+using Upskill.Events;
 using Upskill.EventStore.Models;
 
 namespace Application.Core.Aggregates
 {
-    public class Application : IAggregateRoot
+    public class Application : IAggregateRoot, IBuildBy<ApplicationCreatedEvent>, IBuildBy<ApplicationCategoryNameChangedEvent>
     {
         public string Id { get; private set; }
         public string PhotoUri { get; private set; }
@@ -22,12 +23,12 @@ namespace Application.Core.Aggregates
         public IReadOnlyCollection<ConfirmedSkill> ConfirmedSkills { get; private set; }
         public IReadOnlyCollection<WorkExperience> WorkExperiences { get; private set; }
 
-        private void ApplyEvent(ApplicationCategoryNameChangedEvent applicationCategoryNameChangedEvent)
+        public void ApplyEvent(ApplicationCategoryNameChangedEvent applicationCategoryNameChangedEvent)
         {
             this.Category = applicationCategoryNameChangedEvent.NewCategoryName;
         }
 
-        private void ApplyEvent(ApplicationCreatedEvent applicationCreatedEvent)
+        public void ApplyEvent(ApplicationCreatedEvent applicationCreatedEvent)
         {
             this.Id = applicationCreatedEvent.Id;
             this.PhotoUri = applicationCreatedEvent.PhotoUri;

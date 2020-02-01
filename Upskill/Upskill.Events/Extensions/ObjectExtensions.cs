@@ -26,7 +26,15 @@ namespace Upskill.Events.Extensions
             var method = item
                 .GetType()
                 .GetMethods()
-                .SingleOrDefault(m => m.Name == methodName);
+                .Where(m =>
+                {
+                    var parameters = m.GetParameters();
+                    return
+                        m.Name == methodName
+                        && parameters.Length == 1
+                        && parameters.Single().ParameterType == param.GetType();
+                })
+                .SingleOrDefault();
 
             if (method == null)
             {

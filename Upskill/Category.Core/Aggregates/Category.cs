@@ -1,9 +1,10 @@
 ﻿using Category.Core.Events;
+using Upskill.Events;
 using Upskill.EventStore.Models;
 
 namespace Category.Core.Aggregates
 {
-    public class Category : IAggregateRoot
+    public class Category : IAggregateRoot, IBuildBy<CategoryCreatedEvent>,  IBuildBy<CategoryUpdatedEvent>, IBuildBy<CategoryDeletedEvent>
     {
         public string Id { get; private set; }
         public string Name { get; private set; }
@@ -11,7 +12,7 @@ namespace Category.Core.Aggregates
         public int SortOrder { get; private set; }
         public bool IsDeleted { get; private set; }
 
-        private void ApplyEvent(CategoryCreatedEvent categoryCreated)
+        public void ApplyEvent(CategoryCreatedEvent categoryCreated)
         {
             this.Id = categoryCreated.Id;
             this.Name = categoryCreated.Name;
@@ -20,7 +21,7 @@ namespace Category.Core.Aggregates
             this.IsDeleted = false;
         }
 
-        private void ApplyEvent(CategoryUpdatedEvent categoryUpdated)
+        public void ApplyEvent(CategoryUpdatedEvent categoryUpdated)
         {
             this.Id = categoryUpdated.Id;
             this.Name = categoryUpdated.Name;
@@ -28,7 +29,7 @@ namespace Category.Core.Aggregates
             this.SortOrder = categoryUpdated.SortOrder;
         }
 
-        private void ApplyEvent(CategoryDeletedEvent categoryDeletedEvent)
+        public void ApplyEvent(CategoryDeletedEvent categoryDeletedEvent)
         {
             this.IsDeleted = true;
         }

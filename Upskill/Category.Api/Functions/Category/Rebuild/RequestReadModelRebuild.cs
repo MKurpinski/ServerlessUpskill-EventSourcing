@@ -28,7 +28,7 @@ namespace Category.Api.Functions.Category.Rebuild
 
         [FunctionName(nameof(RequestReadModelRebuild))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "admin/categories")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "category/admin")] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient processStarter,
             [NotificationSubscriber] string subscriber,
             ILogger log)

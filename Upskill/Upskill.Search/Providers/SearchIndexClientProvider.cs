@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
+using Newtonsoft.Json.Serialization;
 using Upskill.Search.Enums;
 using Upskill.Search.Models;
 using Upskill.Search.Resolvers;

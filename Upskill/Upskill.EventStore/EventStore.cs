@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace Upskill.EventStore
     public class EventStore<T> : IEventStore<T> where T : IAggregateRoot
     {
         private const string STREAMS_TABLE_SUFFIX = "Stream";
-        private const string APPLY_EVENT = "ApplyEvent";
+
         private readonly AsyncLazy<CloudTable> _lazyTableClient;
         private readonly IEventDataBuilder _eventDataBuilder;
         private readonly IStreamProvider<T> _streamProvider;
@@ -73,7 +72,7 @@ namespace Upskill.EventStore
 
             foreach (var @event in events)
             {
-                aggregate.Invoke(APPLY_EVENT, @event);
+                aggregate.Invoke(nameof(IBuildBy<IEvent>.ApplyEvent), @event);
             }
 
             return new SuccessfulDataResult<T>(aggregate);

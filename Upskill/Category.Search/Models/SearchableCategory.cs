@@ -12,12 +12,17 @@ namespace Category.Search.Models
         public string Name { get; set; }
         [IsSearchable]
         public string Description { get; set; }
-        [IsSearchable, IsSortable]
+        [IsSortable]
         public int SortOrder { get; set; }
 
         public SearchableCategory()
         {
 
+        }
+
+        public SearchableCategory(string id)
+        {
+            Id = id;
         }
 
         public SearchableCategory(string id, string name, string description, int sortOrder)

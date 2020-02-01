@@ -28,7 +28,7 @@ namespace Application.Api.Functions.Rebuild
 
         [FunctionName(nameof(RequestReadModelRebuild))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "admin/application")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "application/admin")] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient processStarter,
             [NotificationSubscriber] string subscriber,
             ILogger log)

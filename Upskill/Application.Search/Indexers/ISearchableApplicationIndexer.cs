@@ -7,6 +7,5 @@ namespace Application.Search.Indexers
     {
         Task Index(ApplicationDto toIndex);
         Task Reindex(ApplicationDto toIndex);
-        Task BuildNewIndex();
     }
 }

@@ -31,11 +31,6 @@ namespace Application.Search.Indexers
             await this.IndexInternal(toIndex, IndexType.InProgress);
         }
 
-        public async Task BuildNewIndex()
-        {
-            await this.OpenNewIndex();
-        }
-
         private async Task IndexInternal(ApplicationDto toIndex, IndexType indexType)
         {
             var searchableApplication = _mapper.Map<ApplicationDto, SearchableApplication>(toIndex);

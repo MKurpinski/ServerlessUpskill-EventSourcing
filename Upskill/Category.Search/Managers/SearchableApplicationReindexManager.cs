@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Category.Search.Models;
 using Upskill.Infrastructure;
+using Upskill.Search.Enums;
 using Upskill.Search.Managers;
 using Upskill.Search.Tables.Repositories;
 
@@ -14,7 +15,7 @@ namespace Category.Search.Managers
 
         public async Task StartReindex()
         {
-            await this.StartReindex<SearchableCategory>();
+            await this.OpenIndex<SearchableCategory>(IndexType.InProgress);
         }
 
         public async Task FinishReindexing()

@@ -40,27 +40,22 @@ namespace Upskill.Search.Indexers
             }
         }
 
-        protected async Task<IResult> DeleteInternal(string id)
+        protected async Task<IResult> DeleteInternal(T toDelete)
         {
             var indexClient = await _searchIndexClientProvider.Get<T>(IndexType.Active);
 
-            var batch = IndexBatch.Delete(new List<string> { id });
+            var batch = IndexBatch.Delete(new List<T> { toDelete });
 
             try
             {
-                await indexClient.Documents.IndexAsync<string>(batch);
+                await indexClient.Documents.IndexAsync(batch);
                 return new SuccessfulResult();
             }
             catch (IndexBatchException)
             {
-                _logger.LogError($"Removing failed for ${id} in index {indexClient.IndexName}");
+                _logger.LogError($"Removing failed for ${toDelete.Id} in index {indexClient.IndexName}");
                 return new FailedResult();
             }
-        }
-
-        protected async Task OpenNewIndex()
-        {
-            await _searchIndexClientProvider.Get<T>(IndexType.InProgress);
         }
     }
 }

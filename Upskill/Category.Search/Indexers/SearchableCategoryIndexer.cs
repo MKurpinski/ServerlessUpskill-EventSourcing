@@ -1,8 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Category.Search.Dtos;
+using Category.Search.Handlers;
 using Category.Search.Models;
+using Category.Search.Queries;
 using Microsoft.Extensions.Logging;
 using Upskill.Results;
+using Upskill.Results.Implementation;
 using Upskill.Search.Enums;
 using Upskill.Search.Indexers;
 using Upskill.Search.Providers;
@@ -11,9 +14,11 @@ namespace Category.Search.Indexers
 {
     public class SearchableCategoryIndexer : BaseIndexer<SearchableCategory>, ISearchableCategoryIndexer
     {
+
         public SearchableCategoryIndexer(
             ILogger<SearchableCategoryIndexer> logger,
-            ISearchIndexClientProvider searchIndexClientProvider) : base(searchIndexClientProvider, logger)
+            ISearchIndexClientProvider searchIndexClientProvider)
+            : base(searchIndexClientProvider, logger)
         {
         }
 
@@ -29,7 +34,7 @@ namespace Category.Search.Indexers
 
         public async Task<IResult> Delete(string id)
         {
-            return await this.DeleteInternal(id);
+            return await this.DeleteInternal(new SearchableCategory(id));
         }
 
         private async Task<IResult> IndexInternal(CategoryDto toIndex, IndexType indexType)

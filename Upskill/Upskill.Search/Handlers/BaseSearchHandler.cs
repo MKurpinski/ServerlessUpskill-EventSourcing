@@ -43,7 +43,7 @@ namespace Upskill.Search.Handlers
                 Skip = skip,
                 Top = top,
                 IncludeTotalResultCount = true,
-                SearchFields = new List<string> { fieldName.ToLowerInvariant() }
+                SearchFields = new List<string> { fieldName }
             };
 
             var searchResults = await client.Documents.SearchAsync<T>(value, searchParameters);

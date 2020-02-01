@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Application.Search.Models;
-using Application.Storage.Tables.Repositories;
 using Upskill.Infrastructure;
+using Upskill.Search.Enums;
 using Upskill.Search.Managers;
 using Upskill.Search.Tables.Repositories;
 
@@ -15,7 +15,7 @@ namespace Application.Search.Managers
 
         public async Task StartReindex()
         {
-            await this.StartReindex<SearchableApplication>();
+            await this.OpenIndex<SearchableApplication>(IndexType.InProgress);
         }
 
         public async Task FinishReindexing()

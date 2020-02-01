@@ -9,12 +9,12 @@ using Upskill.Search.Tables.Repositories;
 
 namespace Upskill.Search.Managers
 {
-    public abstract class IndexManager : IIndexManager
+    public class IndexManager : IIndexManager
     {
         private readonly ISearchableIndexRepository _searchableIndexRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        protected IndexManager(
+        public IndexManager(
             ISearchableIndexRepository searchableIndexRepository,
             IDateTimeProvider dateTimeProvider)
         {
@@ -32,17 +32,7 @@ namespace Upskill.Search.Managers
             return new SuccessfulDataResult<string>(indexResult.Value.Name);
         }
 
-        public async Task StartReindex<T>() where T : ISearchable
-        {
-            await this.OpenIndex<T>(IndexType.InProgress);
-        }
-
-        public async Task BuildIndex<T>() where T : ISearchable
-        {
-            await this.OpenIndex<T>(IndexType.Active);
-        }
-
-        private async Task OpenIndex<T>(IndexType indexType) where T : ISearchable
+        public async Task OpenIndex<T>(IndexType indexType) where T : ISearchable
         {
             var tName = typeof(T).Name;
             var existing = await this.GetIndexNameByType<T>(indexType);

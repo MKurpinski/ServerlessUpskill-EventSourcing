@@ -24,7 +24,7 @@ namespace Upskill.Search.Resolvers
                 return indexNameResult.Value;
             }
 
-            await _indexManager.BuildIndex<T>();
+            await _indexManager.OpenIndex<T>(indexStatus);
             indexNameResult = await _indexManager.GetIndexNameByType<T>(indexStatus);
 
              return indexNameResult.Value;

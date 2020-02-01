@@ -8,6 +8,6 @@ namespace Upskill.Search.Managers
     public interface IIndexManager
     {
         Task<IDataResult<string>> GetIndexNameByType<T>(IndexType indexType) where T : ISearchable;
-        Task BuildIndex<T>() where T : ISearchable;
+        Task OpenIndex<T>(IndexType indexType) where T : ISearchable;
     }
 }

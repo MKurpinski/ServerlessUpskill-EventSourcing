@@ -11,9 +11,9 @@ namespace Category.Api.Functions.Category.Rebuild
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             [DurableClient] IDurableOrchestrationClient processStarter)
         {
-            await context.CallActivityAsync(nameof(StartReindex), null);
+            //await context.CallActivityAsync(nameof(StartReindex), null);
 
-            await context.CallActivityAsync(nameof(FinishReindex), null);
+            //await context.CallActivityAsync(nameof(FinishReindex), null);
         }
     }
 }
