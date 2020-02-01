@@ -3,13 +3,17 @@ using Application.Search.Models;
 using Upskill.Infrastructure;
 using Upskill.Search.Enums;
 using Upskill.Search.Managers;
+using Upskill.Search.Providers;
 using Upskill.Search.Tables.Repositories;
 
 namespace Application.Search.Managers
 {
     public class SearchableApplicationReindexManager : IndexManager, ISearchableApplicationReindexManager
     {
-        public SearchableApplicationReindexManager(ISearchableIndexRepository searchableIndexRepository, IDateTimeProvider dateTimeProvider) : base(searchableIndexRepository, dateTimeProvider)
+        public SearchableApplicationReindexManager(
+            ISearchableIndexRepository searchableIndexRepository, 
+            IDateTimeProvider dateTimeProvider,
+            ISearchServiceClientProvider searchServiceClientProvider) : base(searchableIndexRepository, dateTimeProvider, searchServiceClientProvider)
         {
         }
 

@@ -3,13 +3,17 @@ using Category.Search.Models;
 using Upskill.Infrastructure;
 using Upskill.Search.Enums;
 using Upskill.Search.Managers;
+using Upskill.Search.Providers;
 using Upskill.Search.Tables.Repositories;
 
 namespace Category.Search.Managers
 {
     public class SearchableCategoryReindexManager : IndexManager, ISearchableCategoryReindexManager
     {
-        public SearchableCategoryReindexManager(ISearchableIndexRepository searchableIndexRepository, IDateTimeProvider dateTimeProvider) : base(searchableIndexRepository, dateTimeProvider)
+        public SearchableCategoryReindexManager(
+            ISearchableIndexRepository searchableIndexRepository,
+            IDateTimeProvider dateTimeProvider,
+            ISearchServiceClientProvider searchServiceClientProvider) : base(searchableIndexRepository, dateTimeProvider, searchServiceClientProvider)
         {
         }
 

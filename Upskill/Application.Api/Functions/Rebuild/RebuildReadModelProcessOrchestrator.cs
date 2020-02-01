@@ -10,8 +10,7 @@ namespace Application.Api.Functions.Rebuild
     {
         [FunctionName(nameof(RebuildReadModelProcessOrchestrator))]
         public async Task RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context,
-            [DurableClient] IDurableOrchestrationClient processStarter)
+            [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             await context.CallActivityAsync(nameof(StartReindex), null);
 
