@@ -10,8 +10,7 @@ namespace Application.Api.Functions.RebuildReadModel
     {
         [FunctionName(nameof(RebuildReadModelProcessOrchestrator))]
         public async Task RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context,
-            [DurableClient] IDurableEntityClient client)
+            [OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             await context.CallActivityAsync(nameof(StartReindex), null);
 
@@ -19,20 +18,20 @@ namespace Application.Api.Functions.RebuildReadModel
                 await context.CallActivityAsync<IReadOnlyCollection<string>>(nameof(ReadApplicationsToRebuild), null);
 
             var rebuildTasks =
-                applicationIds.Select(id => client.SignalEntityAsync<IApplicationEntity>(id, proxy => proxy.Reindex()));
+                applicationIds.Select(id => context.CreateEntityProxy<IApplicationEntity>(id).Reindex());
 
             await Task.WhenAll(rebuildTasks);
 
             applicationIds =
                 await context.CallActivityAsync<IReadOnlyCollection<string>>(nameof(ReadApplicationsToRebuild), null);
 
-            var applyEventTasks = 
-                applicationIds.Select(id => client.SignalEntityAsync<IApplicationEntity>(id, proxy => proxy.ApplyPendingEvents()));
+            var applyEventTasks =
+                applicationIds.Select(id => context.CreateEntityProxy<IApplicationEntity>(id).ApplyPendingEvents());
 
             await Task.WhenAll(applyEventTasks);
 
-            var deleteStateTasks = 
-                applicationIds.Select(id => client.SignalEntityAsync<IApplicationEntity>(id, proxy => proxy.Delete()));
+            var deleteStateTasks =
+                applicationIds.Select(id => context.CreateEntityProxy<IApplicationEntity>(id).Delete());
 
             await Task.WhenAll(deleteStateTasks);
 
