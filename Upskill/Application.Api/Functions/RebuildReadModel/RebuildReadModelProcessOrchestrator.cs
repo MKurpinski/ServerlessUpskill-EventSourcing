@@ -10,46 +10,33 @@ namespace Application.Api.Functions.RebuildReadModel
     {
         [FunctionName(nameof(RebuildReadModelProcessOrchestrator))]
         public async Task RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context)
+            [OrchestrationTrigger] IDurableOrchestrationContext context,
+            [DurableClient] IDurableEntityClient client)
         {
             await context.CallActivityAsync(nameof(StartReindex), null);
 
             var applicationIds =
                 await context.CallActivityAsync<IReadOnlyCollection<string>>(nameof(ReadApplicationsToRebuild), null);
 
-            var rebuildTasks = applicationIds.Select(id =>
-            {
-                var proxy = this.GetApplicationEntityProxy(context, id);
-                return proxy.Reindex();
-            });
+            var rebuildTasks =
+                applicationIds.Select(id => client.SignalEntityAsync<IApplicationEntity>(id, proxy => proxy.Reindex()));
 
             await Task.WhenAll(rebuildTasks);
 
             applicationIds =
                 await context.CallActivityAsync<IReadOnlyCollection<string>>(nameof(ReadApplicationsToRebuild), null);
 
-            var applyEventTasks = applicationIds.Select(id =>
-            {
-                var proxy = this.GetApplicationEntityProxy(context, id);
-                return proxy.ApplyPendingEvents();
-            });
+            var applyEventTasks = 
+                applicationIds.Select(id => client.SignalEntityAsync<IApplicationEntity>(id, proxy => proxy.ApplyPendingEvents()));
 
             await Task.WhenAll(applyEventTasks);
 
-            var deleteStateTasks = applicationIds.Select(id =>
-            {
-                var proxy = this.GetApplicationEntityProxy(context, id);
-                return proxy.Delete();
-            });
+            var deleteStateTasks = 
+                applicationIds.Select(id => client.SignalEntityAsync<IApplicationEntity>(id, proxy => proxy.Delete()));
 
             await Task.WhenAll(deleteStateTasks);
 
             await context.CallActivityAsync(nameof(FinishReindex), null);
-        }
-
-        private IApplicationEntity GetApplicationEntityProxy(IDurableOrchestrationContext context, string id)
-        {
-            return context.CreateEntityProxy<IApplicationEntity>(id);
         }
     }
 }

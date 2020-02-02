@@ -64,7 +64,8 @@ namespace Category.Api.Functions.Category.RebuildReadModel
                 return;
             }
 
-            this.Category = _eventsApplier.ApplyEvents(this.PendingEvents.Select(this.PendingEventToEvent).ToList(), this.Category);
+            var eventsToApply = this.PendingEvents.OrderBy(x => x.Timestamp).Select(this.PendingEventToEvent).ToList();
+            this.Category = _eventsApplier.ApplyEvents(eventsToApply, this.Category);
             await this.PersistReadModel();
         }
 
@@ -83,6 +84,11 @@ namespace Category.Api.Functions.Category.RebuildReadModel
 
         private async Task PersistReadModel()
         {
+            if (this.Category.IsDeleted)
+            {
+                return;
+            }
+
             var toIndex = new CategoryDto(
                 this.Category.Id,
                 this.Category.Name,

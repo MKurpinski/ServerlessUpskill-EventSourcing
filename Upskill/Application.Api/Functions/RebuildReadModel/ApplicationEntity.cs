@@ -67,7 +67,8 @@ namespace Application.Api.Functions.RebuildReadModel
                 return;
             }
 
-            this.Application = _eventsApplier.ApplyEvents(this.PendingEvents.Select(this.PendingEventToEvent).ToList(), this.Application);
+            var eventsToApply = this.PendingEvents.OrderBy(x => x.Timestamp).Select(this.PendingEventToEvent).ToList();
+            this.Application = _eventsApplier.ApplyEvents(eventsToApply, this.Application);
             await this.PersistReadModel();
         }
 

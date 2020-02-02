@@ -10,47 +10,33 @@ namespace Category.Api.Functions.Category.RebuildReadModel
     {
         [FunctionName(nameof(RebuildReadModelProcessOrchestrator))]
         public async Task RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context)
+            [OrchestrationTrigger] IDurableOrchestrationContext context,
+            [DurableClient] IDurableEntityClient client)
         {
             await context.CallActivityAsync(nameof(StartReindex), null);
 
             var categoryIds =
                 await context.CallActivityAsync<IReadOnlyCollection<string>>(nameof(ReadCategoriesToRebuild), null);
 
-            var rebuildTasks = categoryIds.Select(id =>
-            {
-                var proxy = this.GetCategoryEntityProxy(context, id);
-                return proxy.Reindex();
-            });
+            var rebuildTasks = 
+                categoryIds.Select(id => client.SignalEntityAsync<ICategoryEntity>(id, proxy => proxy.Reindex()));
 
             await Task.WhenAll(rebuildTasks);
-
 
             categoryIds =
                 await context.CallActivityAsync<IReadOnlyCollection<string>>(nameof(ReadCategoriesToRebuild), null);
 
-            var applyEventTasks = categoryIds.Select(id =>
-            {
-                var proxy = this.GetCategoryEntityProxy(context, id);
-                return proxy.ApplyPendingEvents();
-            });
+            var applyEventTasks = 
+                categoryIds.Select(id => client.SignalEntityAsync<ICategoryEntity>(id, proxy => proxy.ApplyPendingEvents()));
 
             await Task.WhenAll(applyEventTasks);
 
-            var deleteStateTasks = categoryIds.Select(id =>
-            {
-                var proxy = this.GetCategoryEntityProxy(context, id);
-                return proxy.Delete();
-            });
+            var deleteStateTasks = 
+                categoryIds.Select(id => client.SignalEntityAsync<ICategoryEntity>(id, proxy => proxy.Delete()));
 
             await Task.WhenAll(deleteStateTasks);
 
             await context.CallActivityAsync(nameof(FinishReindex), null);
-        }
-
-        private ICategoryEntity GetCategoryEntityProxy(IDurableOrchestrationContext context, string id)
-        {
-            return context.CreateEntityProxy<ICategoryEntity>(id);
         }
     }
 }

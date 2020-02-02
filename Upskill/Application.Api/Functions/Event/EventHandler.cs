@@ -38,7 +38,10 @@ namespace Application.Api.Functions.Event
                 if (shouldQueueResult.Success)
                 {
                     await client.SignalEntityAsync<IApplicationEntity>(shouldQueueResult.Value,
-                       p => p.QueueEvent(new PendingEvent(eventGridEvent.Data as string, dispatchedEvent.Type)));
+                       p => p.QueueEvent(new PendingEvent(
+                           eventGridEvent.Data as string,
+                           dispatchedEvent.Type, 
+                           eventGridEvent.EventTime)));
                 }
             }
         }
