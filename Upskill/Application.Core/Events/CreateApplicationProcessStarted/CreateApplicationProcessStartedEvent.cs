@@ -4,7 +4,7 @@ using Upskill.Events;
 
 namespace Application.Core.Events.CreateApplicationProcessStarted
 {
-    public class CreateApplicationProcessStartedEvent : BaseEvent
+    public class CreateApplicationProcessStartedEvent : BaseEvent, IAggregateEvent
     {
         public string Id { get; }
         public DateTime CreationTime { get; }

@@ -2,7 +2,7 @@
 
 namespace Category.Core.Events
 {
-    public class DeleteCategoryProcessStartedEvent : BaseEvent
+    public class DeleteCategoryProcessStartedEvent : BaseEvent, IAggregateEvent
     {
         public string Id { get; set; }
 

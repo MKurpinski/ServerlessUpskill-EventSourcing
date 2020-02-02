@@ -2,7 +2,7 @@
 
 namespace Category.Core.Events
 {
-    public class UpdateCategoryProcessStartedEvent : BaseEvent
+    public class UpdateCategoryProcessStartedEvent : BaseEvent, IAggregateEvent
     {
         public string Id { get; set; }
         public string Name { get; set; }

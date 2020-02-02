@@ -1,6 +1,8 @@
-﻿namespace Category.Core.Events
+﻿using Upskill.Events;
+
+namespace Category.Core.Events
 {
-    public class CategoryCreatedEvent : CategoryUpdatedEvent
+    public class CategoryCreatedEvent : CategoryUpdatedEvent, IAggregateEvent
     {
         public CategoryCreatedEvent(
             string id,

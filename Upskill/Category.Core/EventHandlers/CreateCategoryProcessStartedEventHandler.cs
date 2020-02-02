@@ -37,7 +37,7 @@ namespace Category.Core.EventHandlers
 
             if (existingCategoryWithName.Success)
             {
-                var failedEvent = new CreatingCategoryFailedEvent(CategoryModificationStatus.DuplicatedName, categoryChangedEvent.CorrelationId);
+                var failedEvent = new CreatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.DuplicatedName, categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
                 _logger.LogError($"Cannot save the category: {categoryChangedEvent.Id}");
                 return;
@@ -53,7 +53,7 @@ namespace Category.Core.EventHandlers
 
             if (!saveResult.Success)
             {
-                var failedEvent = new CreatingCategoryFailedEvent(CategoryModificationStatus.UnexpectedProblem, categoryChangedEvent.CorrelationId);
+                var failedEvent = new CreatingCategoryFailedEvent(category.Id, CategoryModificationStatus.UnexpectedProblem, categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
                 _logger.LogError($"Problem occured while saving the category: {categoryChangedEvent.Id}");
                 return;

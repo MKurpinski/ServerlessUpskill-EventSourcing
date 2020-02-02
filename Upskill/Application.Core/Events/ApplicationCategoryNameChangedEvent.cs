@@ -2,7 +2,7 @@
 
 namespace Application.Core.Events
 {
-    public class ApplicationCategoryNameChangedEvent : BaseEvent
+    public class ApplicationCategoryNameChangedEvent : BaseEvent, IAggregateEvent
     {
         public string Id { get; }
         public string NewCategoryName { get; }

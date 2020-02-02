@@ -25,6 +25,10 @@ namespace Category.Api.Functions.Category.RebuildReadModel
 
             await Task.WhenAll(rebuildTasks);
 
+
+            categoryIds =
+                await context.CallActivityAsync<IReadOnlyCollection<string>>(nameof(ReadCategoriesToRebuild), null);
+
             var applyEventTasks = categoryIds.Select(id =>
             {
                 var proxy = this.GetCategoryEntityProxy(context, id);

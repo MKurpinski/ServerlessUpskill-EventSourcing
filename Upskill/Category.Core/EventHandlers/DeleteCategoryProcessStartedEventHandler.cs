@@ -35,7 +35,7 @@ namespace Category.Core.EventHandlers
 
             if (!canDeleteResult.Success)
             {
-                var failedEvent = new DeletingCategoryFailedEvent(canDeleteResult.Status, categoryDeletedEvent.CorrelationId);
+                var failedEvent = new DeletingCategoryFailedEvent(categoryDeletedEvent.Id, canDeleteResult.Status, categoryDeletedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, failedEvent);
                 _logger.LogError($"Cannot delete the category({categoryDeletedEvent.Id}), it's used somewhere");
                 return;
@@ -44,7 +44,7 @@ namespace Category.Core.EventHandlers
             var deleteResult = await _categoryIndexer.Delete(categoryDeletedEvent.Id);
             if (!deleteResult.Success)
             {
-                var failedEvent = new DeletingCategoryFailedEvent(CategoryModificationStatus.UnexpectedProblem, categoryDeletedEvent.CorrelationId);
+                var failedEvent = new DeletingCategoryFailedEvent(categoryDeletedEvent.Id, CategoryModificationStatus.UnexpectedProblem, categoryDeletedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, failedEvent);
                 _logger.LogError($"Problem occured while deleting the category: {categoryDeletedEvent.Id}");
             }

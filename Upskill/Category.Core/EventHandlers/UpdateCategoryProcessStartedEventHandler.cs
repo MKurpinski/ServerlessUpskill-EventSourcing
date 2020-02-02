@@ -52,7 +52,7 @@ namespace Category.Core.EventHandlers
 
             if (!saveResult.Success)
             {
-                var failedEvent = new UpdatingCategoryFailedEvent(CategoryModificationStatus.UnexpectedProblem, categoryChangedEvent.CorrelationId);
+                var failedEvent = new UpdatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.UnexpectedProblem, categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
                 _logger.LogError($"Problem occured while saving the category: {categoryChangedEvent.Id}");
                 return;
@@ -69,7 +69,7 @@ namespace Category.Core.EventHandlers
             if (!existingCategoryResult.Success)
             {
                 var failedEvent =
-                    new UpdatingCategoryFailedEvent(CategoryModificationStatus.NotFound, categoryChangedEvent.CorrelationId);
+                    new UpdatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.NotFound, categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
                 _logger.LogError($"Cannot save the category: {categoryChangedEvent.Id}");
                 return false;
@@ -79,7 +79,7 @@ namespace Category.Core.EventHandlers
 
             if (existingCategoryWithSameNameResult.Success)
             {
-                var failedEvent = new UpdatingCategoryFailedEvent(CategoryModificationStatus.DuplicatedName,
+                var failedEvent = new UpdatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.DuplicatedName,
                     categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
                 _logger.LogError($"Cannot save the category: {categoryChangedEvent.Id}");

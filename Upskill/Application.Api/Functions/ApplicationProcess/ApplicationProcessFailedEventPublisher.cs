@@ -25,7 +25,7 @@ namespace Application.Api.Functions.ApplicationProcess
             [ActivityTrigger] IDurableActivityContext context)
         {
             var status = context.GetInput<string>();
-            var applicationFailedEvent = new CreatingApplicationFailedEvent(status, context.InstanceId);
+            var applicationFailedEvent = new CreatingApplicationFailedEvent(context.InstanceId, status, context.InstanceId);
             await _eventStore.AppendEvent(context.InstanceId, applicationFailedEvent);
             await _eventPublisher.PublishEvent(applicationFailedEvent);
         }

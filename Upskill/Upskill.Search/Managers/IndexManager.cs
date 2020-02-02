@@ -54,6 +54,17 @@ namespace Upskill.Search.Managers
             await this.CreateIndex<T>(indexName);
         }
 
+        public async Task<IResult> IsReindexInProgress<T>() where T : ISearchable
+        {
+            var reindex = await this.GetIndexByType<T>(IndexType.InProgress);
+            if (!reindex.Success)
+            {
+                return new FailedResult();
+            }
+
+            return new SuccessfulResult();
+        }
+
         public async Task FinishReindexing<T>() where T : ISearchable
         {
             var existingActive = await this.GetIndexByType<T>(IndexType.Active);
@@ -73,7 +84,7 @@ namespace Upskill.Search.Managers
             await _searchableIndexRepository.UpdateBatch(toUpdate.ToArray());
         }
 
-        private async Task<IDataResult<SearchableIndex>> GetIndexByType<T>(IndexType indexType)where T : ISearchable
+        protected async Task<IDataResult<SearchableIndex>> GetIndexByType<T>(IndexType indexType) where T : ISearchable
         {
             var tName = typeof(T).Name;
             var index =

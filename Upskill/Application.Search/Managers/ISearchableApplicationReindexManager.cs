@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Upskill.Results;
 
 namespace Application.Search.Managers
 {

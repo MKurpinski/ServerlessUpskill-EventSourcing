@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using Application.Core.Events.CreateApplicationProcessStarted;
 using Newtonsoft.Json;
+using Upskill.Events;
 
 namespace Application.Core.Events
 {
-    public class ApplicationCreatedEvent : CreateApplicationProcessStartedEvent
+    public class ApplicationCreatedEvent : CreateApplicationProcessStartedEvent, IAggregateEvent
     {
         [JsonConstructor]
         public ApplicationCreatedEvent(

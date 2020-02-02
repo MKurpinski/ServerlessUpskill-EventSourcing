@@ -2,11 +2,13 @@
 
 namespace Application.Core.Events
 {
-    public class CreatingApplicationFailedEvent : BaseStatusEvent
+    public class CreatingApplicationFailedEvent : BaseStatusEvent, IAggregateEvent
     {
-        public CreatingApplicationFailedEvent(string status, string correlationId) 
+        public string Id { get; }
+        public CreatingApplicationFailedEvent(string id, string status, string correlationId) 
             : base(status, correlationId)
         {
+            Id = id;
         }
     }
 }

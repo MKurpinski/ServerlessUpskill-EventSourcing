@@ -9,5 +9,6 @@ namespace Upskill.Search.Managers
     {
         Task<IDataResult<string>> GetIndexNameByType<T>(IndexType indexType) where T : ISearchable;
         Task OpenIndex<T>(IndexType indexType) where T : ISearchable;
+        Task<IResult> IsReindexInProgress<T>() where T : ISearchable;
     }
 }

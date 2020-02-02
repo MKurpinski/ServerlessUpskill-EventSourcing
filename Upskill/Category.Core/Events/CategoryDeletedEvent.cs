@@ -2,7 +2,7 @@
 
 namespace Category.Core.Events
 {
-    public class CategoryDeletedEvent : BaseEvent
+    public class CategoryDeletedEvent : BaseEvent, IAggregateEvent
     {
         public string Id { get; }
 

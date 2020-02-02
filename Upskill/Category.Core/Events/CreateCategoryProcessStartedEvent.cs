@@ -1,6 +1,8 @@
-﻿namespace Category.Core.Events
+﻿using Upskill.Events;
+
+namespace Category.Core.Events
 {
-    public class CreateCategoryProcessStartedEvent : UpdateCategoryProcessStartedEvent
+    public class CreateCategoryProcessStartedEvent : UpdateCategoryProcessStartedEvent, IAggregateEvent
     {
         public CreateCategoryProcessStartedEvent(
             string id,

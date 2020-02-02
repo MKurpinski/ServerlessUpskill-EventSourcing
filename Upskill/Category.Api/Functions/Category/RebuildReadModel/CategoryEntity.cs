@@ -24,7 +24,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
     public class CategoryEntity : ICategoryEntity
     {
         public Core.Aggregates.Category Category { get; private set; }
-        public IList<IEvent> PendingEvents { get; private set; }
+        public IList<object> PendingEvents { get; private set; }
 
         [JsonIgnore]
         private readonly ISearchableCategoryIndexer _categoryIndexer;
@@ -42,7 +42,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
             _eventStore = eventStore;
             _eventsApplier = eventsApplier;
 
-            this.PendingEvents = new List<IEvent>();
+            this.PendingEvents = new List<object>();
         }
 
         public Task QueueEvent(IEvent @event)
@@ -73,6 +73,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
 
             this.Category = aggregateResult.Value;
             await this.PersistReadModel();
+            await Task.Delay(10000);
         }
 
         private async Task PersistReadModel()

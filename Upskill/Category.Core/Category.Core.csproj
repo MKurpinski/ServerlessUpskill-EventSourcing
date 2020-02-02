@@ -10,6 +10,7 @@
     <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />
     <ProjectReference Include="..\Upskill.EventStore\Upskill.EventStore.csproj" />
     <ProjectReference Include="..\Upskill.Events\Upskill.Events.csproj" />
+    <ProjectReference Include="..\Upskill.ReindexGuards\Upskill.ReindexGuards.csproj" />
   </ItemGroup>
 
 </Project>

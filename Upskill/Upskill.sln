@@ -55,6 +55,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.Search", "Upskill.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Category.Search", "Category.Search\Category.Search.csproj", "{162A5D3D-1296-40A9-9823-745C5B80428B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upskill.ReindexGuards", "Upskill.ReindexGuards\Upskill.ReindexGuards.csproj", "{8E1BA3D1-0155-4366-BF70-BC3EB8533A04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,10 @@ Global
 		{162A5D3D-1296-40A9-9823-745C5B80428B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{162A5D3D-1296-40A9-9823-745C5B80428B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{162A5D3D-1296-40A9-9823-745C5B80428B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E1BA3D1-0155-4366-BF70-BC3EB8533A04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E1BA3D1-0155-4366-BF70-BC3EB8533A04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E1BA3D1-0155-4366-BF70-BC3EB8533A04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E1BA3D1-0155-4366-BF70-BC3EB8533A04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,6 +187,7 @@ Global
 		{B923E462-3E04-4AAF-AEB9-25641B339D8C} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 		{63BBB486-2AAE-47B5-A590-88A61FA87FEF} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 		{162A5D3D-1296-40A9-9823-745C5B80428B} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
+		{8E1BA3D1-0155-4366-BF70-BC3EB8533A04} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BEEA3619-2CA9-4BDD-B713-A656BE95FBB0}
