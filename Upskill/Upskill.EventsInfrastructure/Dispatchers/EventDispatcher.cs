@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Upskill.Events;
 using Upskill.Events.Extensions;
+using Upskill.EventsInfrastructure.Dtos;
 using Upskill.EventsInfrastructure.Providers;
 
 namespace Upskill.EventsInfrastructure.Dispatchers
@@ -26,9 +27,9 @@ namespace Upskill.EventsInfrastructure.Dispatchers
             _typeProvider = typeProvider;
         }
 
-        public async Task<IReadOnlyCollection<IEvent>> Dispatch(params EventGridEvent[] events)
+        public async Task<IReadOnlyCollection<DispatchedEvent>> Dispatch(params EventGridEvent[] events)
         {
-            var dispatchedEvents = new List<IEvent>();
+            var dispatchedEvents = new List<DispatchedEvent>();
             foreach (var @event in events)
             {
                 var eventTypeResult = _typeProvider.ResolveEventType(@event.EventType);
@@ -39,7 +40,7 @@ namespace Upskill.EventsInfrastructure.Dispatchers
                 }
 
                 var eventContent = JsonConvert.DeserializeObject(@event.Data as string, eventTypeResult.Value);
-                dispatchedEvents.Add(eventContent as IEvent);
+                dispatchedEvents.Add(new DispatchedEvent(eventContent as IEvent, eventTypeResult.Value.AssemblyQualifiedName));
 
                 var handlerType = typeof(IEventHandler<>).MakeGenericType(eventTypeResult.Value);
                 var canHandle = _serviceProvider.TryResolveHandlers(handlerType, out var handlers);

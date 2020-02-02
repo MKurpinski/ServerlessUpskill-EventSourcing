@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Search.Dtos;
@@ -10,6 +11,7 @@ using Newtonsoft.Json;
 using Upskill.Events;
 using Upskill.EventStore;
 using Upskill.EventStore.Appliers;
+using Upskill.ReindexGuards;
 
 namespace Application.Api.Functions.RebuildReadModel
 {
@@ -17,14 +19,14 @@ namespace Application.Api.Functions.RebuildReadModel
     {
         Task Reindex();
         Task Delete();
-        Task QueueEvent(IEvent @event);
+        Task QueueEvent(PendingEvent pendingEvent);
         Task ApplyPendingEvents();
     }
 
     public class ApplicationEntity : IApplicationEntity
     {
         public Core.Aggregates.Application Application { get; private set; }
-        public IList<IEvent> PendingEvents { get; private set; }
+        public IList<PendingEvent> PendingEvents { get; private set; }
 
         [JsonIgnore]
         private readonly ISearchableApplicationIndexer _applicationIndexer;
@@ -45,12 +47,12 @@ namespace Application.Api.Functions.RebuildReadModel
             _eventStore = eventStore;
             _mapper = mapper;
             _eventsApplier = eventsApplier;
-            this.PendingEvents = new List<IEvent>();
+            this.PendingEvents = new List<PendingEvent>();
         }
 
-        public Task QueueEvent(IEvent @event)
+        public Task QueueEvent(PendingEvent pendingEvent)
         {
-            this.PendingEvents.Add(@event);
+            this.PendingEvents.Add(pendingEvent);
             return Task.CompletedTask;
         }
 
@@ -61,7 +63,7 @@ namespace Application.Api.Functions.RebuildReadModel
                 return;
             }
 
-            this.Application = _eventsApplier.ApplyEvents(this.PendingEvents.ToList(), this.Application);
+            this.Application = _eventsApplier.ApplyEvents(this.PendingEvents.Select(this.PendingEventToEvent).ToList(), this.Application);
             await this.PersistReadModel();
         }
 
@@ -87,6 +89,11 @@ namespace Application.Api.Functions.RebuildReadModel
         {
             var mapped = _mapper.Map<Core.Aggregates.Application, ApplicationDto>(this.Application);
             await _applicationIndexer.Reindex(mapped);
+        }
+
+        public object PendingEventToEvent(PendingEvent pendingEvent)
+        {
+            return JsonConvert.DeserializeObject(pendingEvent.Content, Type.GetType(pendingEvent.EventType));
         }
 
         [FunctionName(nameof(ApplicationEntity))]

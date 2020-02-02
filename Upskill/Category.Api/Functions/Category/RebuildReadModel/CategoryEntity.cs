@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Category.Search.Dtos;
@@ -6,15 +7,15 @@ using Category.Search.Indexers;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Newtonsoft.Json;
-using Upskill.Events;
 using Upskill.EventStore;
 using Upskill.EventStore.Appliers;
+using Upskill.ReindexGuards;
 
 namespace Category.Api.Functions.Category.RebuildReadModel
 {
     public interface ICategoryEntity
     {
-        Task QueueEvent(IEvent @event);
+        Task QueueEvent(PendingEvent pendingEvent);
         Task ApplyPendingEvents();
 
         Task Reindex();
@@ -24,7 +25,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
     public class CategoryEntity : ICategoryEntity
     {
         public Core.Aggregates.Category Category { get; private set; }
-        public IList<object> PendingEvents { get; private set; }
+        public IList<PendingEvent> PendingEvents { get; private set; }
 
         [JsonIgnore]
         private readonly ISearchableCategoryIndexer _categoryIndexer;
@@ -42,12 +43,12 @@ namespace Category.Api.Functions.Category.RebuildReadModel
             _eventStore = eventStore;
             _eventsApplier = eventsApplier;
 
-            this.PendingEvents = new List<object>();
+            this.PendingEvents = new List<PendingEvent>();
         }
 
-        public Task QueueEvent(IEvent @event)
+        public Task QueueEvent(PendingEvent pendingEvent)
         {
-            this.PendingEvents.Add(@event);
+            this.PendingEvents.Add(pendingEvent);
             return Task.CompletedTask;
         }
 
@@ -58,7 +59,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
                 return;
             }
 
-            this.Category = _eventsApplier.ApplyEvents(this.PendingEvents.ToList(), this.Category);
+            this.Category = _eventsApplier.ApplyEvents(this.PendingEvents.Select(this.PendingEventToEvent).ToList(), this.Category);
             await this.PersistReadModel();
         }
 
@@ -73,7 +74,6 @@ namespace Category.Api.Functions.Category.RebuildReadModel
 
             this.Category = aggregateResult.Value;
             await this.PersistReadModel();
-            await Task.Delay(10000);
         }
 
         private async Task PersistReadModel()
@@ -85,6 +85,11 @@ namespace Category.Api.Functions.Category.RebuildReadModel
                 this.Category.SortOrder);
 
             await _categoryIndexer.Reindex(toIndex);
+        }
+
+        public object PendingEventToEvent(PendingEvent pendingEvent)
+        {
+            return JsonConvert.DeserializeObject(pendingEvent.Content, Type.GetType(pendingEvent.EventType));
         }
 
         public Task Delete()

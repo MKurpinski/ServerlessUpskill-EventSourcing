@@ -8,6 +8,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Upskill.EventsInfrastructure.Dispatchers;
+using Upskill.ReindexGuards;
 
 namespace Application.Api.Functions.Event
 {
@@ -33,11 +34,11 @@ namespace Application.Api.Functions.Event
             foreach (var dispatchedEvent in dispatchedEvents)
             {
                 var shouldQueueResult =
-                    await _queueingEventGuard.ShouldQueueEvent(dispatchedEvent);
+                    await _queueingEventGuard.ShouldQueueEvent(dispatchedEvent.Content);
                 if (shouldQueueResult.Success)
                 {
                     await client.SignalEntityAsync<IApplicationEntity>(shouldQueueResult.Value,
-                        p => p.QueueEvent(dispatchedEvent));
+                       p => p.QueueEvent(new PendingEvent(eventGridEvent.Data as string, dispatchedEvent.Type)));
                 }
             }
         }
