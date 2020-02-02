@@ -11,6 +11,7 @@ using Upskill.EventStore.Appliers;
 using Upskill.EventStore.Builder;
 using Upskill.EventStore.Models;
 using Upskill.EventStore.Providers;
+using Upskill.Infrastructure;
 using Upskill.Results;
 using Upskill.Results.Implementation;
 using Upskill.Storage.Table.Providers;
@@ -25,16 +26,19 @@ namespace Upskill.EventStore
         private readonly IEventDataBuilder _eventDataBuilder;
         private readonly IStreamProvider<T> _streamProvider;
         private readonly IEventsApplier _eventsApplier;
+        private readonly ITypeResolver _typeResolver;
 
         public EventStore(
             ITableClientProvider tableClientProvider,
             IEventDataBuilder eventDataBuilder,
             IStreamProvider<T> streamProvider,
-            IEventsApplier eventsApplier)
+            IEventsApplier eventsApplier,
+            ITypeResolver typeResolver)
         {
             _eventDataBuilder = eventDataBuilder;
             _streamProvider = streamProvider;
             _eventsApplier = eventsApplier;
+            _typeResolver = typeResolver;
             _lazyTableClient =
                 new AsyncLazy<CloudTable>(() => tableClientProvider.Get($"{typeof(T).Name}{STREAMS_TABLE_SUFFIX}"));
         }
@@ -100,7 +104,7 @@ namespace Upskill.EventStore
         private object ToEvent(PropertyMap eventProperties)
         {
             var type = eventProperties[nameof(EventStorageData.EventType)].StringValue;
-            var typeOfEvent = Type.GetType(type);
+            var typeOfEvent = _typeResolver.Get(type);
             var data = eventProperties[nameof(EventStorageData.Content)].StringValue;
 
             return JsonConvert.DeserializeObject(data, typeOfEvent);

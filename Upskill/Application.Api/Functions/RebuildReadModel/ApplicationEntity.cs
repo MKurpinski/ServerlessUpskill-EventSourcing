@@ -8,9 +8,9 @@ using AutoMapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Newtonsoft.Json;
-using Upskill.Events;
 using Upskill.EventStore;
 using Upskill.EventStore.Appliers;
+using Upskill.Infrastructure;
 using Upskill.ReindexGuards;
 
 namespace Application.Api.Functions.RebuildReadModel
@@ -36,17 +36,21 @@ namespace Application.Api.Functions.RebuildReadModel
         private readonly IMapper _mapper;
         [JsonIgnore]
         private readonly IEventsApplier _eventsApplier;
+        [JsonIgnore]
+        private readonly ITypeResolver _typeResolver;
 
         public ApplicationEntity(
             ISearchableApplicationIndexer applicationIndexer,
             IEventStore<Core.Aggregates.Application> eventStore,
             IMapper mapper,
-            IEventsApplier eventsApplier)
+            IEventsApplier eventsApplier,
+            ITypeResolver typeResolver)
         {
             _applicationIndexer = applicationIndexer;
             _eventStore = eventStore;
             _mapper = mapper;
             _eventsApplier = eventsApplier;
+            _typeResolver = typeResolver;
             this.PendingEvents = new List<PendingEvent>();
         }
 
@@ -93,7 +97,7 @@ namespace Application.Api.Functions.RebuildReadModel
 
         public object PendingEventToEvent(PendingEvent pendingEvent)
         {
-            return JsonConvert.DeserializeObject(pendingEvent.Content, Type.GetType(pendingEvent.EventType));
+            return JsonConvert.DeserializeObject(pendingEvent.Content, _typeResolver.Get(pendingEvent.EventType));
         }
 
         [FunctionName(nameof(ApplicationEntity))]

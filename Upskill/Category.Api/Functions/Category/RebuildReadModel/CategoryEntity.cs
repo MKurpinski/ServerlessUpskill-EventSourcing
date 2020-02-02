@@ -9,6 +9,7 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Newtonsoft.Json;
 using Upskill.EventStore;
 using Upskill.EventStore.Appliers;
+using Upskill.Infrastructure;
 using Upskill.ReindexGuards;
 
 namespace Category.Api.Functions.Category.RebuildReadModel
@@ -33,15 +34,19 @@ namespace Category.Api.Functions.Category.RebuildReadModel
         private readonly IEventStore<Core.Aggregates.Category> _eventStore;
         [JsonIgnore]
         private readonly IEventsApplier _eventsApplier;
+        [JsonIgnore]
+        private readonly ITypeResolver _typeResolver;
 
         public CategoryEntity(
             ISearchableCategoryIndexer categoryIndexer,
             IEventStore<Core.Aggregates.Category> eventStore,
-            IEventsApplier eventsApplier)
+            IEventsApplier eventsApplier, 
+            ITypeResolver typeResolver)
         {
             _categoryIndexer = categoryIndexer;
             _eventStore = eventStore;
             _eventsApplier = eventsApplier;
+            _typeResolver = typeResolver;
 
             this.PendingEvents = new List<PendingEvent>();
         }
@@ -89,7 +94,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
 
         public object PendingEventToEvent(PendingEvent pendingEvent)
         {
-            return JsonConvert.DeserializeObject(pendingEvent.Content, Type.GetType(pendingEvent.EventType));
+            return JsonConvert.DeserializeObject(pendingEvent.Content, _typeResolver.Get(pendingEvent.EventType));
         }
 
         public Task Delete()
