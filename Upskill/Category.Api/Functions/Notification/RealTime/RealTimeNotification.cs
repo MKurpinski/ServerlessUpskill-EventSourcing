@@ -6,7 +6,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
-using Upskill.RealTimeNotifications;
+using Microsoft.Build.Framework;
 using Upskill.RealTimeNotifications.Builders;
 using Upskill.RealTimeNotifications.Constants;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
@@ -38,7 +38,8 @@ namespace Category.Api.Functions.Notification.RealTime
         [FunctionName(nameof(EventNotificationHandler))]
         public async Task EventNotificationHandler(
             [EventGridTrigger] EventGridEvent @event,
-            [SignalR(HubName = NOTIFICATION_HUB_NAME)] IAsyncCollector<SignalRMessage> signalRMessages)
+            [SignalR(HubName = NOTIFICATION_HUB_NAME)] IAsyncCollector<SignalRMessage> signalRMessages, 
+            ILogger log)
         {
             var messageToPushResult =
                 await _notificationFromEventBuilder.BuildNotification(@event.EventType, @event.Data as string);

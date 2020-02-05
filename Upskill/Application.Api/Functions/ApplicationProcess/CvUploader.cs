@@ -27,8 +27,7 @@ namespace Application.Api.Functions.ApplicationProcess
         [FunctionName(nameof(CvUploader))]
         public async Task Run(
             [DurableClient] IDurableOrchestrationClient client,
-            [ActivityTrigger] IDurableActivityContext context,
-            ILogger log)
+            [ActivityTrigger] IDurableActivityContext context)
         {
             var command = context.GetInput<UploadCvCommand>();
             var saveCvResult = await _fileWriter.Write(
@@ -39,7 +38,6 @@ namespace Application.Api.Functions.ApplicationProcess
 
             if (!saveCvResult.Success)
             {
-                log.LogErrors($"Uploading cv failed instanceId: {context.InstanceId}", saveCvResult.Errors);
                 var failedEvent = new CvUploadFailedInternalFunctionEvent(saveCvResult.Errors);
                 await client.RaiseEventAsync(context.InstanceId, nameof(CvUploadFailedInternalFunctionEvent), failedEvent);
             }

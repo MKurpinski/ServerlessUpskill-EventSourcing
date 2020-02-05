@@ -7,7 +7,10 @@ using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
+using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Dispatchers;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 using Upskill.ReindexGuards;
 
 namespace Category.Api.Functions.Event
@@ -30,6 +33,7 @@ namespace Category.Api.Functions.Event
             [EventGridTrigger] EventGridEvent eventGridEvent,
             [DurableClient] IDurableEntityClient client)
         {
+
             var dispatchedEvents = await _eventDispatcher.Dispatch(eventGridEvent);
 
             foreach (var dispatchedEvent in dispatchedEvents)

@@ -3,6 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Extensions.Logging;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 
 namespace Category.Api.Functions.Category.RebuildReadModel
 {
@@ -10,7 +13,8 @@ namespace Category.Api.Functions.Category.RebuildReadModel
     {
         [FunctionName(nameof(RebuildReadModelProcessOrchestrator))]
         public async Task RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context)
+            [OrchestrationTrigger] IDurableOrchestrationContext context, 
+            ILogger log)
         {
             await context.CallActivityAsync(nameof(StartReindex), null);
 
@@ -21,14 +25,18 @@ namespace Category.Api.Functions.Category.RebuildReadModel
                 categoryIds.Select(id => context.CreateEntityProxy<ICategoryEntity>(id).Reindex());
 
             await Task.WhenAll(rebuildTasks);
+            log.LogProgress(OperationPhase.InProgress, "Rebuild of events stored in event store finished", context.InstanceId);
 
             categoryIds =
                 await context.CallActivityAsync<IReadOnlyCollection<string>>(nameof(ReadCategoriesToRebuild), null);
+
 
             var applyEventTasks =
                 categoryIds.Select(id => context.CreateEntityProxy<ICategoryEntity>(id).ApplyPendingEvents());
 
             await Task.WhenAll(applyEventTasks);
+            log.LogProgress(OperationPhase.InProgress, "Applied pending events", context.InstanceId);
+
 
             var deleteStateTasks =
                 categoryIds.Select(id => context.CreateEntityProxy<ICategoryEntity>(id).Delete());
@@ -36,6 +44,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
             await Task.WhenAll(deleteStateTasks);
 
             await context.CallActivityAsync(nameof(FinishReindex), null);
+            log.LogProgress(OperationPhase.Finished, string.Empty, context.InstanceId);
         }
     }
 }

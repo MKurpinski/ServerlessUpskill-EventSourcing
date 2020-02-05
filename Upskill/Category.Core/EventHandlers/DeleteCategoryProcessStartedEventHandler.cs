@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 
 namespace Category.Core.EventHandlers
 {
@@ -37,7 +39,7 @@ namespace Category.Core.EventHandlers
             {
                 var failedEvent = new DeletingCategoryFailedEvent(categoryDeletedEvent.Id, canDeleteResult.Status, categoryDeletedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, failedEvent);
-                _logger.LogError($"Cannot delete the category({categoryDeletedEvent.Id}), it's used somewhere");
+                _logger.LogProgress(OperationPhase.Failed, "Category is used", categoryDeletedEvent.CorrelationId);
                 return;
             }
 
@@ -46,10 +48,11 @@ namespace Category.Core.EventHandlers
             {
                 var failedEvent = new DeletingCategoryFailedEvent(categoryDeletedEvent.Id, CategoryModificationStatus.UnexpectedProblem, categoryDeletedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, failedEvent);
-                _logger.LogError($"Problem occured while deleting the category: {categoryDeletedEvent.Id}");
+                _logger.LogProgress(OperationPhase.Failed, $"Problem occured during saving category {categoryDeletedEvent.Id}", categoryDeletedEvent.CorrelationId);
             }
 
             var successEvent = new CategoryDeletedEvent(categoryDeletedEvent.Id, categoryDeletedEvent.CorrelationId);
+            _logger.LogProgress(OperationPhase.Finished, string.Empty, categoryDeletedEvent.CorrelationId);
             await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, successEvent);
         }
     }

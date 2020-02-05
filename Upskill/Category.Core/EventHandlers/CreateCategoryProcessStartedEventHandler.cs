@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 
 namespace Category.Core.EventHandlers
 {
@@ -39,7 +41,7 @@ namespace Category.Core.EventHandlers
             {
                 var failedEvent = new CreatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.DuplicatedName, categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
-                _logger.LogError($"Cannot save the category: {categoryChangedEvent.Id}");
+                _logger.LogProgress(OperationPhase.Failed, $"Cannot save the category: {categoryChangedEvent.Id}. Duplicated name", categoryChangedEvent.CorrelationId);
                 return;
             }
 
@@ -55,11 +57,12 @@ namespace Category.Core.EventHandlers
             {
                 var failedEvent = new CreatingCategoryFailedEvent(category.Id, CategoryModificationStatus.UnexpectedProblem, categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
-                _logger.LogError($"Problem occured while saving the category: {categoryChangedEvent.Id}");
+                _logger.LogProgress(OperationPhase.Failed, $"Problem occured while saving the category: {categoryChangedEvent.Id}", categoryChangedEvent.CorrelationId);
                 return;
             }
 
             var successEvent = this.GetSuccessEvent(categoryChangedEvent);
+            _logger.LogProgress(OperationPhase.Finished, string.Empty, categoryChangedEvent.CorrelationId);
             await this.SaveAndDispatchEvent(categoryChangedEvent.Id, successEvent);
         }
 

@@ -5,6 +5,8 @@ using Category.Search.Queries;
 using Category.Storage.Tables.Repositories;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 
 namespace Category.Core.EventHandlers
 {
@@ -32,11 +34,14 @@ namespace Category.Core.EventHandlers
 
             if (!categoryResult.Success)
             {
-                _logger.LogError($"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name} cannot be find. Inconsistency of data!");
+                _logger.LogProgress(OperationPhase.Failed,
+                    $"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name} cannot be find",
+                    categoryUsedEvent.CorrelationId);
                 return;
             }
 
             await _usedCategoryRepository.CreateOrUpdate(categoryResult.Value.Id, categoryUsedEvent.UsedIn);
+            _logger.LogProgress(OperationPhase.Finished, string.Empty, categoryUsedEvent.CorrelationId);
         }
     }
 }

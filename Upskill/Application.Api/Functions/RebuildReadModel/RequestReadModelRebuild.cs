@@ -7,6 +7,8 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
@@ -38,7 +40,7 @@ namespace Application.Api.Functions.RebuildReadModel
 
             await processStarter.StartNewAsync(nameof(RebuildReadModelProcessOrchestrator), correlationId);
 
-            log.LogInformation($"Started applications read model rebuild: {correlationId}");
+            log.LogProgress(OperationPhase.Started, "Started applications read model rebuild", correlationId);
             return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }
     }

@@ -10,6 +10,7 @@ using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
+using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
@@ -48,13 +49,17 @@ namespace Category.Api.Functions.Category
         {
             var validationResult = await _createCategoryRequestValidator.ValidateAsync(createCategoryRequest);
 
+            var id = _guidProvider.GenerateGuid();
+            var correlationId = id;
+
+            log.LogProgress(OperationPhase.Started, "Creating category process started", correlationId);
+
             if (!validationResult.IsValid)
             {
+                log.LogProgress(OperationPhase.Failed, "Validation failed", correlationId);
                 return new BadRequestObjectResult(validationResult.Errors);
             }
 
-            var id = _guidProvider.GenerateGuid();
-            var correlationId = id;
             await _subscriber.Register(correlationId, subscriber);
 
             var categoryAddedEvent = new CreateCategoryProcessStartedEvent(
@@ -68,11 +73,13 @@ namespace Category.Api.Functions.Category
 
             if (!saveEventResult.Success)
             {
-                log.LogErrors(nameof(CreateCategory), saveEventResult.Errors);
+                log.LogFailedOperation(OperationPhase.Failed, "Creating category process failed", saveEventResult.Errors, correlationId);
                 return new BadRequestResult();
             }
 
+            log.LogProgress(OperationPhase.InProgress, "Request accepted to further processing.", correlationId);
             await _eventPublisher.PublishEvent(categoryAddedEvent);
+            log.LogProgress(OperationPhase.InProgress, $"{nameof(CreateCategoryProcessStartedEvent)} published", correlationId);
 
             return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }

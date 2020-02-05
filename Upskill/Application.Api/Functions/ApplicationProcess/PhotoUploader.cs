@@ -39,7 +39,7 @@ namespace Application.Api.Functions.ApplicationProcess
 
             if (!photoSaveResult.Success)
             {
-                log.LogError($"Uploading photo failed instanceId: {context.InstanceId}", photoSaveResult.Errors);
+                log.LogError($"Uploading photo failed instanceId: {context.InstanceId}", photoSaveResult.Errors, context.InstanceId);
                 var failedEvent = new CvUploadFailedInternalFunctionEvent(photoSaveResult.Errors);
                 await client.RaiseEventAsync(context.InstanceId, nameof(CvUploadFailedInternalFunctionEvent), failedEvent);
             }

@@ -9,6 +9,7 @@ using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
+using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
@@ -43,6 +44,8 @@ namespace Category.Api.Functions.Category
             ILogger log)
         {
             var correlationId = _guidProvider.GenerateGuid();
+            log.LogProgress(OperationPhase.Started, "Deleting category process started", correlationId);
+
             var categoryDeletedEvent = new DeleteCategoryProcessStartedEvent(id, correlationId);
 
             await _subscriber.Register(correlationId, subscriber);
@@ -50,11 +53,14 @@ namespace Category.Api.Functions.Category
 
             if (!saveEventResult.Success)
             {
-                log.LogErrors(nameof(DeleteCategory), saveEventResult.Errors);
+                log.LogFailedOperation(OperationPhase.Failed, "Deleting category process failed", saveEventResult.Errors, correlationId);
                 return new BadRequestResult();
             }
 
+            log.LogProgress(OperationPhase.InProgress, "Request accepted to further processing.", correlationId);
             await _eventPublisher.PublishEvent(categoryDeletedEvent);
+            log.LogProgress(OperationPhase.InProgress, $"{nameof(DeleteCategoryProcessStartedEvent)} published", correlationId);
+
             return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }
     }
