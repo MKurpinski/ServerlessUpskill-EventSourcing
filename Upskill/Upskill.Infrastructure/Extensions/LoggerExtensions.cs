@@ -7,13 +7,14 @@ namespace Upskill.Infrastructure.Extensions
 {
     public static class LoggerExtensions
     {
-        public static void LogFailedOperation(this ILogger logger, OperationPhase phase, string message, IEnumerable<KeyValuePair<string, string>> errors, string correlationId)
+        public static void LogFailedOperation(this ILogger logger, OperationPhase phase, string messsage, IEnumerable<KeyValuePair<string, string>> errors, string correlationId)
         {
+            var description = $"{messsage}, Errors: {string.Join(",", errors.Select(err => $"[{err.Key}]: {err.Value}"))}";
             var status = phase.ToString();
             logger.LogError(
-                $"Phase: {phase}, Message: {message}, Errors: {string.Join(",", errors.Select(err => $"[{err.Key}]: {err.Value}"))}, " +
-                $"CorrelationId: {correlationId}", 
+                "Phase: {status},  Description: {description}, CorrelationId: {correlationId}", 
                 status,
+                description,
                 correlationId);
         }
 
@@ -27,8 +28,9 @@ namespace Upskill.Infrastructure.Extensions
             var status = phase.ToString();
 
             logger.LogInformation(
-                $"Phase: {phase}, Message: {message}, CorrelationId: {correlationId}", 
+                "Phase: {status}, Message: {message}, CorrelationId: {correlationId}", 
                 status,
+                message,
                 correlationId);
         }
     }
