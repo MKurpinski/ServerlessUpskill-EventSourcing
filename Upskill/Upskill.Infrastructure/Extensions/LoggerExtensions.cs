@@ -9,7 +9,12 @@ namespace Upskill.Infrastructure.Extensions
     {
         public static void LogFailedOperation(this ILogger logger, OperationPhase phase, string message, IEnumerable<KeyValuePair<string, string>> errors, string correlationId)
         {
-            logger.LogError($"Phase: {phase}, Message: {message}, Errors: {string.Join(",", errors.Select(err => $"[{err.Key}]: {err.Value}"))}, CorrelationId: {correlationId}");
+            var status = phase.ToString();
+            logger.LogError(
+                $"Phase: {phase}, Message: {message}, Errors: {string.Join(",", errors.Select(err => $"[{err.Key}]: {err.Value}"))}, " +
+                $"CorrelationId: {correlationId}", 
+                status,
+                correlationId);
         }
 
         public static void LogErrors(this ILogger logger, string message, IEnumerable<KeyValuePair<string, string>> errors)
@@ -19,12 +24,12 @@ namespace Upskill.Infrastructure.Extensions
 
         public static void LogProgress(this ILogger logger, OperationPhase phase, string message, string correlationId)
         {
-            logger.LogInformation($"Phase: {phase}, Message: {message}, CorrelationId: {correlationId}");
-        }
+            var status = phase.ToString();
 
-        public static void LogError(this ILogger logger, string message, string correlationId)
-        {
-            logger.LogError($"Error: {message}, CorrelationId: {correlationId}");
+            logger.LogInformation(
+                $"Phase: {phase}, Message: {message}, CorrelationId: {correlationId}", 
+                status,
+                correlationId);
         }
     }
 }
