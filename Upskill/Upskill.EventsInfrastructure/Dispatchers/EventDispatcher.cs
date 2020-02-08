@@ -5,9 +5,9 @@ using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Upskill.Events;
-using Upskill.Events.Extensions;
 using Upskill.EventsInfrastructure.Dtos;
 using Upskill.EventsInfrastructure.Providers;
+using Upskill.Infrastructure;
 
 namespace Upskill.EventsInfrastructure.Dispatchers
 {
@@ -16,15 +16,18 @@ namespace Upskill.EventsInfrastructure.Dispatchers
         private readonly ILogger<EventDispatcher> _logger;
         private readonly IEventTypeProvider _typeProvider;
         private readonly IHandlerImplementationProvider _serviceProvider;
+        private readonly IInvokerProvider _invokerProvider;
 
         public EventDispatcher(
             ILogger<EventDispatcher> logger,
             IHandlerImplementationProvider serviceProvider,
-            IEventTypeProvider typeProvider)
+            IEventTypeProvider typeProvider,
+            IInvokerProvider invokerProvider)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
             _typeProvider = typeProvider;
+            _invokerProvider = invokerProvider;
         }
 
         public async Task<IReadOnlyCollection<DispatchedEvent>> Dispatch(params EventGridEvent[] events)
@@ -51,7 +54,12 @@ namespace Upskill.EventsInfrastructure.Dispatchers
                     continue;
                 }
 
-                await Task.WhenAll(handlers.Select(h => h.InvokeAsync(nameof(IEventHandler<IEvent>.Handle), eventContent)));
+                await Task.WhenAll(handlers.Select(handler =>
+                {
+                    var invoker =
+                        _invokerProvider.GetAsyncInvoker(handler, eventContent, nameof(IEventHandler<IEvent>.Handle));
+                    return invoker(handler, eventContent);
+                }));
             }
 
             return dispatchedEvents;

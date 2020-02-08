@@ -38,8 +38,7 @@ namespace Category.Api.Functions.Notification.RealTime
         [FunctionName(nameof(EventNotificationHandler))]
         public async Task EventNotificationHandler(
             [EventGridTrigger] EventGridEvent @event,
-            [SignalR(HubName = NOTIFICATION_HUB_NAME)] IAsyncCollector<SignalRMessage> signalRMessages, 
-            ILogger log)
+            [SignalR(HubName = NOTIFICATION_HUB_NAME)] IAsyncCollector<SignalRMessage> signalRMessages)
         {
             var messageToPushResult =
                 await _notificationFromEventBuilder.BuildNotification(@event.EventType, @event.Data as string);
