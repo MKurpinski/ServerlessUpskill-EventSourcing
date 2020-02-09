@@ -7,6 +7,7 @@ using Category.Storage.Config;
 using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
@@ -21,6 +22,12 @@ namespace Category.Api
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            builder.Services.AddLogging(options =>
+            {
+                options.AddFilter("Upskill", LogLevel.Information);
+                options.AddFilter("Category", LogLevel.Information);
+            });
+
             builder.Services.AddTransient<IValidator<CreateCategoryHttpRequest>, CreateCategoryHttpRequestValidator>();
             builder.Services.AddTransient<IValidator<UpdateCategoryCommand>, UpdateCategoryCommandValidator>();
             builder.Services.AddTransient<IValidator<GetCategoriesHttpRequest>, GetCategoriesHttpRequestValidator>();
