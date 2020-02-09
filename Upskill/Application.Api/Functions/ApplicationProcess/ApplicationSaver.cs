@@ -5,8 +5,11 @@ using Application.Core.Events.CreateApplicationProcessStarted;
 using AutoMapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -29,7 +32,8 @@ namespace Application.Api.Functions.ApplicationProcess
         [FunctionName(nameof(ApplicationSaver))]
         public async Task Run(
             [DurableClient] IDurableOrchestrationClient client,
-            [ActivityTrigger] IDurableActivityContext context)
+            [ActivityTrigger] IDurableActivityContext context, 
+            ILogger log)
         {
             var command = context.GetInput<CreateApplicationCommand>();
 
@@ -43,6 +47,7 @@ namespace Application.Api.Functions.ApplicationProcess
                 await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailedInternalFunctionEvent), applicationSaveFailedEvent);
             }
 
+            log.LogProgress(OperationPhase.InProgress, "Application accepted", context.InstanceId);
             await _eventPublisher.PublishEvent(applicationCreatedEvent);
 
             var applicationSavedEvent = new ApplicationSavedInternalFunctionEvent();

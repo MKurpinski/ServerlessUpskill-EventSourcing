@@ -79,7 +79,6 @@ namespace Category.Api.Functions.Category
 
             log.LogProgress(OperationPhase.InProgress, "Request accepted to further processing.", correlationId);
             await _eventPublisher.PublishEvent(categoryAddedEvent);
-            log.LogProgress(OperationPhase.InProgress, $"{nameof(CreateCategoryProcessStartedEvent)} published", correlationId);
 
             return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }
