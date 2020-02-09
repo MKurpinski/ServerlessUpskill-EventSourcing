@@ -34,9 +34,7 @@ namespace Category.Core.EventHandlers
 
             if (!categoryResult.Success)
             {
-                _logger.LogProgress(OperationPhase.Failed,
-                    $"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name} cannot be find",
-                    categoryUsedEvent.CorrelationId);
+                _logger.LogInformation($"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name} cannot be find");
                 return;
             }
 
