@@ -102,7 +102,6 @@ namespace Application.Api.Functions.ApplicationProcess
 
             var finishProcessCommand = this.BuildFinishedProcessCommand(context);
             await context.CallActivityAsync<Task>(nameof(StatusTracker), finishProcessCommand);
-            log.LogProgress(OperationPhase.InProgress, "Application accepted", context.InstanceId);
         }
 
         private async Task HandleUploadFilesFailure(IDurableOrchestrationContext context,
