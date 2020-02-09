@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Upskill.EventsInfrastructure.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
+using Upskill.LogChecker.Config;
 using Upskill.RealTimeNotifications.Config;
 
 [assembly: FunctionsStartup(typeof(Category.Api.Startup))]
@@ -31,6 +32,7 @@ namespace Category.Api
             builder.AddStorageModule();
             builder.AddInfrastructureModule();
             builder.AddEvents();
+            builder.AddLogChecker();
         }
     }
 }

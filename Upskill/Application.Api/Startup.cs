@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Upskill.EventsInfrastructure.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
+using Upskill.LogChecker.Config;
 using Upskill.RealTimeNotifications.Config;
 
 [assembly: FunctionsStartup(typeof(Application.Api.Startup))]
@@ -49,6 +50,7 @@ namespace Application.Api
             builder.AddCategories();
             builder.AddEvents();
             builder.AddPushNotifications();
+            builder.AddLogChecker();
         }
     }
 }
