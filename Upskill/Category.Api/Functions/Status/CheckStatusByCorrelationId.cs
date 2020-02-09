@@ -19,7 +19,7 @@ namespace Category.Api.Functions.Status
 
         [FunctionName(nameof(CheckStatusByCorrelationId))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Get, Route = "check/{correlationId}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Get, Route = "category/check/{correlationId}")] HttpRequest req,
             string correlationId)
         {
             var statusResult = await _lastLogProvider.GetLastLogByCorrelationId(correlationId);
