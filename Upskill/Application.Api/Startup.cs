@@ -16,6 +16,7 @@ using AutoMapper;
 using FluentValidation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
@@ -30,6 +31,12 @@ namespace Application.Api
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            builder.Services.AddLogging(options =>
+            {
+                options.AddFilter("Upskill", LogLevel.Information);
+                options.AddFilter("Application", LogLevel.Information);
+            });
+
             builder.Services.AddAutoMapper(
                 typeof(CreateApplicationCommandToCreateApplicationProcessStartedEventProfile).Assembly,
                 typeof(CreateApplicationProcessStartedEventToApplicationDtoProfile).Assembly,
