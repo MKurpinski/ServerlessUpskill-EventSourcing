@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Application.Search.Dtos;
 using Application.Search.Queries;
 using Upskill.Results;
+using Upskill.Search.Dtos;
 
 namespace Application.Search.Handlers
 {

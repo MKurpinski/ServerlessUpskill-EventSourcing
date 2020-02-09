@@ -6,6 +6,6 @@ namespace Upskill.EventStore.Builder
 {
     public interface IEventDataBuilder
     {
-        EventData BuildEventData<T>(IEvent eventData) where T: IAggregate;
+        EventData BuildEventData<T>(IEvent eventData) where T: IAggregateRoot;
     }
 }

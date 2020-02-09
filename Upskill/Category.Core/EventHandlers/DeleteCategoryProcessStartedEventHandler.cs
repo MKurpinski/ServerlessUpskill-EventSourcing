@@ -1,31 +1,32 @@
 ﻿using System.Threading.Tasks;
 using Category.Core.Enums;
-using Category.Core.Events.External;
-using Category.Core.Events.Internal;
+using Category.Core.Events;
 using Category.Core.Validators;
-using Category.EventStore.Facades;
-using Category.Storage.Tables.Repositories;
+using Category.Search.Indexers;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 
 namespace Category.Core.EventHandlers
 {
     public class DeleteCategoryProcessStartedEventHandler : BaseCategoryModificationHandler, IEventHandler<DeleteCategoryProcessStartedEvent>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ISearchableCategoryIndexer _categoryIndexer;
         private readonly IDeleteValidator _deleteValidator;
         private readonly ILogger<DeleteCategoryProcessStartedEventHandler> _logger;
 
         public DeleteCategoryProcessStartedEventHandler(
-            ICategoryRepository categoryRepository,
+            ISearchableCategoryIndexer categoryIndexer,
             ILogger<DeleteCategoryProcessStartedEventHandler> logger,
             IDeleteValidator deleteValidator, 
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore)
+            IEventStore<Aggregates.Category> eventStore)
             :base(eventPublisher, eventStore)
         {
-            _categoryRepository = categoryRepository;
+            _categoryIndexer = categoryIndexer;
             _logger = logger;
             _deleteValidator = deleteValidator;
         }
@@ -36,21 +37,22 @@ namespace Category.Core.EventHandlers
 
             if (!canDeleteResult.Success)
             {
-                var failedEvent = new DeletingCategoryFailedEvent(canDeleteResult.Status, categoryDeletedEvent.CorrelationId);
+                var failedEvent = new DeletingCategoryFailedEvent(categoryDeletedEvent.Id, canDeleteResult.Status, categoryDeletedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, failedEvent);
-                _logger.LogError($"Cannot delete the category({categoryDeletedEvent.Id}), it's used somewhere");
+                _logger.LogProgress(OperationPhase.Failed, "Category is used", categoryDeletedEvent.CorrelationId);
                 return;
             }
 
-            var deleteResult = await _categoryRepository.Delete(categoryDeletedEvent.Id);
+            var deleteResult = await _categoryIndexer.Delete(categoryDeletedEvent.Id);
             if (!deleteResult.Success)
             {
-                var failedEvent = new DeletingCategoryFailedEvent(CategoryModificationStatus.UnexpectedProblem, categoryDeletedEvent.CorrelationId);
+                var failedEvent = new DeletingCategoryFailedEvent(categoryDeletedEvent.Id, CategoryModificationStatus.UnexpectedProblem, categoryDeletedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, failedEvent);
-                _logger.LogError($"Problem occured while deleting the category: {categoryDeletedEvent.Id}");
+                _logger.LogProgress(OperationPhase.Failed, $"Problem occured during saving category {categoryDeletedEvent.Id}", categoryDeletedEvent.CorrelationId);
             }
 
             var successEvent = new CategoryDeletedEvent(categoryDeletedEvent.Id, categoryDeletedEvent.CorrelationId);
+            _logger.LogProgress(OperationPhase.Finished, string.Empty, categoryDeletedEvent.CorrelationId);
             await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, successEvent);
         }
     }

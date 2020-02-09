@@ -13,7 +13,6 @@ namespace Upskill.EventsInfrastructure.Providers
             _serviceProvider = serviceProvider;
         }
 
-
         public bool TryResolveHandlers(Type type, out object[] handlers)
         {
             handlers = default;

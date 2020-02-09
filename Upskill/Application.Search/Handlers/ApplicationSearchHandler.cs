@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Search.Dtos;
 using Application.Search.Models;
-using Application.Search.Options;
-using Application.Search.Providers;
 using Application.Search.Queries;
 using Application.Storage.Blobs.Providers;
 using Application.Storage.Constants;
@@ -14,6 +12,10 @@ using Microsoft.Azure.Search.Models;
 using Microsoft.Extensions.Options;
 using Upskill.Results;
 using Upskill.Results.Implementation;
+using Upskill.Search.Dtos;
+using Upskill.Search.Handlers;
+using Upskill.Search.Options;
+using Upskill.Search.Providers;
 
 namespace Application.Search.Handlers
 {

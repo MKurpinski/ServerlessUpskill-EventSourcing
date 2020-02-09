@@ -10,7 +10,9 @@ namespace Upskill.Infrastructure.Config
         {
             return builder.Services
                 .AddTransient<IGuidProvider, GuidProvider>()
-                .AddTransient<IDateTimeProvider, DateTimeProvider>();
+                .AddTransient<IDateTimeProvider, DateTimeProvider>()
+                .AddTransient<IInvokerProvider, InvokerProvider>()
+                .AddTransient<ITypeResolver, TypeResolver>();
         }
     }
 }

@@ -1,16 +1,17 @@
 using System.Threading.Tasks;
 using Category.Api.Commands;
 using Category.Api.CustomHttpRequests;
-using Category.Core.Events.Internal;
-using Category.EventStore.Facades;
+using Category.Core.Events;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
+using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
@@ -23,13 +24,13 @@ namespace Category.Api.Functions.Category
         private readonly IValidator<UpdateCategoryCommand> _updateCommandValidator;
         private readonly IGuidProvider _guidProvider;
         private readonly IEventPublisher _eventPublisher;
-        private readonly IEventStoreFacade _eventStore;
+        private readonly IEventStore<Core.Aggregates.Category> _eventStore;
         private readonly ISubscriber _subscriber;
 
         public UpdateCategory(
             IValidator<UpdateCategoryCommand> updateCommandValidator,
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore, 
+            IEventStore<Core.Aggregates.Category> eventStore, 
             IGuidProvider guidProvider,
             ISubscriber subscriber)
         {
@@ -49,9 +50,11 @@ namespace Category.Api.Functions.Category
         {
             var correlationId = _guidProvider.GenerateGuid(); 
             var validationResult = await _updateCommandValidator.ValidateAsync(new UpdateCategoryCommand(id, updateCategoryRequest));
+            log.LogProgress(OperationPhase.Started, "Updating category process started", correlationId);
 
             if (!validationResult.IsValid)
             {
+                log.LogProgress(OperationPhase.Failed, "Validation failed", correlationId);
                 return new BadRequestObjectResult(validationResult.Errors);
             }
 
@@ -68,11 +71,13 @@ namespace Category.Api.Functions.Category
 
             if (!saveEventResult.Success)
             {
-                log.LogErrors(nameof(UpdateCategory), saveEventResult.Errors);
+                log.LogFailedOperation(OperationPhase.Failed, "Creating category process failed", saveEventResult.Errors, correlationId);
                 return new BadRequestResult();
             }
 
+            log.LogProgress(OperationPhase.InProgress, "Request accepted to further processing.", correlationId);
             await _eventPublisher.PublishEvent(categoryChangedEvent);
+            log.LogProgress(OperationPhase.InProgress, $"{nameof(UpdateCategoryProcessStartedEvent)} published", correlationId);
 
             return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }

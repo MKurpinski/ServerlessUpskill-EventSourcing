@@ -1,23 +1,27 @@
 using System.Threading.Tasks;
-using Category.Core.Events.External;
+using Category.Core.Events;
+using Category.Search.Handlers;
+using Category.Search.Queries;
 using Category.Storage.Tables.Repositories;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 
 namespace Category.Core.EventHandlers
 {
     public class CategoryUsedEventHandler : IEventHandler<CategoryUsedEvent>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ICategorySearchHandler _categorySearchHandler;
         private readonly IUsedCategoryRepository _usedCategoryRepository;
         private readonly ILogger<CategoryUsedEventHandler> _logger;
 
         public CategoryUsedEventHandler(
-            ICategoryRepository categoryRepository,
+            ICategorySearchHandler categorySearchHandler,
             IUsedCategoryRepository usedCategoryRepository,
             ILogger<CategoryUsedEventHandler> logger)
         {
-            _categoryRepository = categoryRepository;
+            _categorySearchHandler = categorySearchHandler;
             _usedCategoryRepository = usedCategoryRepository;
             _logger = logger;
         }
@@ -26,15 +30,18 @@ namespace Category.Core.EventHandlers
         {
             _logger.LogInformation($"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name}, has been used in {categoryUsedEvent.UsedIn}");
 
-            var categoryResult = await _categoryRepository.GetByName(categoryUsedEvent.Name);
+            var categoryResult = await _categorySearchHandler.GetByName(new GetCategoryByNameQuery(categoryUsedEvent.Name));
 
             if (!categoryResult.Success)
             {
-                _logger.LogError($"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name} cannot be find. Inconsistency of data!");
+                _logger.LogProgress(OperationPhase.Failed,
+                    $"{nameof(CategoryUsedEvent)} with name: {categoryUsedEvent.Name} cannot be find",
+                    categoryUsedEvent.CorrelationId);
                 return;
             }
 
             await _usedCategoryRepository.CreateOrUpdate(categoryResult.Value.Id, categoryUsedEvent.UsedIn);
+            _logger.LogProgress(OperationPhase.Finished, string.Empty, categoryUsedEvent.CorrelationId);
         }
     }
 }

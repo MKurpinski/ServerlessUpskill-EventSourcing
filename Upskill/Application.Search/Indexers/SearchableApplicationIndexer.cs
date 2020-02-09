@@ -1,9 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Application.Search.Dtos;
 using Application.Search.Models;
-using Application.Search.Providers;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Upskill.Search.Enums;
+using Upskill.Search.Indexers;
+using Upskill.Search.Providers;
 
 namespace Application.Search.Indexers
 {
@@ -21,8 +23,18 @@ namespace Application.Search.Indexers
 
         public async Task Index(ApplicationDto toIndex)
         {
+            await this.IndexInternal(toIndex, IndexType.Active);
+        }
+
+        public async Task Reindex(ApplicationDto toIndex)
+        {
+            await this.IndexInternal(toIndex, IndexType.InProgress);
+        }
+
+        private async Task IndexInternal(ApplicationDto toIndex, IndexType indexType)
+        {
             var searchableApplication = _mapper.Map<ApplicationDto, SearchableApplication>(toIndex);
-            await this.Index(searchableApplication);
+            await this.Index(searchableApplication, indexType);
         }
     }
 }

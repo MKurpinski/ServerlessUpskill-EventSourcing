@@ -11,18 +11,23 @@ namespace Upskill.Storage.Table.Repositories
 {
     public abstract class Repository<T> where T: TableEntity, new()
     {
-        private readonly string _nameOfTypeT;
+        private readonly string _nameOfTable;
         private readonly ITableClientProvider _tableClientProvider;
 
         protected Repository(ITableClientProvider tableClientProvider)
         {
             _tableClientProvider = tableClientProvider;
-            _nameOfTypeT = typeof(T).Name;
+            _nameOfTable = typeof(T).Name;
+        }
+        protected Repository(ITableClientProvider tableClientProvider, string tableName)
+        {
+            _tableClientProvider = tableClientProvider;
+            _nameOfTable = tableName;
         }
 
         protected async Task<IResult> CreateOrUpdate(T entity)
         {
-            var table = await _tableClientProvider.Get(_nameOfTypeT);
+            var table = await _tableClientProvider.Get(_nameOfTable);
             var insertOrMergeOperation = TableOperation.InsertOrMerge(entity);
             var result = await table.ExecuteAsync(insertOrMergeOperation);
             
@@ -47,7 +52,7 @@ namespace Upskill.Storage.Table.Repositories
 
             var query = new TableQuery<T>().Where(partitionKeyCondition);
 
-            var table = await _tableClientProvider.Get(_nameOfTypeT);
+            var table = await _tableClientProvider.Get(_nameOfTable);
 
             var result = await table.ExecuteQueryAsync(query);
 
@@ -56,11 +61,27 @@ namespace Upskill.Storage.Table.Repositories
 
         protected async Task<IList<T>> GetBy(TableQuery<T> tableQuery)
         {
-            var table = await _tableClientProvider.Get(_nameOfTypeT);
+            var table = await _tableClientProvider.Get(_nameOfTable);
 
             var result = await table.ExecuteQueryAsync(tableQuery);
 
             return result;
+        }
+
+        protected async Task<IList<T>> GetAll()
+        {
+            var table = await _tableClientProvider.Get(_nameOfTable);
+
+            var result = await table.ExecuteQueryAsync(new TableQuery<T>());
+
+            return result;
+        }
+
+        protected async Task ExecuteBatch(TableBatchOperation batchOperation)
+        {
+            var table = await _tableClientProvider.Get(_nameOfTable);
+
+            await table.ExecuteBatchAsync(batchOperation);
         }
 
         protected async Task<IResult> DeleteById(string rowKey)
@@ -72,15 +93,15 @@ namespace Upskill.Storage.Table.Repositories
                 return new FailedResult();
             }
 
-            var table = await _tableClientProvider.Get(_nameOfTypeT);
+            var table = await _tableClientProvider.Get(_nameOfTable);
             var tableResult = await table.ExecuteAsync(TableOperation.Delete(result));
             return this.ResultBasedOnTableResult(tableResult);
         }
 
         private async Task<T> GetByIdInternal(string id)
         {
-            var table = await _tableClientProvider.Get(_nameOfTypeT);
-            var retrieveOperation = TableOperation.Retrieve<T>(_nameOfTypeT, id);
+            var table = await _tableClientProvider.Get(_nameOfTable);
+            var retrieveOperation = TableOperation.Retrieve<T>(_nameOfTable, id);
             var result = await table.ExecuteAsync(retrieveOperation);
 
             var entity = result.Result as T;

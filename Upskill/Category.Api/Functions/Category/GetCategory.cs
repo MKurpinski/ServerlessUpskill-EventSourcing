@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using Category.Search.Handlers;
+using Category.Search.Queries;
 using Category.Storage.Tables.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +12,11 @@ namespace Category.Api.Functions.Category
 {
     public class GetCategory
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ICategorySearchHandler _categorySearchHandler;
 
-        public GetCategory(ICategoryRepository categoryRepository)
+        public GetCategory(ICategorySearchHandler categorySearchHandler)
         {
-            _categoryRepository = categoryRepository;
+            _categorySearchHandler = categorySearchHandler;
         }
 
 
@@ -23,7 +25,7 @@ namespace Category.Api.Functions.Category
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Get, Route = "category/{id:guid}")] HttpRequest req,
             string id)
         {
-            var categoryResult = await _categoryRepository.GetById(id);
+            var categoryResult = await _categorySearchHandler.GetById(new GetCategoryByIdQuery(id));
 
             if (!categoryResult.Success)
             {

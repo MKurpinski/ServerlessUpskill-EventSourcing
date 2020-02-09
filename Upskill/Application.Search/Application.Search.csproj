@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application.Storage\Application.Storage.csproj" />
+    <ProjectReference Include="..\Upskill.Search\Upskill.Search.csproj" />
   </ItemGroup>
 
 </Project>

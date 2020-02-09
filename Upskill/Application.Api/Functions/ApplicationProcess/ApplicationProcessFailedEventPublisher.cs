@@ -1,20 +1,20 @@
 using System.Threading.Tasks;
 using Application.Core.Events;
-using Application.EventStore.Facades;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
     public class ApplicationProcessFailedEventPublisher
     {
         private readonly IEventPublisher _eventPublisher;
-        private readonly IEventStoreFacade _eventStore;
+        private readonly IEventStore<Core.Aggregates.Application> _eventStore;
 
         public ApplicationProcessFailedEventPublisher(
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore)
+            IEventStore<Core.Aggregates.Application> eventStore)
         {
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;
@@ -25,7 +25,7 @@ namespace Application.Api.Functions.ApplicationProcess
             [ActivityTrigger] IDurableActivityContext context)
         {
             var status = context.GetInput<string>();
-            var applicationFailedEvent = new CreatingApplicationFailedEvent(status, context.InstanceId);
+            var applicationFailedEvent = new CreatingApplicationFailedEvent(context.InstanceId, status, context.InstanceId);
             await _eventStore.AppendEvent(context.InstanceId, applicationFailedEvent);
             await _eventPublisher.PublishEvent(applicationFailedEvent);
         }

@@ -9,16 +9,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
-    public class ApplicationProcessRecompensationOrchiestrator
+    public class ApplicationProcessRecompensationOrchestrator
     {
         private readonly IFileNameProvider _fileNameProvider;
 
-        public ApplicationProcessRecompensationOrchiestrator(IFileNameProvider fileNameProvider)
+        public ApplicationProcessRecompensationOrchestrator(IFileNameProvider fileNameProvider)
         {
             _fileNameProvider = fileNameProvider;
         }
 
-        [FunctionName(nameof(ApplicationProcessRecompensationOrchiestrator))]
+        [FunctionName(nameof(ApplicationProcessRecompensationOrchestrator))]
         public async Task RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             ILogger log)

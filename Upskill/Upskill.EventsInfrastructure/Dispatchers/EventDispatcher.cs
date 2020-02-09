@@ -1,11 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Upskill.Events;
-using Upskill.EventsInfrastructure.Extensions;
+using Upskill.EventsInfrastructure.Dtos;
 using Upskill.EventsInfrastructure.Providers;
+using Upskill.Infrastructure;
 
 namespace Upskill.EventsInfrastructure.Dispatchers
 {
@@ -14,18 +16,23 @@ namespace Upskill.EventsInfrastructure.Dispatchers
         private readonly ILogger<EventDispatcher> _logger;
         private readonly IEventTypeProvider _typeProvider;
         private readonly IHandlerImplementationProvider _serviceProvider;
+        private readonly IInvokerProvider _invokerProvider;
 
         public EventDispatcher(
             ILogger<EventDispatcher> logger,
-            IHandlerImplementationProvider serviceProvider, IEventTypeProvider typeProvider)
+            IHandlerImplementationProvider serviceProvider,
+            IEventTypeProvider typeProvider,
+            IInvokerProvider invokerProvider)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
             _typeProvider = typeProvider;
+            _invokerProvider = invokerProvider;
         }
 
-        public async Task Dispatch(params EventGridEvent[] events)
+        public async Task<IReadOnlyCollection<DispatchedEvent>> Dispatch(params EventGridEvent[] events)
         {
+            var dispatchedEvents = new List<DispatchedEvent>();
             foreach (var @event in events)
             {
                 var eventTypeResult = _typeProvider.ResolveEventType(@event.EventType);
@@ -34,6 +41,9 @@ namespace Upskill.EventsInfrastructure.Dispatchers
                     this.LogNotHandledEvent(@event);
                     continue;
                 }
+
+                var eventContent = JsonConvert.DeserializeObject(@event.Data as string, eventTypeResult.Value);
+                dispatchedEvents.Add(new DispatchedEvent(eventContent as IEvent, eventTypeResult.Value.AssemblyQualifiedName));
 
                 var handlerType = typeof(IEventHandler<>).MakeGenericType(eventTypeResult.Value);
                 var canHandle = _serviceProvider.TryResolveHandlers(handlerType, out var handlers);
@@ -44,9 +54,15 @@ namespace Upskill.EventsInfrastructure.Dispatchers
                     continue;
                 }
 
-                var eventContent = JsonConvert.DeserializeObject(@event.Data as string, eventTypeResult.Value);
-                await Task.WhenAll(handlers.Select(h => h.InvokeAsync(nameof(IEventHandler<IEvent>.Handle), eventContent)));
+                await Task.WhenAll(handlers.Select(handler =>
+                {
+                    var invoker =
+                        _invokerProvider.GetAsyncInvoker(handler, eventContent, nameof(IEventHandler<IEvent>.Handle));
+                    return invoker(handler, eventContent);
+                }));
             }
+
+            return dispatchedEvents;
         }
 
         private void LogNotHandledEvent(EventGridEvent @event)

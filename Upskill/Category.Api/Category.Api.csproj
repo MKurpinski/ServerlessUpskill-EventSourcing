@@ -6,18 +6,20 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="8.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventGrid" Version="2.1.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.SignalRService" Version="1.0.2" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
   </ItemGroup>
   <ItemGroup>
 	  <ProjectReference Include="..\Category.Core\Category.Core.csproj" />
-	  <ProjectReference Include="..\Category.EventStore\Category.EventStore.csproj" />
+	  <ProjectReference Include="..\Category.Search\Category.Search.csproj" />
 	  <ProjectReference Include="..\Category.Storage\Category.Storage.csproj" />
 	  <ProjectReference Include="..\Upskill.EventsInfrastructure\Upskill.EventsInfrastructure.csproj" />
 	  <ProjectReference Include="..\Upskill.Events\Upskill.Events.csproj" />
 	  <ProjectReference Include="..\Upskill.FunctionUtils\Upskill.FunctionUtils.csproj" />
 	  <ProjectReference Include="..\Upskill.Infrastructure\Upskill.Infrastructure.csproj" />
+	  <ProjectReference Include="..\Upskill.LogChecker\Upskill.LogChecker.csproj" />
 	  <ProjectReference Include="..\Upskill.RealTimeNotifications\Upskill.RealTimeNotifications.csproj" />
   </ItemGroup>
   <ItemGroup>

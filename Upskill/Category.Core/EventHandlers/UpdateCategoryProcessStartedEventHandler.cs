@@ -1,36 +1,42 @@
 ﻿using System.Threading.Tasks;
 using Category.Core.Enums;
-using Category.Core.Events.External;
-using Category.Core.Events.Internal;
-using Category.EventStore.Facades;
-using Category.Storage.Tables.Dtos;
-using Category.Storage.Tables.Repositories;
+using Category.Core.Events;
+using Category.Search.Dtos;
+using Category.Search.Handlers;
+using Category.Search.Indexers;
+using Category.Search.Queries;
 using Microsoft.Extensions.Logging;
 using Upskill.Events;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.EventStore;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 
 namespace Category.Core.EventHandlers
 {
     public class UpdateCategoryProcessStartedEventHandler : BaseCategoryModificationHandler, IEventHandler<UpdateCategoryProcessStartedEvent>
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ISearchableCategoryIndexer _categoryIndexer;
+        private readonly ICategorySearchHandler _categorySearchHandler;
         private readonly ILogger<UpdateCategoryProcessStartedEventHandler> _logger;
 
         public UpdateCategoryProcessStartedEventHandler(
-            ICategoryRepository categoryRepository,
+            ISearchableCategoryIndexer categoryIndexer,
             ILogger<UpdateCategoryProcessStartedEventHandler> logger,
             IEventPublisher eventPublisher,
-            IEventStoreFacade eventStore)
+            IEventStore<Aggregates.Category> eventStore,
+            ICategorySearchHandler categorySearchHandler)
             :base(eventPublisher, eventStore)
         {
-            _categoryRepository = categoryRepository;
+            _categoryIndexer = categoryIndexer;
             _logger = logger;
+            _categorySearchHandler = categorySearchHandler;
         }
 
         public async Task Handle(UpdateCategoryProcessStartedEvent categoryChangedEvent)
         {
             var canSave = await this.SaveGuard(categoryChangedEvent);
-            
+
             if (!canSave)
             {
                 return;
@@ -42,41 +48,42 @@ namespace Category.Core.EventHandlers
                 categoryChangedEvent.Description,
                 categoryChangedEvent.SortOrder);
 
-            var saveResult = await _categoryRepository.CreateOrUpdate(category);
+            var saveResult = await _categoryIndexer.Index(category);
 
             if (!saveResult.Success)
             {
-                var failedEvent = new UpdatingCategoryFailedEvent(CategoryModificationStatus.UnexpectedProblem, categoryChangedEvent.CorrelationId);
+                var failedEvent = new UpdatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.UnexpectedProblem, categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
-                _logger.LogError($"Problem occured while saving the category: {categoryChangedEvent.Id}");
+                _logger.LogProgress(OperationPhase.Failed, "Problem occured while saving the category", categoryChangedEvent.CorrelationId);
                 return;
             }
 
             var successEvent = this.GetSuccessEvent(categoryChangedEvent);
+            _logger.LogProgress(OperationPhase.Finished, string.Empty, categoryChangedEvent.CorrelationId);
             await this.SaveAndDispatchEvent(categoryChangedEvent.Id, successEvent);
         }
 
         private async Task<bool> SaveGuard(UpdateCategoryProcessStartedEvent categoryChangedEvent)
         {
-            var existingCategoryResult = await _categoryRepository.GetById(categoryChangedEvent.Id);
+            var existingCategoryResult = await _categorySearchHandler.GetById(new GetCategoryByIdQuery(categoryChangedEvent.Id));
 
             if (!existingCategoryResult.Success)
             {
                 var failedEvent =
-                    new UpdatingCategoryFailedEvent(CategoryModificationStatus.NotFound, categoryChangedEvent.CorrelationId);
+                    new UpdatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.NotFound, categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
-                _logger.LogError($"Cannot save the category: {categoryChangedEvent.Id}");
+                _logger.LogProgress(OperationPhase.Failed, $"Category({categoryChangedEvent.Id}) cannot be found", categoryChangedEvent.CorrelationId);
                 return false;
             }
 
-            var existingCategoryWithSameNameResult = await _categoryRepository.GetByName(categoryChangedEvent.Name);
+            var existingCategoryWithSameNameResult = await _categorySearchHandler.GetByName(new GetCategoryByNameQuery(categoryChangedEvent.Name));
 
             if (existingCategoryWithSameNameResult.Success)
             {
-                var failedEvent = new UpdatingCategoryFailedEvent(CategoryModificationStatus.DuplicatedName,
+                var failedEvent = new UpdatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.DuplicatedName,
                     categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
-                _logger.LogError($"Cannot save the category: {categoryChangedEvent.Id}");
+                _logger.LogProgress(OperationPhase.Failed, $"Cannot save category({categoryChangedEvent.Id}). Duplicated name", categoryChangedEvent.CorrelationId);
                 return false;
             }
 

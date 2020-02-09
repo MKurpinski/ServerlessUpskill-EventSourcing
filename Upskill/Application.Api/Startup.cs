@@ -6,7 +6,6 @@ using Application.Commands.Config;
 using Application.Commands.Profiles;
 using Application.Core.Config;
 using Application.Core.Profiles;
-using Application.EventStore.Config;
 using Application.ProcessStatus.Config;
 using Application.PushNotifications.Config;
 using Application.RequestMappers.Config;
@@ -20,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Upskill.EventsInfrastructure.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
+using Upskill.LogChecker.Config;
 using Upskill.RealTimeNotifications.Config;
 
 [assembly: FunctionsStartup(typeof(Application.Api.Startup))]
@@ -38,7 +38,6 @@ namespace Application.Api
 
             builder.Services.AddTransient<IValidator<SimpleApplicationSearchHttpRequest>, SimpleApplicationSearchHttpRequestValidator>();
 
-            builder.AddApplicationEventStore();
             builder.AddRealTimeNotifications();
             builder.AddAppSettingsToConfiguration();
             builder.AddCoreModule();
@@ -51,6 +50,7 @@ namespace Application.Api
             builder.AddCategories();
             builder.AddEvents();
             builder.AddPushNotifications();
+            builder.AddLogChecker();
         }
     }
 }

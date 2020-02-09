@@ -15,7 +15,7 @@ namespace Upskill.EventStore.Builder
             _guidProvider = guidProvider;
         }
 
-        public EventData BuildEventData<T>(IEvent eventData) where T : IAggregate
+        public EventData BuildEventData<T>(IEvent eventData) where T : IAggregateRoot
         {
             var id = _guidProvider.GenerateGuid();
 

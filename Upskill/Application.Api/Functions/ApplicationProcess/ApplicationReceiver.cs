@@ -11,6 +11,8 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
+using Upskill.Infrastructure.Enums;
+using Upskill.Infrastructure.Extensions;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
@@ -45,6 +47,7 @@ namespace Application.Api.Functions.ApplicationProcess
         {
             var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.MapRequest(req);
             var instanceId = _guidProvider.GenerateGuid();
+            log.LogProgress(OperationPhase.Started, "Application process started", instanceId);
 
             if (!mappingResult.Success)
             {
@@ -58,7 +61,7 @@ namespace Application.Api.Functions.ApplicationProcess
 
             await processStarter.StartNewAsync(nameof(ApplicationProcessOrchestrator), instanceId, command);
 
-            log.LogInformation($"Started orchestration of application process with instanceId: {instanceId}");
+            log.LogProgress(OperationPhase.InProgress, "Started processing of application process", instanceId);
 
             return new AcceptedWithCorrelationIdHeaderResult(instanceId);
         }

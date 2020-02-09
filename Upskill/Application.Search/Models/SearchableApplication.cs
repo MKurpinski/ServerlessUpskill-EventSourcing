@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Azure.Search;
-using Microsoft.Azure.Search.Models;
+using Upskill.Search.Models;
 
 namespace Application.Search.Models
 {
-    [SerializePropertyNamesAsCamelCase]
     public class SearchableApplication : ISearchable
     {
         [System.ComponentModel.DataAnnotations.Key]

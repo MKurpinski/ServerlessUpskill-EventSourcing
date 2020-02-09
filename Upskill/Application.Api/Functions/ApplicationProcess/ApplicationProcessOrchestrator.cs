@@ -7,6 +7,7 @@ using Application.ProcessStatus.Enums;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
 
 namespace Application.Api.Functions.ApplicationProcess
@@ -19,8 +20,6 @@ namespace Application.Api.Functions.ApplicationProcess
             [DurableClient] IDurableOrchestrationClient processStarter,
             ILogger log)
         {
-            log.LogInformation($"Starting orchestration of application process with instance id: {context.InstanceId}");
-
             var beginProcessCommand = this.BuildBeginProcessCommand(context);
             await context.CallActivityAsync<Task>(nameof(StatusTracker), beginProcessCommand);
 
@@ -65,7 +64,7 @@ namespace Application.Api.Functions.ApplicationProcess
                 return;
             }
 
-            log.LogInformation($"Finished the files uploading in instanceId: {context.InstanceId}");
+            log.LogProgress(OperationPhase.InProgress, "Finished the files uploading", context.InstanceId);
 
             var cvUri = cvUploadedEventTask.Result.CvUri;
             var photoUri = photoUploadedEventTask.Result.PhotoUri;
@@ -94,7 +93,7 @@ namespace Application.Api.Functions.ApplicationProcess
             var applicationSavedSuccessfully = applicationSaveEvent == applicationSavedEvent;
             if (!applicationSavedSuccessfully)
             {
-                log.LogErrors($"Storing application failed with instance id: {context.InstanceId}", applicationSaveFailed.Result.Errors);
+                log.LogFailedOperation(OperationPhase.Failed, "Storing application failed", applicationSaveFailed.Result.Errors, context.InstanceId);
                 var failedProcessCommand = this.BuildFailedProcessCommand(context, applicationSaveFailed.Result.Errors);
                 await context.CallActivityAsync<Task>(nameof(StatusTracker), failedProcessCommand);
                 await this.StartRecompensateProcess(processStarter, context, command, log);
@@ -103,8 +102,7 @@ namespace Application.Api.Functions.ApplicationProcess
 
             var finishProcessCommand = this.BuildFinishedProcessCommand(context);
             await context.CallActivityAsync<Task>(nameof(StatusTracker), finishProcessCommand);
-
-            log.LogInformation($"Application process finished: {context.InstanceId}");
+            log.LogProgress(OperationPhase.InProgress, "Application accepted", context.InstanceId);
         }
 
         private async Task HandleUploadFilesFailure(IDurableOrchestrationContext context,
@@ -123,7 +121,7 @@ namespace Application.Api.Functions.ApplicationProcess
             var failedProcessCommand = this.BuildFailedProcessCommand(context, errors);
             await context.CallActivityAsync<Task>(nameof(StatusTracker), failedProcessCommand);
 
-            log.LogErrors($"Uploading files failed: {context.InstanceId}", errors);
+            log.LogFailedOperation(OperationPhase.Failed, "Uploading files failed:", errors, context.InstanceId);
             await this.StartRecompensateProcess(processStarter, context, command, log);
         }
 
@@ -136,7 +134,7 @@ namespace Application.Api.Functions.ApplicationProcess
         {
             await context.CallActivityAsync(nameof(ApplicationProcessFailedEventPublisher), ApplicationProcessStatus.Failed.ToString());
             var recompensateCommand = this.BuildRecompensationCommand(context, command);
-            var recompensationId = await processStarter.StartNewAsync(nameof(ApplicationProcessRecompensationOrchiestrator), recompensateCommand);
+            var recompensationId = await processStarter.StartNewAsync(nameof(ApplicationProcessRecompensationOrchestrator), recompensateCommand);
             log.LogInformation($"Started recompensation process for application process with instanceId: {context.InstanceId}." +
                                $"Recompensation process instanceId: {recompensationId}");
         }

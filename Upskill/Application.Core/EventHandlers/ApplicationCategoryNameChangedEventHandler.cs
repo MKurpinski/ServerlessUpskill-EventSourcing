@@ -32,6 +32,7 @@ namespace Application.Core.EventHandlers
             if (!applicationGetResult.Success)
             {
                 _logger.LogInformation($"{nameof(Events.ApplicationCategoryNameChangedEvent)}: application with id: {applicationCategoryNameChangedEvent.Id} cannot be found");
+                return;
             }
 
             var application = applicationGetResult.Value;

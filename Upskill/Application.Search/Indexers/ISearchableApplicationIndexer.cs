@@ -6,5 +6,6 @@ namespace Application.Search.Indexers
     public interface ISearchableApplicationIndexer
     {
         Task Index(ApplicationDto toIndex);
+        Task Reindex(ApplicationDto toIndex);
     }
 }
