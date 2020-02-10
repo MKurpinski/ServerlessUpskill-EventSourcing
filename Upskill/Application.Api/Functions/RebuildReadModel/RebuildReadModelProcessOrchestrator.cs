@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
 
@@ -14,8 +15,10 @@ namespace Application.Api.Functions.RebuildReadModel
         [FunctionName(nameof(RebuildReadModelProcessOrchestrator))]
         public async Task RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context,
-            ILogger log)
+            ILogger log,
+            ExecutionContext executionContext)
         {
+            executionContext.CorrelateExecution(context.InstanceId);
             await context.CallActivityAsync(nameof(StartReindex), null);
 
             var applicationIds =

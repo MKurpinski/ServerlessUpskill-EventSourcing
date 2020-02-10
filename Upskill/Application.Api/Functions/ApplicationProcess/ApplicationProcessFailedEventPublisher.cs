@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
+using Upskill.FunctionUtils.Extensions;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -22,8 +23,10 @@ namespace Application.Api.Functions.ApplicationProcess
 
         [FunctionName(nameof(ApplicationProcessFailedEventPublisher))]
         public async Task Run(
-            [ActivityTrigger] IDurableActivityContext context)
+            [ActivityTrigger] IDurableActivityContext context,
+            ExecutionContext executionContext)
         {
+            executionContext.CorrelateExecution(context.InstanceId);
             var status = context.GetInput<string>();
             var applicationFailedEvent = new CreatingApplicationFailedEvent(context.InstanceId, status, context.InstanceId);
             await _eventStore.AppendEvent(context.InstanceId, applicationFailedEvent);

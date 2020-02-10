@@ -6,6 +6,7 @@ using Application.Storage.Constants;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using Upskill.FunctionUtils.Extensions;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -21,8 +22,11 @@ namespace Application.Api.Functions.ApplicationProcess
         [FunctionName(nameof(ApplicationProcessRecompensationOrchestrator))]
         public async Task RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context,
+            ExecutionContext executionContext,
             ILogger log)
         {
+            executionContext.CorrelateExecution(context.InstanceId);
+
             try
             {
                 var command = context.GetInput<RecompensateApplicationProcessCommand>();

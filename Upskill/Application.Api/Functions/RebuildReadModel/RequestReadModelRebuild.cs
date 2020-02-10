@@ -5,6 +5,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using Upskill.FunctionUtils.Extensions;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Enums;
@@ -33,9 +34,11 @@ namespace Application.Api.Functions.RebuildReadModel
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "application/admin")] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient processStarter,
             [NotificationSubscriber] string subscriber,
-            ILogger log)
+            ILogger log,
+            ExecutionContext executionContext)
         {
             var correlationId = _guidProvider.GenerateGuid();
+            executionContext.CorrelateExecution(correlationId);
             await _subscriber.Register(correlationId, subscriber);
 
             await processStarter.StartNewAsync(nameof(RebuildReadModelProcessOrchestrator), correlationId);

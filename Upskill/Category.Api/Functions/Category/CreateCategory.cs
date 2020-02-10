@@ -8,6 +8,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
+using Upskill.FunctionUtils.Extensions;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Enums;
@@ -45,11 +46,12 @@ namespace Category.Api.Functions.Category
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "category")] CreateCategoryHttpRequest createCategoryRequest,
             [NotificationSubscriber] string subscriber,
-            ILogger log)
+            ILogger log,
+            ExecutionContext executionContext)
         {
-            var validationResult = await _createCategoryRequestValidator.ValidateAsync(createCategoryRequest);
-
             var id = _guidProvider.GenerateGuid();
+            executionContext.CorrelateExecution(id);
+            var validationResult = await _createCategoryRequestValidator.ValidateAsync(createCategoryRequest);
             var correlationId = id;
 
             log.LogProgress(OperationPhase.Started, "Creating category process started", correlationId);

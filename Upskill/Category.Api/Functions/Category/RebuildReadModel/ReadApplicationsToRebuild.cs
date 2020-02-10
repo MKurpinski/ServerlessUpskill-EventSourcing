@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventStore.Providers;
+using Upskill.FunctionUtils.Extensions;
 
 namespace Category.Api.Functions.Category.RebuildReadModel
 {
@@ -17,8 +18,11 @@ namespace Category.Api.Functions.Category.RebuildReadModel
         }
 
         [FunctionName(nameof(ReadCategoriesToRebuild))]
-        public async Task<IReadOnlyCollection<string>> Run([ActivityTrigger] IDurableActivityContext context)
+        public async Task<IReadOnlyCollection<string>> Run(
+            [ActivityTrigger] IDurableActivityContext context,
+            ExecutionContext executionContext)
         {
+            executionContext.CorrelateExecution(context.InstanceId);
             var application = await _streamLogProvider.GetStreams();
             return application;
         }

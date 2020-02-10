@@ -8,6 +8,7 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
+using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
 
@@ -32,9 +33,11 @@ namespace Application.Api.Functions.ApplicationProcess
         [FunctionName(nameof(ApplicationSaver))]
         public async Task Run(
             [DurableClient] IDurableOrchestrationClient client,
-            [ActivityTrigger] IDurableActivityContext context, 
+            [ActivityTrigger] IDurableActivityContext context,
+            ExecutionContext executionContext,
             ILogger log)
         {
+            executionContext.CorrelateExecution(context.InstanceId);
             var command = context.GetInput<CreateApplicationCommand>();
 
             var applicationCreatedEvent = _mapper.Map<CreateApplicationCommand, CreateApplicationProcessStartedEvent>(command);

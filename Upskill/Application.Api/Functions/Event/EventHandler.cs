@@ -8,6 +8,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Upskill.EventsInfrastructure.Dispatchers;
+using Upskill.FunctionUtils.Extensions;
 using Upskill.ReindexGuards;
 
 namespace Application.Api.Functions.Event
@@ -28,8 +29,11 @@ namespace Application.Api.Functions.Event
         [FunctionName(nameof(EventHandler))]
         public async Task Run(
             [EventGridTrigger] EventGridEvent eventGridEvent,
-            [DurableClient] IDurableEntityClient client)
+            [DurableClient] IDurableEntityClient client,
+            ExecutionContext executionContext)
         {
+            executionContext.CorrelateExecution(eventGridEvent.Subject);
+
             var dispatchedEvents = await _eventDispatcher.Dispatch(eventGridEvent);
             foreach (var dispatchedEvent in dispatchedEvents)
             {

@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
+using Upskill.FunctionUtils.Extensions;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Enums;
@@ -41,9 +42,11 @@ namespace Category.Api.Functions.Category
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Delete, Route = "category/{id:guid}")] HttpRequest req,
             [NotificationSubscriber] string subscriber,
             string id,
-            ILogger log)
+            ILogger log,
+            ExecutionContext executionContext)
         {
             var correlationId = _guidProvider.GenerateGuid();
+            executionContext.CorrelateExecution(correlationId);
             log.LogProgress(OperationPhase.Started, "Deleting category process started", correlationId);
 
             var categoryDeletedEvent = new DeleteCategoryProcessStartedEvent(id, correlationId);

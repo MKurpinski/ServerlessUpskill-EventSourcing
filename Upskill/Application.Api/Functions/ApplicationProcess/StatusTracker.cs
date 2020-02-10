@@ -3,6 +3,7 @@ using Application.Commands.Commands;
 using Application.ProcessStatus;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Upskill.FunctionUtils.Extensions;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -17,9 +18,11 @@ namespace Application.Api.Functions.ApplicationProcess
 
         [FunctionName(nameof(StatusTracker))]
         public async Task Run(
-            [ActivityTrigger] IDurableActivityContext context)
+            [ActivityTrigger] IDurableActivityContext context,
+            ExecutionContext executionContext)
         {
             var command = context.GetInput<TrackProcessStatusCommand>();
+            executionContext.CorrelateExecution(command.CorrelationId);
             await _processStatusHandler.TrackStatus(
                 command.CorrelationId,
                 command.Status,

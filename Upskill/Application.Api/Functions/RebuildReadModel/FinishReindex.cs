@@ -4,6 +4,7 @@ using Application.Search.Managers;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventsInfrastructure.Publishers;
+using Upskill.FunctionUtils.Extensions;
 
 namespace Application.Api.Functions.RebuildReadModel
 {
@@ -21,8 +22,11 @@ namespace Application.Api.Functions.RebuildReadModel
         }
 
         [FunctionName(nameof(FinishReindex))]
-        public async Task Run([ActivityTrigger] IDurableActivityContext context)
+        public async Task Run(
+            [ActivityTrigger] IDurableActivityContext context,
+            ExecutionContext executionContext)
         {
+            executionContext.CorrelateExecution(context.InstanceId);
             await _reindexManager.FinishReindexing();
             await _eventPublisher.PublishEvent(new ApplicationReindexFinishedEvent(context.InstanceId));
         }

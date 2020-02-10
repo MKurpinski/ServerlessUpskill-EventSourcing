@@ -9,6 +9,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using Upskill.FunctionUtils.Extensions;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Enums;
@@ -43,10 +44,14 @@ namespace Application.Api.Functions.ApplicationProcess
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "application")] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient processStarter,
             [NotificationSubscriber] string subscriber,
+            ExecutionContext executionContext,
             ILogger log)
         {
-            var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.MapRequest(req);
             var instanceId = _guidProvider.GenerateGuid();
+            executionContext.CorrelateExecution(instanceId);
+
+            var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.MapRequest(req);
+
             log.LogProgress(OperationPhase.Started, "Application process started", instanceId);
 
             if (!mappingResult.Success)

@@ -6,8 +6,7 @@ using Application.Storage.Blobs.Writers;
 using Application.Storage.Constants;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Extensions.Logging;
-using Upskill.Infrastructure.Extensions;
+using Upskill.FunctionUtils.Extensions;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -27,8 +26,11 @@ namespace Application.Api.Functions.ApplicationProcess
         [FunctionName(nameof(CvUploader))]
         public async Task Run(
             [DurableClient] IDurableOrchestrationClient client,
-            [ActivityTrigger] IDurableActivityContext context)
+            [ActivityTrigger] IDurableActivityContext context,
+            ExecutionContext executionContext)
         {
+            executionContext.CorrelateExecution(context.InstanceId);
+
             var command = context.GetInput<UploadCvCommand>();
             var saveCvResult = await _fileWriter.Write(
                 FileStore.CvsContainer,

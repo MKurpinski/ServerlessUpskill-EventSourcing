@@ -7,6 +7,7 @@ using Application.ProcessStatus.Enums;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
 
@@ -18,8 +19,11 @@ namespace Application.Api.Functions.ApplicationProcess
         public async Task RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             [DurableClient] IDurableOrchestrationClient processStarter,
+            ExecutionContext executionContext,
             ILogger log)
         {
+            executionContext.CorrelateExecution(context.InstanceId);
+
             var beginProcessCommand = this.BuildBeginProcessCommand(context);
             await context.CallActivityAsync<Task>(nameof(StatusTracker), beginProcessCommand);
 
@@ -133,9 +137,8 @@ namespace Application.Api.Functions.ApplicationProcess
         {
             await context.CallActivityAsync(nameof(ApplicationProcessFailedEventPublisher), ApplicationProcessStatus.Failed.ToString());
             var recompensateCommand = this.BuildRecompensationCommand(context, command);
-            var recompensationId = await processStarter.StartNewAsync(nameof(ApplicationProcessRecompensationOrchestrator), recompensateCommand);
-            log.LogInformation($"Started recompensation process for application process with instanceId: {context.InstanceId}." +
-                               $"Recompensation process instanceId: {recompensationId}");
+            await processStarter.StartNewAsync(nameof(ApplicationProcessRecompensationOrchestrator), context.InstanceId, recompensateCommand);
+            log.LogInformation($"Started recompensation process for application process with instanceId: {context.InstanceId}.");
         }
 
         private RecompensateApplicationProcessCommand BuildRecompensationCommand(

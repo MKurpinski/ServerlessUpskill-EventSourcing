@@ -3,6 +3,7 @@ using Application.Commands.Commands;
 using Application.Storage.Blobs.Deleters;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Upskill.FunctionUtils.Extensions;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -17,8 +18,11 @@ namespace Application.Api.Functions.ApplicationProcess
 
         [FunctionName(nameof(FileDeleter))]
         public async Task Run(
-            [ActivityTrigger] IDurableActivityContext context)
+            [ActivityTrigger] IDurableActivityContext context,
+            ExecutionContext executionContext)
         {
+            executionContext.CorrelateExecution(context.InstanceId);
+
             var command = context.GetInput<DeleteFileCommand>();
             await _fileDeleter.Delete(command.ContainerName, command.FileName);
         }
