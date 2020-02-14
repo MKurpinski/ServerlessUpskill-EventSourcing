@@ -6,8 +6,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
-using Microsoft.Build.Framework;
-using Upskill.FunctionUtils.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 using Upskill.RealTimeNotifications.Builders;
 using Upskill.RealTimeNotifications.Constants;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
@@ -17,10 +16,14 @@ namespace Category.Api.Functions.Notification.RealTime
     public class RealTimeNotification
     {
         private readonly INotificationFromEventBuilder _notificationFromEventBuilder;
+        private readonly ITelemetryInitializer _telemetryInitializer;
 
-        public RealTimeNotification(INotificationFromEventBuilder notificationFromEventBuilder)
+        public RealTimeNotification(
+            INotificationFromEventBuilder notificationFromEventBuilder, 
+            ITelemetryInitializer telemetryInitializer)
         {
             _notificationFromEventBuilder = notificationFromEventBuilder;
+            _telemetryInitializer = telemetryInitializer;
         }
 
         private const string NOTIFICATION_HUB_NAME = "CategoryNotifications";
@@ -39,10 +42,9 @@ namespace Category.Api.Functions.Notification.RealTime
         [FunctionName(nameof(EventNotificationHandler))]
         public async Task EventNotificationHandler(
             [EventGridTrigger] EventGridEvent @event,
-            [SignalR(HubName = NOTIFICATION_HUB_NAME)] IAsyncCollector<SignalRMessage> signalRMessages,
-            ExecutionContext executionContext)
+            [SignalR(HubName = NOTIFICATION_HUB_NAME)] IAsyncCollector<SignalRMessage> signalRMessages)
         {
-            executionContext.CorrelateExecution(@event.Subject);
+            _telemetryInitializer.Initialize(@event.Subject);
             var messageToPushResult =
                 await _notificationFromEventBuilder.BuildNotification(@event.EventType, @event.Data as string);
 

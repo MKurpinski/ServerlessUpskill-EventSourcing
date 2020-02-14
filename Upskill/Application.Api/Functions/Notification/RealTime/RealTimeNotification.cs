@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using Upskill.FunctionUtils.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 using Upskill.RealTimeNotifications.Builders;
 using Upskill.RealTimeNotifications.Constants;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
@@ -16,10 +17,14 @@ namespace Application.Api.Functions.Notification.RealTime
     public class RealTimeNotification
     {
         private readonly INotificationFromEventBuilder _notificationFromEventBuilder;
+        private readonly ITelemetryInitializer _telemetryInitializer;
 
-        public RealTimeNotification(INotificationFromEventBuilder notificationFromEventBuilder)
+        public RealTimeNotification(
+            INotificationFromEventBuilder notificationFromEventBuilder, 
+            ITelemetryInitializer telemetryInitializer)
         {
             _notificationFromEventBuilder = notificationFromEventBuilder;
+            _telemetryInitializer = telemetryInitializer;
         }
 
         private const string USER_ID_HEADER = NotificationUserId.HeaderSearchPattern;
@@ -38,10 +43,9 @@ namespace Application.Api.Functions.Notification.RealTime
         [FunctionName(nameof(EventNotificationHandler))]
         public async Task EventNotificationHandler(
             [EventGridTrigger] EventGridEvent @event,
-            [SignalR(HubName = NOTIFICATION_HUB_NAME)] IAsyncCollector<SignalRMessage> signalRMessages,
-            ExecutionContext executionContext)
+            [SignalR(HubName = NOTIFICATION_HUB_NAME)] IAsyncCollector<SignalRMessage> signalRMessages)
         {
-            executionContext.CorrelateExecution(@event.Subject);
+            _telemetryInitializer.Initialize(@event.Subject);
 
             var messageToPushResult =
                 await _notificationFromEventBuilder.BuildNotification(@event.EventType, @event.Data as string);
