@@ -4,21 +4,27 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
-using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 
 namespace Category.Api.Functions.Category.RebuildReadModel
 {
     public class RebuildReadModelProcessOrchestrator
     {
+        private readonly ITelemetryInitializer _telemetryInitializer;
+
+        public RebuildReadModelProcessOrchestrator(ITelemetryInitializer telemetryInitializer)
+        {
+            _telemetryInitializer = telemetryInitializer;
+        }
+
         [FunctionName(nameof(RebuildReadModelProcessOrchestrator))]
         public async Task RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context, 
-            ILogger log,
-            ExecutionContext executionContext)
+            ILogger log)
         {
-            executionContext.CorrelateExecution(context.InstanceId);
+            _telemetryInitializer.Initialize(context.InstanceId);
             await context.CallActivityAsync(nameof(StartReindex), null);
 
             var categoryIds =
