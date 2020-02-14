@@ -9,11 +9,11 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using Upskill.FunctionUtils.Extensions;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
@@ -26,17 +26,20 @@ namespace Application.Api.Functions.ApplicationProcess
         private readonly IFromFormToApplicationAddDtoRequestMapper _fromFormToApplicationAddDtoRequestMapper;
         private readonly ICommandBuilder<RegisterApplicationDto, RegisterApplicationCommand> _commandBuilder;
         private readonly ISubscriber _subscriber;
+        private readonly ITelemetryInitializer _telemetryInitializer;
 
         public ApplicationReceiver(
             IGuidProvider guidProvider, 
             IFromFormToApplicationAddDtoRequestMapper fromFormToApplicationAddDtoRequestMapper,
             ICommandBuilder<RegisterApplicationDto, RegisterApplicationCommand> commandBuilder,
-            ISubscriber subscriber)
+            ISubscriber subscriber,
+            ITelemetryInitializer telemetryInitializer)
         {
             _guidProvider = guidProvider;
             _fromFormToApplicationAddDtoRequestMapper = fromFormToApplicationAddDtoRequestMapper;
             _commandBuilder = commandBuilder;
             _subscriber = subscriber;
+            _telemetryInitializer = telemetryInitializer;
         }
 
         [FunctionName(nameof(ApplicationReceiver))]
@@ -44,11 +47,10 @@ namespace Application.Api.Functions.ApplicationProcess
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "application")] HttpRequest req,
             [DurableClient] IDurableOrchestrationClient processStarter,
             [NotificationSubscriber] string subscriber,
-            ExecutionContext executionContext,
             ILogger log)
         {
             var instanceId = _guidProvider.GenerateGuid();
-            executionContext.CorrelateExecution(instanceId);
+            _telemetryInitializer.Initialize(instanceId);
 
             var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.MapRequest(req);
 

@@ -7,11 +7,8 @@ using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
-using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Dispatchers;
-using Upskill.FunctionUtils.Extensions;
-using Upskill.Infrastructure.Enums;
-using Upskill.Infrastructure.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 using Upskill.ReindexGuards;
 
 namespace Category.Api.Functions.Event
@@ -20,22 +17,24 @@ namespace Category.Api.Functions.Event
     {
         private readonly IEventDispatcher _eventDispatcher;
         private readonly ICategoryQueueingEventGuard _queueingEventGuard;
+        private readonly ITelemetryInitializer _telemetryInitializer;
 
         public EventHandler(
             IEventDispatcher eventDispatcher,
-            ICategoryQueueingEventGuard queueingEventGuard)
+            ICategoryQueueingEventGuard queueingEventGuard,
+            ITelemetryInitializer telemetryInitializer)
         {
             _eventDispatcher = eventDispatcher;
             _queueingEventGuard = queueingEventGuard;
+            _telemetryInitializer = telemetryInitializer;
         }
 
         [FunctionName(nameof(EventHandler))]
         public async Task Run(
             [EventGridTrigger] EventGridEvent eventGridEvent,
-            [DurableClient] IDurableEntityClient client,
-            ExecutionContext executionContext)
+            [DurableClient] IDurableEntityClient client)
         {
-            executionContext.CorrelateExecution(eventGridEvent.Subject);
+            _telemetryInitializer.Initialize(eventGridEvent.Subject);
             var dispatchedEvents = await _eventDispatcher.Dispatch(eventGridEvent);
 
             foreach (var dispatchedEvent in dispatchedEvents)

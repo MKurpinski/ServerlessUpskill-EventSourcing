@@ -8,11 +8,11 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
-using Upskill.FunctionUtils.Extensions;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
@@ -26,19 +26,22 @@ namespace Category.Api.Functions.Category
         private readonly IEventPublisher _eventPublisher;
         private readonly IEventStore<Core.Aggregates.Category> _eventStore;
         private readonly ISubscriber _subscriber;
+        private readonly ITelemetryInitializer _telemetryInitializer;
 
         public CreateCategory(
             IValidator<CreateCategoryHttpRequest> createCategoryRequestValidator,
             IGuidProvider guidProvider,
             IEventPublisher eventPublisher,
             IEventStore<Core.Aggregates.Category> eventStore, 
-            ISubscriber subscriber)
+            ISubscriber subscriber,
+            ITelemetryInitializer telemetryInitializer)
         {
             _createCategoryRequestValidator = createCategoryRequestValidator;
             _guidProvider = guidProvider;
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;
             _subscriber = subscriber;
+            _telemetryInitializer = telemetryInitializer;
         }
 
 
@@ -46,11 +49,10 @@ namespace Category.Api.Functions.Category
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Post, Route = "category")] CreateCategoryHttpRequest createCategoryRequest,
             [NotificationSubscriber] string subscriber,
-            ILogger log,
-            ExecutionContext executionContext)
+            ILogger log)
         {
             var id = _guidProvider.GenerateGuid();
-            executionContext.CorrelateExecution(id);
+            _telemetryInitializer.Initialize(id);
             var validationResult = await _createCategoryRequestValidator.ValidateAsync(createCategoryRequest);
             var correlationId = id;
 

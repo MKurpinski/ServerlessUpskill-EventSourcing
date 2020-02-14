@@ -9,6 +9,7 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Upskill.EventsInfrastructure.Dispatchers;
 using Upskill.FunctionUtils.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 using Upskill.ReindexGuards;
 
 namespace Application.Api.Functions.Event
@@ -17,22 +18,24 @@ namespace Application.Api.Functions.Event
     {
         private readonly IEventDispatcher _eventDispatcher;
         private readonly IApplicationQueueingEventGuard _queueingEventGuard;
+        private readonly ITelemetryInitializer _telemetryInitializer;
 
         public EventHandler(
             IEventDispatcher eventDispatcher,
-            IApplicationQueueingEventGuard queueingEventGuard)
+            IApplicationQueueingEventGuard queueingEventGuard,
+            ITelemetryInitializer telemetryInitializer)
         {
             _eventDispatcher = eventDispatcher;
             _queueingEventGuard = queueingEventGuard;
+            _telemetryInitializer = telemetryInitializer;
         }
 
         [FunctionName(nameof(EventHandler))]
         public async Task Run(
             [EventGridTrigger] EventGridEvent eventGridEvent,
-            [DurableClient] IDurableEntityClient client,
-            ExecutionContext executionContext)
+            [DurableClient] IDurableEntityClient client)
         {
-            executionContext.CorrelateExecution(eventGridEvent.Subject);
+            _telemetryInitializer.Initialize(eventGridEvent.Subject);
 
             var dispatchedEvents = await _eventDispatcher.Dispatch(eventGridEvent);
             foreach (var dispatchedEvent in dispatchedEvents)

@@ -7,7 +7,7 @@ using Application.Storage.Constants;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
-using Upskill.FunctionUtils.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -15,23 +15,25 @@ namespace Application.Api.Functions.ApplicationProcess
     {
         private readonly IFileWriter _fileWriter;
         private readonly IFileNameProvider _fileNameProvider;
+        private readonly ITelemetryInitializer _telemetryInitializer;
 
         public PhotoUploader(
             IFileWriter fileWriter,
-            IFileNameProvider fileNameProvider)
+            IFileNameProvider fileNameProvider, 
+            ITelemetryInitializer telemetryInitializer)
         {
             _fileWriter = fileWriter;
             _fileNameProvider = fileNameProvider;
+            _telemetryInitializer = telemetryInitializer;
         }
 
         [FunctionName(nameof(PhotoUploader))]
         public async Task Run(
             [DurableClient] IDurableOrchestrationClient client,
             [ActivityTrigger] IDurableActivityContext context,
-            ExecutionContext executionContext,
             ILogger log)
         {
-            executionContext.CorrelateExecution(context.InstanceId);
+            _telemetryInitializer.Initialize(context.InstanceId);
             var command = context.GetInput<UploadPhotoCommand>();
 
             var photoSaveResult = await _fileWriter.Write(

@@ -8,9 +8,9 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
-using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -19,25 +19,27 @@ namespace Application.Api.Functions.ApplicationProcess
         private readonly IMapper _mapper;
         private readonly IEventPublisher _eventPublisher;
         private readonly IEventStore<Core.Aggregates.Application> _eventStore;
+        private readonly ITelemetryInitializer _telemetryInitializer;
 
         public ApplicationSaver(
             IMapper mapper, 
             IEventPublisher eventPublisher,
-            IEventStore<Core.Aggregates.Application> eventStore)
+            IEventStore<Core.Aggregates.Application> eventStore,
+            ITelemetryInitializer telemetryInitializer)
         {
             _mapper = mapper;
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;
+            _telemetryInitializer = telemetryInitializer;
         }
 
         [FunctionName(nameof(ApplicationSaver))]
         public async Task Run(
             [DurableClient] IDurableOrchestrationClient client,
             [ActivityTrigger] IDurableActivityContext context,
-            ExecutionContext executionContext,
             ILogger log)
         {
-            executionContext.CorrelateExecution(context.InstanceId);
+            _telemetryInitializer.Initialize(context.InstanceId);
             var command = context.GetInput<CreateApplicationCommand>();
 
             var applicationCreatedEvent = _mapper.Map<CreateApplicationCommand, CreateApplicationProcessStartedEvent>(command);

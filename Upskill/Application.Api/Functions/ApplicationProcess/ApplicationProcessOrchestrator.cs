@@ -7,22 +7,28 @@ using Application.ProcessStatus.Enums;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
-using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
     public class ApplicationProcessOrchestrator
     {
+        private readonly ITelemetryInitializer _telemetryInitializer;
+
+        public ApplicationProcessOrchestrator(ITelemetryInitializer telemetryInitializer)
+        {
+            _telemetryInitializer = telemetryInitializer;
+        }
+
         [FunctionName(nameof(ApplicationProcessOrchestrator))]
         public async Task RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             [DurableClient] IDurableOrchestrationClient processStarter,
-            ExecutionContext executionContext,
             ILogger log)
         {
-            executionContext.CorrelateExecution(context.InstanceId);
+            _telemetryInitializer.Initialize(context.InstanceId);
 
             var beginProcessCommand = this.BuildBeginProcessCommand(context);
             await context.CallActivityAsync<Task>(nameof(StatusTracker), beginProcessCommand);

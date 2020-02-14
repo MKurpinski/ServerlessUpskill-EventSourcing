@@ -12,6 +12,7 @@ using Upskill.EventsInfrastructure.Config;
 using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
 using Upskill.LogChecker.Config;
+using Upskill.Logging.Config;
 using Upskill.RealTimeNotifications.Config;
 
 [assembly: FunctionsStartup(typeof(Category.Api.Startup))]
@@ -40,6 +41,7 @@ namespace Category.Api
             builder.AddInfrastructureModule();
             builder.AddEvents();
             builder.AddLogChecker();
+            builder.AddTelemetryLogging();
         }
     }
 }

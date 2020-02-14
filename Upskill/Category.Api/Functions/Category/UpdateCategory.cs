@@ -9,11 +9,11 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
-using Upskill.FunctionUtils.Extensions;
 using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
@@ -27,18 +27,21 @@ namespace Category.Api.Functions.Category
         private readonly IEventPublisher _eventPublisher;
         private readonly IEventStore<Core.Aggregates.Category> _eventStore;
         private readonly ISubscriber _subscriber;
+        private readonly ITelemetryInitializer _telemetryInitializer;
 
         public UpdateCategory(
             IValidator<UpdateCategoryCommand> updateCommandValidator,
             IEventPublisher eventPublisher,
             IEventStore<Core.Aggregates.Category> eventStore, 
             IGuidProvider guidProvider,
-            ISubscriber subscriber)
+            ISubscriber subscriber, 
+            ITelemetryInitializer telemetryInitializer)
         {
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;
             _guidProvider = guidProvider;
             _subscriber = subscriber;
+            _telemetryInitializer = telemetryInitializer;
             _updateCommandValidator = updateCommandValidator;
         }
 
@@ -47,11 +50,10 @@ namespace Category.Api.Functions.Category
             [HttpTrigger(AuthorizationLevel.Function, HttpMethods.Put, Route = "category/{id:guid}")] UpdateCategoryHttpRequest updateCategoryRequest,
             string id,
             [NotificationSubscriber] string subscriber,
-            ILogger log,
-            ExecutionContext executionContext)
+            ILogger log)
         {
             var correlationId = _guidProvider.GenerateGuid();
-            executionContext.CorrelateExecution(correlationId);
+            _telemetryInitializer.Initialize(correlationId);
             var validationResult = await _updateCommandValidator.ValidateAsync(new UpdateCategoryCommand(id, updateCategoryRequest));
             log.LogProgress(OperationPhase.Started, "Updating category process started", correlationId);
 

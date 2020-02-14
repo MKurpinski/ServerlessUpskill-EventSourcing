@@ -6,26 +6,29 @@ using Application.Storage.Constants;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
-using Upskill.FunctionUtils.Extensions;
+using Upskill.Logging.TelemetryInitialization;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
     public class ApplicationProcessRecompensationOrchestrator
     {
         private readonly IFileNameProvider _fileNameProvider;
+        private readonly ITelemetryInitializer _telemetryInitializer;
 
-        public ApplicationProcessRecompensationOrchestrator(IFileNameProvider fileNameProvider)
+        public ApplicationProcessRecompensationOrchestrator(
+            IFileNameProvider fileNameProvider,
+            ITelemetryInitializer telemetryInitializer)
         {
             _fileNameProvider = fileNameProvider;
+            _telemetryInitializer = telemetryInitializer;
         }
 
         [FunctionName(nameof(ApplicationProcessRecompensationOrchestrator))]
         public async Task RunOrchestrator(
             [OrchestrationTrigger] IDurableOrchestrationContext context,
-            ExecutionContext executionContext,
             ILogger log)
         {
-            executionContext.CorrelateExecution(context.InstanceId);
+            _telemetryInitializer.Initialize(context.InstanceId);
 
             try
             {
