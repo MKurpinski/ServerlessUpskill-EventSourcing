@@ -13,9 +13,9 @@ using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
-using Upskill.Logging.TelemetryInitialization;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
+using Upskill.Telemetry.CorrelationInitializers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions.Category
@@ -27,7 +27,7 @@ namespace Category.Api.Functions.Category
         private readonly IEventPublisher _eventPublisher;
         private readonly IEventStore<Core.Aggregates.Category> _eventStore;
         private readonly ISubscriber _subscriber;
-        private readonly ITelemetryInitializer _telemetryInitializer;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
         public UpdateCategory(
             IValidator<UpdateCategoryCommand> updateCommandValidator,
@@ -35,13 +35,13 @@ namespace Category.Api.Functions.Category
             IEventStore<Core.Aggregates.Category> eventStore, 
             IGuidProvider guidProvider,
             ISubscriber subscriber, 
-            ITelemetryInitializer telemetryInitializer)
+            ICorrelationInitializer correlationInitializer)
         {
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;
             _guidProvider = guidProvider;
             _subscriber = subscriber;
-            _telemetryInitializer = telemetryInitializer;
+            _correlationInitializer = correlationInitializer;
             _updateCommandValidator = updateCommandValidator;
         }
 
@@ -53,13 +53,13 @@ namespace Category.Api.Functions.Category
             ILogger log)
         {
             var correlationId = _guidProvider.GenerateGuid();
-            _telemetryInitializer.Initialize(correlationId);
+            _correlationInitializer.Initialize(correlationId);
             var validationResult = await _updateCommandValidator.ValidateAsync(new UpdateCategoryCommand(id, updateCategoryRequest));
-            log.LogProgress(OperationPhase.Started, "Updating category process started", correlationId);
+            log.LogProgress(OperationStatus.Started, "Updating category process started", correlationId);
 
             if (!validationResult.IsValid)
             {
-                log.LogProgress(OperationPhase.Failed, "Validation failed", correlationId);
+                log.LogProgress(OperationStatus.Failed, "Validation failed", correlationId);
                 return new BadRequestObjectResult(validationResult.Errors);
             }
 
@@ -76,13 +76,13 @@ namespace Category.Api.Functions.Category
 
             if (!saveEventResult.Success)
             {
-                log.LogFailedOperation(OperationPhase.Failed, "Creating category process failed", saveEventResult.Errors, correlationId);
+                log.LogFailedOperation(OperationStatus.Failed, "Creating category process failed", saveEventResult.Errors, correlationId);
                 return new BadRequestResult();
             }
 
-            log.LogProgress(OperationPhase.InProgress, "Request accepted to further processing.", correlationId);
+            log.LogProgress(OperationStatus.InProgress, "Request accepted to further processing.", correlationId);
             await _eventPublisher.PublishEvent(categoryChangedEvent);
-            log.LogProgress(OperationPhase.InProgress, $"{nameof(UpdateCategoryProcessStartedEvent)} published", correlationId);
+            log.LogProgress(OperationStatus.InProgress, $"{nameof(UpdateCategoryProcessStartedEvent)} published", correlationId);
 
             return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }

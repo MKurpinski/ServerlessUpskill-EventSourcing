@@ -7,7 +7,7 @@ namespace Upskill.Infrastructure.Extensions
 {
     public static class LoggerExtensions
     {
-        public static void LogFailedOperation(this ILogger logger, OperationPhase phase, string messsage, IEnumerable<KeyValuePair<string, string>> errors, string correlationId)
+        public static void LogFailedOperation(this ILogger logger, OperationStatus phase, string messsage, IEnumerable<KeyValuePair<string, string>> errors, string correlationId)
         {
             var description = $"{messsage}, Errors: {string.Join(",", errors.Select(err => $"[{err.Key}]: {err.Value}"))}";
             var status = phase.ToString();
@@ -23,7 +23,7 @@ namespace Upskill.Infrastructure.Extensions
             logger.LogError($"Operation failed with {message}, errors: {string.Join(",", errors.Select(err => $"[{err.Key}]: {err.Value}"))}");
         }
 
-        public static void LogProgress(this ILogger logger, OperationPhase phase, string message, string correlationId)
+        public static void LogProgress(this ILogger logger, OperationStatus phase, string message, string correlationId)
         {
             var status = phase.ToString();
 

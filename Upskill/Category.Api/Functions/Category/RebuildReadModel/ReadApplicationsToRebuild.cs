@@ -3,28 +3,28 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Upskill.EventStore.Providers;
-using Upskill.Logging.TelemetryInitialization;
+using Upskill.Telemetry.CorrelationInitializers;
 
 namespace Category.Api.Functions.Category.RebuildReadModel
 {
     public class ReadCategoriesToRebuild
     {
         private readonly IStreamLogProvider<Core.Aggregates.Category> _streamLogProvider;
-        private readonly ITelemetryInitializer _telemetryInitializer;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
         public ReadCategoriesToRebuild(
             IStreamLogProvider<Core.Aggregates.Category> streamLogProvider,
-            ITelemetryInitializer telemetryInitializer)
+            ICorrelationInitializer correlationInitializer)
         {
             _streamLogProvider = streamLogProvider;
-            _telemetryInitializer = telemetryInitializer;
+            _correlationInitializer = correlationInitializer;
         }
 
         [FunctionName(nameof(ReadCategoriesToRebuild))]
         public async Task<IReadOnlyCollection<string>> Run(
             [ActivityTrigger] IDurableActivityContext context)
         {
-            _telemetryInitializer.Initialize(context.InstanceId);
+            _correlationInitializer.Initialize(context.InstanceId);
             var application = await _streamLogProvider.GetStreams();
             return application;
         }

@@ -3,21 +3,21 @@ using Application.Commands.Commands;
 using Application.ProcessStatus;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Upskill.Logging.TelemetryInitialization;
+using Upskill.Telemetry.CorrelationInitializers;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
     public class StatusTracker
     {
         private readonly IProcessStatusHandler _processStatusHandler;
-        private readonly ITelemetryInitializer _telemetryInitializer;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
         public StatusTracker(
             IProcessStatusHandler processStatusHandler,
-            ITelemetryInitializer telemetryInitializer)
+            ICorrelationInitializer correlationInitializer)
         {
             _processStatusHandler = processStatusHandler;
-            _telemetryInitializer = telemetryInitializer;
+            _correlationInitializer = correlationInitializer;
         }
 
         [FunctionName(nameof(StatusTracker))]
@@ -25,7 +25,7 @@ namespace Application.Api.Functions.ApplicationProcess
             [ActivityTrigger] IDurableActivityContext context)
         {
             var command = context.GetInput<TrackProcessStatusCommand>();
-            _telemetryInitializer.Initialize(command.CorrelationId);
+            _correlationInitializer.Initialize(command.CorrelationId);
             await _processStatusHandler.TrackStatus(
                 command.CorrelationId,
                 command.Status,

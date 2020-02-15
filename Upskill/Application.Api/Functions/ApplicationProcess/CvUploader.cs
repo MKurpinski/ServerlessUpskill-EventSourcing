@@ -6,7 +6,7 @@ using Application.Storage.Blobs.Writers;
 using Application.Storage.Constants;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Upskill.Logging.TelemetryInitialization;
+using Upskill.Telemetry.CorrelationInitializers;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -14,16 +14,16 @@ namespace Application.Api.Functions.ApplicationProcess
     {
         private readonly IFileWriter _fileWriter;
         private readonly IFileNameProvider _fileNameProvider;
-        private readonly ITelemetryInitializer _telemetryInitializer;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
         public CvUploader(
             IFileWriter fileWriter,
             IFileNameProvider fileNameProvider,
-            ITelemetryInitializer telemetryInitializer)
+            ICorrelationInitializer correlationInitializer)
         {
             _fileWriter = fileWriter;
             _fileNameProvider = fileNameProvider;
-            _telemetryInitializer = telemetryInitializer;
+            _correlationInitializer = correlationInitializer;
         }
 
         [FunctionName(nameof(CvUploader))]
@@ -31,7 +31,7 @@ namespace Application.Api.Functions.ApplicationProcess
             [DurableClient] IDurableOrchestrationClient client,
             [ActivityTrigger] IDurableActivityContext context)
         {
-            _telemetryInitializer.Initialize(context.InstanceId);
+            _correlationInitializer.Initialize(context.InstanceId);
 
             var command = context.GetInput<UploadCvCommand>();
             var saveCvResult = await _fileWriter.Write(

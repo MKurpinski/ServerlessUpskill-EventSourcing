@@ -9,17 +9,17 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
-using Upskill.Logging.TelemetryInitialization;
+using Upskill.Telemetry.CorrelationInitializers;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
     public class ApplicationProcessOrchestrator
     {
-        private readonly ITelemetryInitializer _telemetryInitializer;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
-        public ApplicationProcessOrchestrator(ITelemetryInitializer telemetryInitializer)
+        public ApplicationProcessOrchestrator(ICorrelationInitializer correlationInitializer)
         {
-            _telemetryInitializer = telemetryInitializer;
+            _correlationInitializer = correlationInitializer;
         }
 
         [FunctionName(nameof(ApplicationProcessOrchestrator))]
@@ -28,7 +28,7 @@ namespace Application.Api.Functions.ApplicationProcess
             [DurableClient] IDurableOrchestrationClient processStarter,
             ILogger log)
         {
-            _telemetryInitializer.Initialize(context.InstanceId);
+            _correlationInitializer.Initialize(context.InstanceId);
 
             var beginProcessCommand = this.BuildBeginProcessCommand(context);
             await context.CallActivityAsync<Task>(nameof(StatusTracker), beginProcessCommand);
@@ -74,8 +74,7 @@ namespace Application.Api.Functions.ApplicationProcess
                 return;
             }
 
-            log.LogProgress(OperationPhase.InProgress, "Finished the files uploading", context.InstanceId);
-
+            log.LogProgress(OperationStatus.InProgress, "Finished the files uploading", context.InstanceId);
             var cvUri = cvUploadedEventTask.Result.CvUri;
             var photoUri = photoUploadedEventTask.Result.PhotoUri;
 
@@ -103,7 +102,7 @@ namespace Application.Api.Functions.ApplicationProcess
             var applicationSavedSuccessfully = applicationSaveEvent == applicationSavedEvent;
             if (!applicationSavedSuccessfully)
             {
-                log.LogFailedOperation(OperationPhase.Failed, "Storing application failed", applicationSaveFailed.Result.Errors, context.InstanceId);
+                log.LogFailedOperation(OperationStatus.Failed, "Storing application failed", applicationSaveFailed.Result.Errors, context.InstanceId);
                 var failedProcessCommand = this.BuildFailedProcessCommand(context, applicationSaveFailed.Result.Errors);
                 await context.CallActivityAsync<Task>(nameof(StatusTracker), failedProcessCommand);
                 await this.StartRecompensateProcess(processStarter, context, command, log);
@@ -130,7 +129,7 @@ namespace Application.Api.Functions.ApplicationProcess
             var failedProcessCommand = this.BuildFailedProcessCommand(context, errors);
             await context.CallActivityAsync<Task>(nameof(StatusTracker), failedProcessCommand);
 
-            log.LogFailedOperation(OperationPhase.Failed, "Uploading files failed:", errors, context.InstanceId);
+            log.LogFailedOperation(OperationStatus.Failed, "Uploading files failed:", errors, context.InstanceId);
             await this.StartRecompensateProcess(processStarter, context, command, log);
         }
 

@@ -6,17 +6,17 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
-using Upskill.Logging.TelemetryInitialization;
+using Upskill.Telemetry.CorrelationInitializers;
 
 namespace Category.Api.Functions.Category.RebuildReadModel
 {
     public class RebuildReadModelProcessOrchestrator
     {
-        private readonly ITelemetryInitializer _telemetryInitializer;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
-        public RebuildReadModelProcessOrchestrator(ITelemetryInitializer telemetryInitializer)
+        public RebuildReadModelProcessOrchestrator(ICorrelationInitializer correlationInitializer)
         {
-            _telemetryInitializer = telemetryInitializer;
+            _correlationInitializer = correlationInitializer;
         }
 
         [FunctionName(nameof(RebuildReadModelProcessOrchestrator))]
@@ -24,7 +24,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
             [OrchestrationTrigger] IDurableOrchestrationContext context, 
             ILogger log)
         {
-            _telemetryInitializer.Initialize(context.InstanceId);
+            _correlationInitializer.Initialize(context.InstanceId);
             await context.CallActivityAsync(nameof(StartReindex), null);
 
             var categoryIds =
@@ -34,7 +34,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
                 categoryIds.Select(id => context.CreateEntityProxy<ICategoryEntity>(id).Reindex());
 
             await Task.WhenAll(rebuildTasks);
-            log.LogProgress(OperationPhase.InProgress, "Rebuild of events stored in event store finished", context.InstanceId);
+            log.LogProgress(OperationStatus.InProgress, "Rebuild of events stored in event store finished", context.InstanceId);
 
             categoryIds =
                 await context.CallActivityAsync<IReadOnlyCollection<string>>(nameof(ReadCategoriesToRebuild), null);
@@ -44,7 +44,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
                 categoryIds.Select(id => context.CreateEntityProxy<ICategoryEntity>(id).ApplyPendingEvents());
 
             await Task.WhenAll(applyEventTasks);
-            log.LogProgress(OperationPhase.InProgress, "Applied pending events", context.InstanceId);
+            log.LogProgress(OperationStatus.InProgress, "Applied pending events", context.InstanceId);
 
 
             var deleteStateTasks =
@@ -53,7 +53,7 @@ namespace Category.Api.Functions.Category.RebuildReadModel
             await Task.WhenAll(deleteStateTasks);
 
             await context.CallActivityAsync(nameof(FinishReindex), null);
-            log.LogProgress(OperationPhase.Finished, string.Empty, context.InstanceId);
+            log.LogProgress(OperationStatus.Finished, string.Empty, context.InstanceId);
         }
     }
 }

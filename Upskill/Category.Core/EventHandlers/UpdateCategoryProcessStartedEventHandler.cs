@@ -54,12 +54,12 @@ namespace Category.Core.EventHandlers
             {
                 var failedEvent = new UpdatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.UnexpectedProblem, categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
-                _logger.LogProgress(OperationPhase.Failed, "Problem occured while saving the category", categoryChangedEvent.CorrelationId);
+                _logger.LogProgress(OperationStatus.Failed, "Problem occured while saving the category", categoryChangedEvent.CorrelationId);
                 return;
             }
 
             var successEvent = this.GetSuccessEvent(categoryChangedEvent);
-            _logger.LogProgress(OperationPhase.Finished, string.Empty, categoryChangedEvent.CorrelationId);
+            _logger.LogProgress(OperationStatus.Finished, string.Empty, categoryChangedEvent.CorrelationId);
             await this.SaveAndDispatchEvent(categoryChangedEvent.Id, successEvent);
         }
 
@@ -72,7 +72,7 @@ namespace Category.Core.EventHandlers
                 var failedEvent =
                     new UpdatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.NotFound, categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
-                _logger.LogProgress(OperationPhase.Failed, $"Category({categoryChangedEvent.Id}) cannot be found", categoryChangedEvent.CorrelationId);
+                _logger.LogProgress(OperationStatus.Failed, $"Category({categoryChangedEvent.Id}) cannot be found", categoryChangedEvent.CorrelationId);
                 return false;
             }
 
@@ -83,7 +83,7 @@ namespace Category.Core.EventHandlers
                 var failedEvent = new UpdatingCategoryFailedEvent(categoryChangedEvent.Id, CategoryModificationStatus.DuplicatedName,
                     categoryChangedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryChangedEvent.Id, failedEvent);
-                _logger.LogProgress(OperationPhase.Failed, $"Cannot save category({categoryChangedEvent.Id}). Duplicated name", categoryChangedEvent.CorrelationId);
+                _logger.LogProgress(OperationStatus.Failed, $"Cannot save category({categoryChangedEvent.Id}). Duplicated name", categoryChangedEvent.CorrelationId);
                 return false;
             }
 

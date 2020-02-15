@@ -9,9 +9,9 @@ using Upskill.FunctionUtils.Results;
 using Upskill.Infrastructure;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
-using Upskill.Logging.TelemetryInitialization;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
+using Upskill.Telemetry.CorrelationInitializers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions.Category.RebuildReadModel
@@ -20,16 +20,16 @@ namespace Category.Api.Functions.Category.RebuildReadModel
     {
         private readonly ISubscriber _subscriber;
         private readonly IGuidProvider _guidProvider;
-        private readonly ITelemetryInitializer _telemetryInitializer;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
         public RequestReadModelRebuild(
             ISubscriber subscriber,
             IGuidProvider guidProvider, 
-            ITelemetryInitializer telemetryInitializer)
+            ICorrelationInitializer correlationInitializer)
         {
             _subscriber = subscriber;
             _guidProvider = guidProvider;
-            _telemetryInitializer = telemetryInitializer;
+            _correlationInitializer = correlationInitializer;
         }
 
         [FunctionName(nameof(RequestReadModelRebuild))]
@@ -41,11 +41,11 @@ namespace Category.Api.Functions.Category.RebuildReadModel
             ILogger log)
         {
             var correlationId = _guidProvider.GenerateGuid();
-            _telemetryInitializer.Initialize(correlationId);
+            _correlationInitializer.Initialize(correlationId);
             await _subscriber.Register(correlationId, subscriber);
 
             await processStarter.StartNewAsync(nameof(RebuildReadModelProcessOrchestrator), correlationId);
-            log.LogProgress(OperationPhase.Started, "Started categories read model rebuild", correlationId);
+            log.LogProgress(OperationStatus.Started, "Started categories read model rebuild", correlationId);
             return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }
     }

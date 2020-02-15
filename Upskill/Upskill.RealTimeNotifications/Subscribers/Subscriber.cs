@@ -29,7 +29,7 @@ namespace Upskill.RealTimeNotifications.Subscribers
             }
 
             await _cacheService.Set(correlationId, subscriber, TimeSpan.FromDays(MAX_SUBSCRIPTION_LIFETIME_IN_DAYS));
-            _logger.LogProgress(OperationPhase.InProgress, $"Subscriber {subscriber} registered", correlationId);
+            _logger.LogProgress(OperationStatus.InProgress, $"Subscriber {subscriber} registered", correlationId);
         }
     }
 }
