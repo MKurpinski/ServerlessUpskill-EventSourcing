@@ -2,8 +2,6 @@ using System.Threading.Tasks;
 using Category.Api.CustomHttpRequests;
 using Category.Search.Handlers;
 using Category.Search.Queries;
-using Category.Storage.Tables.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;

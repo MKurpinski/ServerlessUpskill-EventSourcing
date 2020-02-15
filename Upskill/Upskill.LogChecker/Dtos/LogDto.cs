@@ -1,17 +1,18 @@
 ﻿using System;
+using Upskill.Infrastructure.Enums;
 
 namespace Upskill.LogChecker.Dtos
 {
     public class LogDto
     {
         public string CorrelationId { get; }
-        public string Status { get; }
+        public OperationStatus Status { get; }
         public string Description { get; }
         public DateTime Timestamp { get; }
 
         public LogDto(
             string correlationId,
-            string status,
+            OperationStatus status,
             string description,
             DateTime timestamp)
         {

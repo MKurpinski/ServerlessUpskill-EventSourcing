@@ -57,7 +57,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Category.Search", "Category
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.ReindexGuards", "Upskill.ReindexGuards\Upskill.ReindexGuards.csproj", "{8E1BA3D1-0155-4366-BF70-BC3EB8533A04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upskill.LogChecker", "Upskill.LogChecker\Upskill.LogChecker.csproj", "{408F098F-D2F2-4774-AFA9-D1FA73A53E27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Upskill.LogChecker", "Upskill.LogChecker\Upskill.LogChecker.csproj", "{408F098F-D2F2-4774-AFA9-D1FA73A53E27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upskill.Telemetry", "Upskill.Telemetry\Upskill.Telemetry.csproj", "{B32BBFEF-5A4E-4C1A-A2AC-97DD5C951714}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -165,6 +167,10 @@ Global
 		{408F098F-D2F2-4774-AFA9-D1FA73A53E27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{408F098F-D2F2-4774-AFA9-D1FA73A53E27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{408F098F-D2F2-4774-AFA9-D1FA73A53E27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B32BBFEF-5A4E-4C1A-A2AC-97DD5C951714}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B32BBFEF-5A4E-4C1A-A2AC-97DD5C951714}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B32BBFEF-5A4E-4C1A-A2AC-97DD5C951714}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B32BBFEF-5A4E-4C1A-A2AC-97DD5C951714}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -195,6 +201,7 @@ Global
 		{162A5D3D-1296-40A9-9823-745C5B80428B} = {92584842-4161-4BD1-A832-3B0A57EFDAFA}
 		{8E1BA3D1-0155-4366-BF70-BC3EB8533A04} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 		{408F098F-D2F2-4774-AFA9-D1FA73A53E27} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
+		{B32BBFEF-5A4E-4C1A-A2AC-97DD5C951714} = {4DFD79F8-3A74-4B4C-A329-61A152FEB499}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BEEA3619-2CA9-4BDD-B713-A656BE95FBB0}

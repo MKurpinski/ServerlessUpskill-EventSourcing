@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Application.Api.Events.Internal;
 using Application.Commands.Commands;
@@ -10,6 +11,7 @@ using Upskill.EventsInfrastructure.Publishers;
 using Upskill.EventStore;
 using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
+using Upskill.Telemetry.CorrelationInitializers;
 
 namespace Application.Api.Functions.ApplicationProcess
 {
@@ -18,23 +20,27 @@ namespace Application.Api.Functions.ApplicationProcess
         private readonly IMapper _mapper;
         private readonly IEventPublisher _eventPublisher;
         private readonly IEventStore<Core.Aggregates.Application> _eventStore;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
         public ApplicationSaver(
             IMapper mapper, 
             IEventPublisher eventPublisher,
-            IEventStore<Core.Aggregates.Application> eventStore)
+            IEventStore<Core.Aggregates.Application> eventStore,
+            ICorrelationInitializer correlationInitializer)
         {
             _mapper = mapper;
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;
+            _correlationInitializer = correlationInitializer;
         }
 
         [FunctionName(nameof(ApplicationSaver))]
         public async Task Run(
             [DurableClient] IDurableOrchestrationClient client,
-            [ActivityTrigger] IDurableActivityContext context, 
+            [ActivityTrigger] IDurableActivityContext context,
             ILogger log)
         {
+            _correlationInitializer.Initialize(context.InstanceId);
             var command = context.GetInput<CreateApplicationCommand>();
 
             var applicationCreatedEvent = _mapper.Map<CreateApplicationCommand, CreateApplicationProcessStartedEvent>(command);
@@ -47,7 +53,7 @@ namespace Application.Api.Functions.ApplicationProcess
                 await client.RaiseEventAsync(context.InstanceId, nameof(ApplicationSaveFailedInternalFunctionEvent), applicationSaveFailedEvent);
             }
 
-            log.LogProgress(OperationPhase.InProgress, "Application accepted", context.InstanceId);
+            log.LogProgress(OperationStatus.InProgress, "Application accepted", context.InstanceId);
             await _eventPublisher.PublishEvent(applicationCreatedEvent);
 
             var applicationSavedEvent = new ApplicationSavedInternalFunctionEvent();

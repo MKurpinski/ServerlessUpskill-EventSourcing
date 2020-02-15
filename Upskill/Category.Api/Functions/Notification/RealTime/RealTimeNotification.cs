@@ -6,9 +6,9 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
-using Microsoft.Build.Framework;
 using Upskill.RealTimeNotifications.Builders;
 using Upskill.RealTimeNotifications.Constants;
+using Upskill.Telemetry.CorrelationInitializers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions.Notification.RealTime
@@ -16,10 +16,14 @@ namespace Category.Api.Functions.Notification.RealTime
     public class RealTimeNotification
     {
         private readonly INotificationFromEventBuilder _notificationFromEventBuilder;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
-        public RealTimeNotification(INotificationFromEventBuilder notificationFromEventBuilder)
+        public RealTimeNotification(
+            INotificationFromEventBuilder notificationFromEventBuilder, 
+            ICorrelationInitializer correlationInitializer)
         {
             _notificationFromEventBuilder = notificationFromEventBuilder;
+            _correlationInitializer = correlationInitializer;
         }
 
         private const string NOTIFICATION_HUB_NAME = "CategoryNotifications";
@@ -40,6 +44,7 @@ namespace Category.Api.Functions.Notification.RealTime
             [EventGridTrigger] EventGridEvent @event,
             [SignalR(HubName = NOTIFICATION_HUB_NAME)] IAsyncCollector<SignalRMessage> signalRMessages)
         {
+            _correlationInitializer.Initialize(@event.Subject);
             var messageToPushResult =
                 await _notificationFromEventBuilder.BuildNotification(@event.EventType, @event.Data as string);
 

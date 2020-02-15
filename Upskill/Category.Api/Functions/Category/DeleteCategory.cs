@@ -13,6 +13,7 @@ using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
+using Upskill.Telemetry.CorrelationInitializers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Category.Api.Functions.Category
@@ -23,17 +24,20 @@ namespace Category.Api.Functions.Category
         private readonly IEventStore<Core.Aggregates.Category> _eventStore;
         private readonly IGuidProvider _guidProvider;
         private readonly ISubscriber _subscriber;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
         public DeleteCategory(
             IEventPublisher eventPublisher,
             IEventStore<Core.Aggregates.Category> eventStore,
             IGuidProvider guidProvider, 
-            ISubscriber subscriber)
+            ISubscriber subscriber,
+            ICorrelationInitializer correlationInitializer)
         {
             _eventPublisher = eventPublisher;
             _eventStore = eventStore;
             _guidProvider = guidProvider;
             _subscriber = subscriber;
+            _correlationInitializer = correlationInitializer;
         }
 
         [FunctionName(nameof(DeleteCategory))]
@@ -44,7 +48,8 @@ namespace Category.Api.Functions.Category
             ILogger log)
         {
             var correlationId = _guidProvider.GenerateGuid();
-            log.LogProgress(OperationPhase.Started, "Deleting category process started", correlationId);
+            _correlationInitializer.Initialize(correlationId);
+            log.LogProgress(OperationStatus.Started, "Deleting category process started", correlationId);
 
             var categoryDeletedEvent = new DeleteCategoryProcessStartedEvent(id, correlationId);
 
@@ -53,13 +58,13 @@ namespace Category.Api.Functions.Category
 
             if (!saveEventResult.Success)
             {
-                log.LogFailedOperation(OperationPhase.Failed, "Deleting category process failed", saveEventResult.Errors, correlationId);
+                log.LogFailedOperation(OperationStatus.Failed, "Deleting category process failed", saveEventResult.Errors, correlationId);
                 return new BadRequestResult();
             }
 
-            log.LogProgress(OperationPhase.InProgress, "Request accepted to further processing.", correlationId);
+            log.LogProgress(OperationStatus.InProgress, "Request accepted to further processing.", correlationId);
             await _eventPublisher.PublishEvent(categoryDeletedEvent);
-            log.LogProgress(OperationPhase.InProgress, $"{nameof(DeleteCategoryProcessStartedEvent)} published", correlationId);
+            log.LogProgress(OperationStatus.InProgress, $"{nameof(DeleteCategoryProcessStartedEvent)} published", correlationId);
 
             return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }

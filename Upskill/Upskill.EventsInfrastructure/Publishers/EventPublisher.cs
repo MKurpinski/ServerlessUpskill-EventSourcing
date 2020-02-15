@@ -67,7 +67,7 @@ namespace Upskill.EventsInfrastructure.Publishers
                 EventTime = _dateTimeProvider.GetCurrentDateTime(),
                 EventType = typeName,
                 Topic = typeName,
-                Subject = typeName
+                Subject = eventContent.CorrelationId
             };
 
             await _eventGridClientFacade.PublishEvent(domainCredentials, domainHostname, eventToPublish);

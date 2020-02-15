@@ -15,6 +15,7 @@ using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
+using Upskill.Telemetry.CorrelationInitializers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Application.Api.Functions.ApplicationProcess
@@ -25,17 +26,20 @@ namespace Application.Api.Functions.ApplicationProcess
         private readonly IFromFormToApplicationAddDtoRequestMapper _fromFormToApplicationAddDtoRequestMapper;
         private readonly ICommandBuilder<RegisterApplicationDto, RegisterApplicationCommand> _commandBuilder;
         private readonly ISubscriber _subscriber;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
         public ApplicationReceiver(
             IGuidProvider guidProvider, 
             IFromFormToApplicationAddDtoRequestMapper fromFormToApplicationAddDtoRequestMapper,
             ICommandBuilder<RegisterApplicationDto, RegisterApplicationCommand> commandBuilder,
-            ISubscriber subscriber)
+            ISubscriber subscriber,
+            ICorrelationInitializer correlationInitializer)
         {
             _guidProvider = guidProvider;
             _fromFormToApplicationAddDtoRequestMapper = fromFormToApplicationAddDtoRequestMapper;
             _commandBuilder = commandBuilder;
             _subscriber = subscriber;
+            _correlationInitializer = correlationInitializer;
         }
 
         [FunctionName(nameof(ApplicationReceiver))]
@@ -45,9 +49,12 @@ namespace Application.Api.Functions.ApplicationProcess
             [NotificationSubscriber] string subscriber,
             ILogger log)
         {
-            var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.MapRequest(req);
             var instanceId = _guidProvider.GenerateGuid();
-            log.LogProgress(OperationPhase.Started, "Application process started", instanceId);
+            _correlationInitializer.Initialize(instanceId);
+
+            var mappingResult = await _fromFormToApplicationAddDtoRequestMapper.MapRequest(req);
+
+            log.LogProgress(OperationStatus.Started, "Application process started", instanceId);
 
             if (!mappingResult.Success)
             {
@@ -61,8 +68,7 @@ namespace Application.Api.Functions.ApplicationProcess
 
             await processStarter.StartNewAsync(nameof(ApplicationProcessOrchestrator), instanceId, command);
 
-            log.LogProgress(OperationPhase.InProgress, "Started processing of application process", instanceId);
-
+            log.LogProgress(OperationStatus.InProgress, "Started processing of application process", instanceId);
             return new AcceptedWithCorrelationIdHeaderResult(instanceId);
         }
     }

@@ -22,6 +22,7 @@ using Upskill.FunctionUtils.Extensions;
 using Upskill.Infrastructure.Config;
 using Upskill.LogChecker.Config;
 using Upskill.RealTimeNotifications.Config;
+using Upskill.Telemetry.Config;
 
 [assembly: FunctionsStartup(typeof(Application.Api.Startup))]
 
@@ -44,7 +45,7 @@ namespace Application.Api
                 typeof(SearchableApplicationToApplicationDtoProfile).Assembly);
 
             builder.Services.AddTransient<IValidator<SimpleApplicationSearchHttpRequest>, SimpleApplicationSearchHttpRequestValidator>();
-
+            builder.AddTelemetryLogging();
             builder.AddRealTimeNotifications();
             builder.AddAppSettingsToConfiguration();
             builder.AddCoreModule();

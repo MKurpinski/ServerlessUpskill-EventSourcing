@@ -11,6 +11,7 @@ using Upskill.Infrastructure.Enums;
 using Upskill.Infrastructure.Extensions;
 using Upskill.RealTimeNotifications.NotificationSubscriberBinding;
 using Upskill.RealTimeNotifications.Subscribers;
+using Upskill.Telemetry.CorrelationInitializers;
 using HttpMethods = Upskill.FunctionUtils.Constants.HttpMethods;
 
 namespace Application.Api.Functions.RebuildReadModel
@@ -19,13 +20,16 @@ namespace Application.Api.Functions.RebuildReadModel
     {
         private readonly ISubscriber _subscriber;
         private readonly IGuidProvider _guidProvider;
+        private readonly ICorrelationInitializer _correlationInitializer;
 
         public RequestReadModelRebuild(
             ISubscriber subscriber,
-            IGuidProvider guidProvider)
+            IGuidProvider guidProvider, 
+            ICorrelationInitializer correlationInitializer)
         {
             _subscriber = subscriber;
             _guidProvider = guidProvider;
+            _correlationInitializer = correlationInitializer;
         }
 
         [FunctionName(nameof(RequestReadModelRebuild))]
@@ -36,11 +40,12 @@ namespace Application.Api.Functions.RebuildReadModel
             ILogger log)
         {
             var correlationId = _guidProvider.GenerateGuid();
+            _correlationInitializer.Initialize(correlationId);
             await _subscriber.Register(correlationId, subscriber);
 
             await processStarter.StartNewAsync(nameof(RebuildReadModelProcessOrchestrator), correlationId);
 
-            log.LogProgress(OperationPhase.Started, "Started applications read model rebuild", correlationId);
+            log.LogProgress(OperationStatus.Started, "Started applications read model rebuild", correlationId);
             return new AcceptedWithCorrelationIdHeaderResult(correlationId);
         }
     }

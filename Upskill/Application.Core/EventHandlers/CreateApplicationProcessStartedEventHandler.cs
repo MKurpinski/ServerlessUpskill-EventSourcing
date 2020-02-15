@@ -37,7 +37,7 @@ namespace Application.Core.EventHandlers
 
         public async Task Handle(CreateApplicationProcessStartedEvent createApplicationProcessStartedEvent)
         {
-            _logger.LogProgress(OperationPhase.InProgress, "Indexing started", createApplicationProcessStartedEvent.CorrelationId);
+            _logger.LogProgress(OperationStatus.InProgress, "Indexing started", createApplicationProcessStartedEvent.CorrelationId);
 
             var applicationDto = _mapper.Map<CreateApplicationProcessStartedEvent, ApplicationDto>(createApplicationProcessStartedEvent);
             await _searchableApplicationIndexer.Index(applicationDto);
@@ -47,7 +47,7 @@ namespace Application.Core.EventHandlers
             await _eventStore.AppendEvent(applicationCreatedEvent.Id, applicationCreatedEvent);
             await _eventPublisher.PublishEvent(applicationCreatedEvent);
 
-            _logger.LogProgress(OperationPhase.Finished, string.Empty, createApplicationProcessStartedEvent.CorrelationId);
+            _logger.LogProgress(OperationStatus.Finished, string.Empty, createApplicationProcessStartedEvent.CorrelationId);
         }
     }
 }

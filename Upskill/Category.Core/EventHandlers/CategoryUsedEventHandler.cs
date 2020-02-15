@@ -39,7 +39,7 @@ namespace Category.Core.EventHandlers
             }
 
             await _usedCategoryRepository.CreateOrUpdate(categoryResult.Value.Id, categoryUsedEvent.UsedIn);
-            _logger.LogProgress(OperationPhase.Finished, string.Empty, categoryUsedEvent.CorrelationId);
+            _logger.LogProgress(OperationStatus.Finished, string.Empty, categoryUsedEvent.CorrelationId);
         }
     }
 }

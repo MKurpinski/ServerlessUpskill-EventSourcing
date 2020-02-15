@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="8.6.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.12.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventGrid" Version="2.1.0" />
@@ -21,6 +22,7 @@
 	  <ProjectReference Include="..\Upskill.Infrastructure\Upskill.Infrastructure.csproj" />
 	  <ProjectReference Include="..\Upskill.LogChecker\Upskill.LogChecker.csproj" />
 	  <ProjectReference Include="..\Upskill.RealTimeNotifications\Upskill.RealTimeNotifications.csproj" />
+	  <ProjectReference Include="..\Upskill.Telemetry\Upskill.Telemetry.csproj" />
   </ItemGroup>
   <ItemGroup>
 	  <None Update="appsettings.json">

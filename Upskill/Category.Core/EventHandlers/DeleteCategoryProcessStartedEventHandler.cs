@@ -39,7 +39,7 @@ namespace Category.Core.EventHandlers
             {
                 var failedEvent = new DeletingCategoryFailedEvent(categoryDeletedEvent.Id, canDeleteResult.Status, categoryDeletedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, failedEvent);
-                _logger.LogProgress(OperationPhase.Failed, "Category is used", categoryDeletedEvent.CorrelationId);
+                _logger.LogProgress(OperationStatus.Failed, "Category is used", categoryDeletedEvent.CorrelationId);
                 return;
             }
 
@@ -48,11 +48,11 @@ namespace Category.Core.EventHandlers
             {
                 var failedEvent = new DeletingCategoryFailedEvent(categoryDeletedEvent.Id, CategoryModificationStatus.UnexpectedProblem, categoryDeletedEvent.CorrelationId);
                 await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, failedEvent);
-                _logger.LogProgress(OperationPhase.Failed, $"Problem occured during saving category {categoryDeletedEvent.Id}", categoryDeletedEvent.CorrelationId);
+                _logger.LogProgress(OperationStatus.Failed, $"Problem occured during saving category {categoryDeletedEvent.Id}", categoryDeletedEvent.CorrelationId);
             }
 
             var successEvent = new CategoryDeletedEvent(categoryDeletedEvent.Id, categoryDeletedEvent.CorrelationId);
-            _logger.LogProgress(OperationPhase.Finished, string.Empty, categoryDeletedEvent.CorrelationId);
+            _logger.LogProgress(OperationStatus.Finished, string.Empty, categoryDeletedEvent.CorrelationId);
             await this.SaveAndDispatchEvent(categoryDeletedEvent.Id, successEvent);
         }
     }
